@@ -12,6 +12,18 @@
 - 接入协议：OIDC、SAML、LDAP、AD
 - 人类与智能体身份分离建模
 - `AgentActor` 不能复用 `HumanActor` 会话
+- 不同环境的 OIDC client、service account、AgentActor 注册记录和密钥必须独立，详见 [environment-isolation.md](environment-isolation.md)
+
+### 身份类型
+
+| 类型 | 用途 | 默认限制 |
+| --- | --- | --- |
+| `HumanActor` | 员工、HR、主管、管理员、审批人 | 必须绑定组织身份和角色 |
+| `AgentActor` | 智能体执行者 | 不能登录 UI，不能复用人类 session |
+| `ServiceAccount` | CI、部署、迁移、备份、网关调用 | 只授予单一职责所需权限 |
+| `ExternalConnector` | 受控外部系统连接器 | 必须登记出网目的和审计标签 |
+
+权限判断必须同时考虑 actor、环境、数据等级、业务范围、工具风险和策略版本。
 
 ## 工具治理
 
@@ -39,11 +51,19 @@
 - `restricted` 和 `sensitive` 默认不允许进入外部模型上下文
 - 若确需外发，必须通过脱敏、摘要或审批策略
 
+| 等级 | 示例 | 模型上下文规则 | 导出规则 |
+| --- | --- | --- | --- |
+| `public` | 公开制度、公开公告 | 可进入模型上下文 | 可导出，仍需审计 |
+| `internal` | 内部流程、普通协作内容 | 可进入受控模型上下文 | 按权限导出 |
+| `restricted` | 员工档案、考勤明细、内部评价 | 默认不得外发，需摘要或脱敏 | 需权限和审计，批量导出触发审批 |
+| `sensitive` | 身份证、银行卡、薪酬、合同、健康信息 | 默认禁止进入外部模型上下文 | 默认触发 ApprovalGate |
+
 ## 网络治理
 
 - 运行面不允许自由出网
 - 仅模型网关与少数受控连接器可出网
 - 外部调用必须记录模型、路由、耗时、成本和调用方
+- `dev`、`ci`、`staging`、`prod` 默认互不可达，跨环境访问必须登记、审批、审计且默认只读
 
 ## 审批治理
 
@@ -55,6 +75,20 @@
 - 策略、预算、模型路由调整
 - 生产学习结果发布
 
+### ApprovalGate 最低字段
+
+- 审批请求 id
+- 关联 WorkItem
+- 请求动作和风险等级
+- 输入引用与输出引用
+- 策略判断引用
+- 审批人和审批链
+- 决策、理由和时间
+- 修改后 payload 引用
+- 回滚引用
+
+审批不能只保存一个布尔值。
+
 ## 预算与策略
 
 策略至少覆盖：
@@ -64,6 +98,16 @@
 - 高风险工具白名单
 - 允许的知识域
 - 最大自动执行步数
+
+策略评估结果至少包含：
+
+- `policyVersion`
+- `matchedRules`
+- `decision`：`allow`、`deny`、`require_approval`、`escalate`
+- `riskLevel`
+- `reason`
+- `budgetImpact`
+- `auditTags`
 
 ## 审计模型
 
@@ -78,6 +122,37 @@
 - `policy_evaluations`
 - `approval_refs`
 - `rollback_refs`
+
+审计事件还必须包含：
+
+- `env`
+- `trace_id`
+- `work_item_id`
+- `agent_run_id`
+- `data_classification`
+- `risk_level`
+- `before_refs`
+- `after_refs`
+
+高敏数据审计应记录引用和摘要，不应在审计日志中复制明文字段。
+
+## 安全事件处理
+
+以下情况必须作为安全事件处理：
+
+- secret、模型 key、OIDC client secret 或数据库凭据泄漏。
+- `AgentActor` 越权调用工具或访问高等级数据。
+- 生产数据未经审批进入非生产环境。
+- 模型上下文包含未脱敏的 `restricted` 或 `sensitive` 数据。
+- 审批、审计、预算或模型网关策略被绕过。
+
+处理流程：
+
+1. 立即冻结相关 token、工具、模型路由或 AgentActor。
+2. 保留审计证据和受影响数据引用。
+3. 执行密钥轮换、权限回收或策略回滚。
+4. 复盘根因，补充质量门禁和评测样本。
+5. 在安全治理文档或 ADR 中记录需要长期保留的决策变化。
 
 ## 合规优先级
 

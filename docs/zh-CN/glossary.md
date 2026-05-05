@@ -75,3 +75,43 @@
 ## Durable Workflow
 
 支持长流程、恢复、补偿与人工介入的工作流骨干。
+
+## Environment
+
+承载系统运行、验证或发布的隔离边界。v1 至少区分 `dev`、`ci`、`staging` 和 `prod`，不同环境拥有独立数据、配置、身份、模型路由、预算和审计边界。
+
+## Environment Promotion
+
+代码、配置、prompt、workflow、策略、模型路由或迁移从低风险环境向高风险环境单向晋级的过程，必须经过评测、审批、审计和回滚设计。
+
+## AgentRun
+
+某个 AgentActor 围绕一个 WorkItem 执行一次 LangGraph graph 的运行实例，必须绑定环境、策略版本、预算快照、工具授权和 checkpoint。
+
+## EvalRun
+
+对候选 prompt、workflow、工具策略、模型路由或学习沉淀物进行评测的一次运行记录，必须绑定数据集版本、评分器版本、基线版本和候选版本。
+
+## ToolGrant
+
+某次 AgentRun 可使用的工具授权快照。它来自 ToolContract 和 PolicyRule 的交集，不等同于 AgentActor 的全部能力。
+
+## PolicyEvaluation
+
+系统对某次请求、工具调用、数据访问或发布动作进行策略判断的结果，至少包含策略版本、命中规则、风险等级、决策和理由。
+
+## RiskLevel
+
+描述动作或对象风险的受控等级，v1 使用 `low`、`medium`、`high`、`critical`。
+
+## DataClassification
+
+描述数据敏感程度的受控等级，v1 使用 `public`、`internal`、`restricted`、`sensitive`。
+
+## ModelRoute
+
+模型网关中的受控路由配置，定义可用模型、供应商、预算、限流、数据分级规则和审计要求。
+
+## AuditEvent
+
+不可随意修改的审计记录，用于说明谁在什么时间、基于什么原因和策略，对哪些输入输出引用执行了什么动作，以及如何回滚或追溯。

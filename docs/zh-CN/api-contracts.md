@@ -7,6 +7,61 @@
 - 结构边界使用 JSON Schema 描述
 - 前端以 Zod 校验边界，运行面以 Pydantic 校验边界
 - 所有正式接口都必须挂在 `/api/v1/` 之下
+- 所有写操作必须携带幂等键或具备业务唯一约束
+- 所有请求必须能绑定 `env`、actor、权限上下文和审计上下文
+
+## 全局约定
+
+### 身份与授权
+
+- API 调用方必须通过 Keycloak 颁发的 token 或内部 service account 认证。
+- `HumanActor` 和 `AgentActor` 使用不同 subject 类型，不能复用 session。
+- Agent Runtime 调用控制面时必须携带 `agentActorId`、`workItemId`、`runId` 和 `policyVersion`。
+- 管理类接口必须声明所需 `PermissionResource`，不能只依赖前端菜单隐藏。
+
+### 请求元数据
+
+写请求推荐包含：
+
+```json
+{
+  "meta": {
+    "requestId": "uuid",
+    "idempotencyKey": "string",
+    "env": "staging",
+    "actorType": "HumanActor",
+    "actorId": "uuid",
+    "workItemId": "uuid",
+    "reason": "string"
+  }
+}
+```
+
+`reason` 在高风险动作中必填。`env` 必须与服务端运行环境一致，客户端传入值只能用于校验和审计，不能决定真实环境。
+
+### ID 与时间
+
+- 外部契约使用不透明字符串 ID，推荐 UUID。
+- 时间字段使用 ISO 8601，服务端统一转换为 UTC 存储。
+- 日期字段如考勤 `day` 使用业务时区下的日期，不可与 UTC timestamp 混用。
+- 所有列表接口必须定义稳定排序字段。
+
+### 错误码
+
+| 错误码 | 含义 |
+| --- | --- |
+| `validation_failed` | 请求结构、枚举、格式或必填字段不合法 |
+| `unauthorized` | 未认证或 token 无效 |
+| `forbidden` | 已认证但权限不足 |
+| `not_found` | 目标资源不存在或不可见 |
+| `conflict` | 幂等键冲突、版本冲突或唯一键冲突 |
+| `approval_required` | 命中高风险策略，必须进入 ApprovalGate |
+| `policy_violation` | 策略明确禁止该动作 |
+| `budget_exceeded` | 预算不足或超出模型/工具限制 |
+| `rate_limited` | 超出速率限制 |
+| `dependency_unavailable` | 依赖系统、模型网关或工具不可用 |
+
+错误响应必须避免泄漏敏感字段原文。
 
 ## 同步响应封套
 
@@ -14,6 +69,24 @@
 - 分页响应统一在 `meta.pagination` 中声明 `total`、`page`、`pageSize` 或游标信息。
 - 错误响应统一返回 `error.code`、`error.message`、`error.details`，不得混用字符串化错误。
 - 同步响应必须统一封套和分页元数据，但字段命名以 v1 正式契约为准。
+
+示例：
+
+```json
+{
+  "data": {},
+  "meta": {
+    "requestId": "uuid",
+    "env": "prod",
+    "version": "v1"
+  },
+  "audit": {
+    "auditEventId": "uuid",
+    "policyEvaluationId": "uuid",
+    "approvalId": "uuid"
+  }
+}
+```
 
 ## 资源族
 
@@ -207,6 +280,17 @@
 - `sla`
 - `approvalPolicyId`
 
+边界说明：
+- `assignedActor` 必须区分 `HumanActor` 与 `AgentActor`。
+- 状态迁移必须使用 transition 接口，不允许普通 PATCH 直接改状态。
+- 高风险 WorkItem 必须绑定审批策略或给出策略豁免记录。
+
+审计点：
+- 创建、分派、升级、关闭
+- 风险等级变更
+- SLA 修改
+- 从智能体转人工或从人工转智能体
+
 ### Agent Run API
 
 用途：启动、查看、暂停、恢复和终止 agent run。
@@ -226,6 +310,17 @@
 - `toolGrants`
 - `checkpointRef`
 
+边界说明：
+- `budgetSnapshot` 是运行开始时的预算快照，不能由模型运行中自行扩大。
+- `toolGrants` 是本次运行可用工具授权，不等同于 AgentActor 全局能力。
+- `checkpointRef` 只能引用同环境运行面 checkpoint。
+
+审计点：
+- 启动、暂停、恢复、取消
+- 工具授权变化
+- 预算耗尽或模型路由降级
+- HITL 中断与恢复
+
 ### Approval API
 
 用途：显式审批高风险动作。
@@ -240,6 +335,23 @@
 - `reject`
 - `edit_and_approve`
 - `escalate`
+
+核心字段：
+- `approvalId`
+- `workItemId`
+- `riskLevel`
+- `requestedAction`
+- `requestPayloadRef`
+- `policyEvaluationId`
+- `approverActorId`
+- `decision`
+- `decisionReason`
+- `rollbackRef`
+
+边界说明：
+- 审批请求创建后，原始输入引用不可变。
+- `edit_and_approve` 必须保存人类修改后的 payload 引用。
+- 超时不能默认批准，必须按策略升级、取消或转人工队列。
 
 ### Knowledge API
 
@@ -268,6 +380,31 @@
 关键操作：
 - `GET /api/v1/audit/events`
 - `GET /api/v1/audit/events/{auditEventId}`
+
+## ToolContract 边界
+
+每个工具必须定义：
+
+```json
+{
+  "toolName": "string",
+  "description": "string",
+  "inputSchemaRef": "string",
+  "outputSchemaRef": "string",
+  "requiredPermissions": ["string"],
+  "riskLevel": "low",
+  "allowedActorTypes": ["AgentActor"],
+  "allowedEnvironments": ["dev", "staging"],
+  "autoExecute": false,
+  "budgetLimit": {
+    "currency": "token",
+    "amount": 10000
+  },
+  "auditTags": ["string"]
+}
+```
+
+工具契约变更必须进入策略审查。生产高风险工具必须默认 `autoExecute=false`。
 
 ## 事件命名
 
@@ -308,6 +445,37 @@ v1 固定使用以下事件前缀：
 | `eval.run_completed` | 评测完成 |
 | `policy.violation_detected` | 策略违规被发现 |
 
+## 事件封套
+
+所有异步事件必须包含：
+
+```json
+{
+  "eventId": "uuid",
+  "eventType": "task.created",
+  "eventVersion": 1,
+  "occurredAt": "2026-05-05T00:00:00Z",
+  "env": "staging",
+  "actor": {
+    "actorType": "HumanActor",
+    "actorId": "uuid"
+  },
+  "trace": {
+    "requestId": "uuid",
+    "workItemId": "uuid",
+    "agentRunId": "uuid"
+  },
+  "data": {},
+  "audit": {
+    "auditEventId": "uuid",
+    "policyEvaluationId": "uuid",
+    "approvalId": "uuid"
+  }
+}
+```
+
+消费者必须按 `eventId` 幂等处理。事件 payload 只能追加兼容字段；破坏性变更必须提升 `eventVersion` 并记录迁移计划。
+
 ## JSON Schema 边界约束
 
 所有对模型或工具开放的结构边界必须：
@@ -341,3 +509,5 @@ v1 固定使用以下事件前缀：
 - 任何新增高风险动作都必须先有 `ApprovalGate` 绑定策略。
 - 任何新增 HR 事实字段都必须同时定义请求边界、响应边界、事件语义和审计点。
 - 接口名称必须使用 v1 正式命名，不能引入未注册的历史路径或别名。
+- 契约测试必须覆盖成功、权限不足、审批触发、策略拒绝、幂等重放和依赖失败。
+- 面向模型或工具的结构化输出必须禁止未声明字段，并在写入控制面前再次校验。

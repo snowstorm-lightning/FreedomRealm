@@ -32,8 +32,22 @@ AI HRMS 是一个面向单企业私有化部署的 agent-first 人力资源管�
 - [ARCHITECTURE.md](ARCHITECTURE.md)：总体架构摘要与关键边界
 - [docs/zh-CN/README.md](docs/zh-CN/README.md)：中文解释文档库总索引
 
+## 当前文档覆盖
+
+本仓库当前覆盖以下设计面：
+
+- 业务边界：组织、账号、员工档案、考勤、协作内容、工作项、审批、智能体和学习沉淀。
+- 架构边界：模块化单体控制面、独立 Agent Runtime、Temporal 工作流骨干、LiteLLM 模型网关。
+- 治理边界：身份、权限、数据分级、预算、策略、审批、审计和安全事件处理。
+- 环境边界：`dev`、`ci`、`staging`、`prod` 的资源隔离、数据隔离、发布晋级和回滚。
+- 演化边界：Observation、LearningArtifact、Experiment、EvalRun、灰度发布和回滚复盘。
+
+后续进入代码实现前，应先确认对应专题文档、ADR、执行计划和评测基线已经同步更新。
+
 ## 目录原则
 
 - `AGENTS.md` 只做导航，不承载全部上下文。
 - 深层设计、执行计划、ADR、评测基线都进入 `docs/zh-CN/` 并版本化。
 - 任何重要决策都应优先沉淀为仓库文档，而不是停留在聊天记录或外部文档中。
+- 文档中出现的接口名、事件名、角色名、环境名和风险等级必须保持一致。
+- 当前阶段不引入生产代码目录，未来代码仓结构以 `deployment-and-operations.md` 中的建议为准。

@@ -12,6 +12,7 @@
 - [learning-flywheel.md](learning-flywheel.md)：学习、自进化与受控发布闭环
 - [security-and-governance.md](security-and-governance.md)：身份、策略、预算、审计与合规
 - [deployment-and-operations.md](deployment-and-operations.md)：部署、环境、可观测性、备份与恢复
+- [environment-isolation.md](environment-isolation.md)：环境隔离、防污染、晋级和回滚约束
 - [harness-engineering.md](harness-engineering.md)：仓库作为 harness 的工程规范
 - [quality-gates.md](quality-gates.md)：质量门禁、验收和发布闸门
 - [roadmap.md](roadmap.md)：阶段路线图

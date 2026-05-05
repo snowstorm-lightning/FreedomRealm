@@ -29,9 +29,21 @@ AI HRMS 采用三段式结构：
 - Temporal 负责跨服务工作流与人工闸门。
 - PostgreSQL 同时承载事务数据、事件 outbox、知识索引元数据与首期 pgvector 检索能力。
 
+## Non-Negotiable Constraints
+
+- 控制面不直接承载 agent 推理图执行逻辑。
+- Agent Runtime 不直接写入 HR 主数据真相。
+- 长流程、审批、超时和补偿由 Temporal 管理。
+- 所有模型调用必须经过 LiteLLM Proxy。
+- 所有高风险动作必须经过 ApprovalGate。
+- `dev`、`ci`、`staging`、`prod` 不得复用数据库、身份、模型 key、长期记忆或生产数据。
+- 学习结果不能直接进入生产，必须先经过评测、审批、灰度和回滚设计。
+
 ## Deep Links
 
 - 详细架构蓝图：[docs/zh-CN/architecture-blueprint.md](docs/zh-CN/architecture-blueprint.md)
 - 业务边界与角色模型：[docs/zh-CN/business-blueprint.md](docs/zh-CN/business-blueprint.md)
 - 接口契约：[docs/zh-CN/api-contracts.md](docs/zh-CN/api-contracts.md)
 - 安全治理：[docs/zh-CN/security-and-governance.md](docs/zh-CN/security-and-governance.md)
+- 环境隔离：[docs/zh-CN/environment-isolation.md](docs/zh-CN/environment-isolation.md)
+- 质量门禁：[docs/zh-CN/quality-gates.md](docs/zh-CN/quality-gates.md)

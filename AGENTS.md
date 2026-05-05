@@ -27,6 +27,7 @@
 - 学习与自进化：[docs/zh-CN/learning-flywheel.md](docs/zh-CN/learning-flywheel.md)
 - 安全治理：[docs/zh-CN/security-and-governance.md](docs/zh-CN/security-and-governance.md)
 - 部署运维：[docs/zh-CN/deployment-and-operations.md](docs/zh-CN/deployment-and-operations.md)
+- 环境隔离：[docs/zh-CN/environment-isolation.md](docs/zh-CN/environment-isolation.md)
 - Harness 工程方式：[docs/zh-CN/harness-engineering.md](docs/zh-CN/harness-engineering.md)
 - 质量门禁：[docs/zh-CN/quality-gates.md](docs/zh-CN/quality-gates.md)
 - 路线图：[docs/zh-CN/roadmap.md](docs/zh-CN/roadmap.md)
