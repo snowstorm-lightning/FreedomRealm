@@ -1,0 +1,35 @@
+{
+  "env": "ci",
+  "service": "control-plane",
+  "version": "0.1.0",
+  "resources": {
+    "database": { "name": "ai_hrms_ci" },
+    "temporal": { "namespace": "ai-hrms-ci" },
+    "keycloak": { "realm": "ai-hrms-ci" },
+    "litellm": { "deployment": "litellm-ci" },
+    "langfuse": { "project": "ai-hrms-ci" },
+    "objectStorage": { "bucketOrPrefix": "ai-hrms-ci/uploads/" },
+    "kubernetes": { "namespace": "ai-hrms-ci" },
+    "secretPath": "ai-hrms/ci/"
+  },
+  "telemetry": {
+    "labels": {
+      "env": "ci",
+      "service": "control-plane",
+      "version": "0.1.0",
+      "workflow_id": "ci",
+      "agent_run_id": "none",
+      "actor_type": "ServiceAccount",
+      "actor_id": "ci-pipeline",
+      "policy_version": "policy-v1",
+      "approval_refs": "none"
+    }
+  },
+  "promotion": {
+    "from": "dev",
+    "to": "ci",
+    "rollbackVersion": "0.0.0",
+    "observationWindow": "PT30M"
+  },
+  "crossEnvironmentAccess": []
+}

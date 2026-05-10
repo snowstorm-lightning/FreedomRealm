@@ -4,8 +4,9 @@ AI HRMS 是一个面向单企业私有化部署的 agent-first 人力资源管�
 
 ## 当前范围
 
-- 当前交付物仍以文档为主，不交付生产业务代码。
-- 当前仓库只保留正式文档资产，`docs/zh-CN/` 是设计与后续实现阶段的唯一 system of record。
+- 当前交付物以文档和 Phase 1 最小工程底座为主，不交付生产 HR 业务代码。
+- 当前仓库保留正式文档资产，`docs/zh-CN/` 是设计与后续实现阶段的主要 system of record。
+- 已新增 `packages/contracts`、`packages/policy` 和 `config/environments`，用于把环境隔离和 ToolContract 高风险边界转成可测试规则。
 - 新文档全部以本仓库为 system of record，为后续重新初始化仓库提供基础。
 
 ## 设计前提
@@ -19,7 +20,7 @@ AI HRMS 是一个面向单企业私有化部署的 agent-first 人力资源管�
 ## 技术栈基线
 
 - 前端：Next.js 15、React 19、TypeScript、Tailwind CSS v4、shadcn/ui、TanStack Query、Playwright
-- 控制面：Node.js 24 LTS、NestJS、Prisma ORM、PostgreSQL 18
+- 控制面：Node.js 24 LTS、pnpm、NestJS、Prisma ORM、PostgreSQL 18
 - 智能体运行面：Python 3.12、uv、FastAPI、LangGraph、Pydantic v2
 - 工作流：Temporal
 - 模型网关：LiteLLM Proxy

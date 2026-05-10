@@ -1,0 +1,35 @@
+{
+  "env": "prod",
+  "service": "control-plane",
+  "version": "0.1.0",
+  "resources": {
+    "database": { "name": "ai_hrms_prod" },
+    "temporal": { "namespace": "ai-hrms-prod" },
+    "keycloak": { "realm": "ai-hrms-prod" },
+    "litellm": { "deployment": "litellm-prod" },
+    "langfuse": { "project": "ai-hrms-prod" },
+    "objectStorage": { "bucketOrPrefix": "ai-hrms-prod/uploads/" },
+    "kubernetes": { "namespace": "ai-hrms-prod" },
+    "secretPath": "ai-hrms/prod/"
+  },
+  "telemetry": {
+    "labels": {
+      "env": "prod",
+      "service": "control-plane",
+      "version": "0.1.0",
+      "workflow_id": "wf-prod",
+      "agent_run_id": "none",
+      "actor_type": "ServiceAccount",
+      "actor_id": "prod-deploy",
+      "policy_version": "policy-v1",
+      "approval_refs": "approval-required-before-prod"
+    }
+  },
+  "promotion": {
+    "from": "staging",
+    "to": "prod",
+    "rollbackVersion": "0.0.0",
+    "observationWindow": "PT2H"
+  },
+  "crossEnvironmentAccess": []
+}

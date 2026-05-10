@@ -1,0 +1,18 @@
+{
+  "name": "ai-hrms",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.0.0",
+  "workspaces": [
+    "packages/contracts",
+    "packages/policy"
+  ],
+  "scripts": {
+    "test": "node --test packages/**/*.test.mjs",
+    "validate:env": "node packages/policy/bin/validate-environment.mjs"
+  },
+  "engines": {
+    "node": ">=24.0.0"
+  }
+}

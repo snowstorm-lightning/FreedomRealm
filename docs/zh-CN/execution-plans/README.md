@@ -5,6 +5,7 @@
 ## Active
 
 - [active/phase-0-doc-foundation.md](active/phase-0-doc-foundation.md)
+- [active/phase-1-environment-isolation-guard.md](active/phase-1-environment-isolation-guard.md)
 
 ## Completed
 

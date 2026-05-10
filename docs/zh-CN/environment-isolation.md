@@ -202,7 +202,7 @@ Agent Runtime 是污染风险最高的运行面，必须额外约束：
 未来实现阶段，本地开发必须满足：
 
 - 使用项目本地依赖目录，不依赖全局包状态。
-- Node 使用 lockfile 和包管理器版本约束。
+- Node 使用 `pnpm`、`pnpm-lock.yaml` 和包管理器版本约束。
 - Python 使用 `uv` 和项目级虚拟环境。
 - 本地数据库、Temporal、Keycloak、LiteLLM mock 或开发实例必须使用 `dev` 前缀。
 - 本地 `.env` 只能引用 `dev` 资源。
@@ -212,7 +212,7 @@ Agent Runtime 是污染风险最高的运行面，必须额外约束：
 
 | 项目 | 要求 |
 | --- | --- |
-| Node 依赖 | 使用 lockfile，禁止依赖全局安装包 |
+| Node 依赖 | 使用 `pnpm` 和 `pnpm-lock.yaml`，禁止依赖全局安装包 |
 | Python 依赖 | 使用 `uv.lock` 和项目虚拟环境 |
 | 数据库 | 本地容器或 dev 数据库，禁止连接 prod |
 | 模型 | mock、stub 或 dev LiteLLM Proxy |

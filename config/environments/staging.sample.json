@@ -1,0 +1,38 @@
+{
+  "env": "staging",
+  "service": "control-plane",
+  "version": "0.1.0",
+  "resources": {
+    "database": { "name": "ai_hrms_staging" },
+    "temporal": { "namespace": "ai-hrms-staging" },
+    "keycloak": { "realm": "ai-hrms-staging" },
+    "litellm": { "deployment": "litellm-staging" },
+    "langfuse": { "project": "ai-hrms-staging" },
+    "objectStorage": { "bucketOrPrefix": "ai-hrms-staging/uploads/" },
+    "kubernetes": { "namespace": "ai-hrms-staging" },
+    "secretPath": "ai-hrms/staging/"
+  },
+  "telemetry": {
+    "labels": {
+      "env": "staging",
+      "service": "control-plane",
+      "version": "0.1.0",
+      "workflow_id": "wf-staging",
+      "agent_run_id": "none",
+      "actor_type": "ServiceAccount",
+      "actor_id": "staging-deploy",
+      "policy_version": "policy-v1",
+      "approval_refs": "approval-required-before-prod"
+    }
+  },
+  "promotion": {
+    "from": "ci",
+    "to": "staging",
+    "rollbackVersion": "0.0.0",
+    "observationWindow": "PT1H"
+  },
+  "data": {
+    "source": "synthetic"
+  },
+  "crossEnvironmentAccess": []
+}

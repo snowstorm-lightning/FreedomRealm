@@ -114,15 +114,19 @@ flowchart TB
 - 权限和 secret 轮换步骤。
 - 关联 dashboard、日志查询和告警规则。
 
-## 未来代码仓建议
+## 当前代码仓结构
+
+当前 Phase 1 已先落地不连接真实基础设施的环境隔离守卫：
+
+- `packages/contracts`：共享环境、风险、actor、telemetry 和 ToolContract 词表。
+- `packages/policy`：环境隔离和 ToolContract 执行边界校验。
+- `config/environments`：`dev`、`ci`、`staging`、`prod` 样例配置。
+
+后续服务目录仍按以下结构扩展：
 
 - `apps/web`
 - `apps/control-plane`
 - `apps/agent-runtime`
-- `packages/contracts`
-- `packages/policy`
 - `packages/evals`
 - `infra/`
 - `docs/runbooks/`
-
-本轮不创建这些目录，只把它们作为后续实现阶段的结构参考。
