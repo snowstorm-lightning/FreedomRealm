@@ -9,6 +9,20 @@
 
 详细隔离规则见 [environment-isolation.md](environment-isolation.md)。后续实现阶段必须补充 `ci` 作为一次性自动化验证环境，不能复用 `dev`、`staging` 或 `prod` 资源。
 
+## 运行档位
+
+环境分层描述发布与隔离边界，运行档位描述不同资源条件下的产品形态。两者不能混用。
+
+| 档位 | 运维目标 | 关键约束 |
+| --- | --- | --- |
+| `Tiny Mode` | 低配设备、教学和轻量试用 | 文件存储或 SQLite，mock/stub，单用户，低并发 |
+| `Demo Mode` | 5 到 10 分钟跑通最小闭环 | 可不启用 Keycloak、Temporal、完整 OTel、Langfuse 和 Grafana |
+| `Local Mode` | 个人长期使用 | 本地数据库、基础权限、基础审计、低成本模型路由 |
+| `Community Mode` | 多人共用实例 | 多用户、审批流、模板共享、资源配额和可选 FederationLink |
+| `Enterprise Mode` | 企业和强治理组织 | 保留 Keycloak、Temporal、PostgreSQL、LiteLLM Proxy、完整观测、环境隔离、备份恢复和灰度发布 |
+
+自适应运行可以降低资源占用，但不能绕过审批、安全、审计、预算、数据分级和环境隔离。
+
 ## 部署拓扑
 
 ```mermaid
@@ -102,6 +116,11 @@ flowchart TB
 | 策略违规率 | 零容忍或接近零 | 冻结相关工具或 AgentActor |
 | 模型调用成本 | 受预算约束 | 限流、降级或调整模型路由 |
 | Temporal workflow backlog | 稳定可控 | 扩容 worker 或暂停入口 |
+| 首次启动时间 | 越低越好 | 检查依赖启动、配置和资源档位 |
+| Demo 跑通时间 | 5 到 10 分钟内 | 降低依赖、补充 mock/stub 或修复引导 |
+| 低资源降级成功率 | 越高越好 | 检查 AdaptiveRuntimePolicy 和人工接管 |
+| 人工接管率 | 受场景约束 | 过高时分析模型、工具、预算或资源瓶颈 |
+| 跨实例协作失败率 | 越低越好 | 检查 FederationLink、速率限制、审计和对方实例状态 |
 
 ## 运维 Runbook 最低要求
 

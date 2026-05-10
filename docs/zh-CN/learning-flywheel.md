@@ -2,13 +2,15 @@
 
 ## 原则
 
-AI HRMS 允许系统学习，但不允许系统未经约束地自我改写生产行为。v1 的自我进化范围仅限于：
+AI-HRMS 允许系统学习，但不允许系统未经约束地自我改写生产行为。v1 的自我进化范围仅限于：
 
 - 提示词优化候选
 - 工作流分支优化候选
 - 工具选择策略候选
 - 知识摘要与记忆组织候选
 - 人机协作模板候选
+- Workflow Template、Skill Recipe、ToolContract 的改进候选
+- Failure case、Review note 和脱敏 SharedEvalSummary 的沉淀
 
 ## 受控飞轮
 
@@ -33,6 +35,7 @@ flowchart LR
 - 收集 token、延迟、工具调用和预算消耗
 - 收集策略判断、审批命中、人工修改差异和回滚事件
 - 收集样本时必须保留环境标签、数据分级和来源引用
+- 收集 ProjectInstance、运行档位、资源降级、人工接管和 ExecutionReportCard 引用
 
 ### 2. 样本整理与打分
 
@@ -41,6 +44,7 @@ flowchart LR
 - 为候选变更指定业务指标和质量指标
 - 删除或脱敏不必要的个人敏感信息
 - 将样本绑定到固定数据集版本，避免评测漂移
+- 公开或跨实例共享时只能生成 SharedEvalSummary，不得共享原始上下文、内部任务或敏感字段
 
 ### 3. 生成候选
 
@@ -85,6 +89,7 @@ flowchart LR
 - `artifactId`
 - `artifactType`：`prompt`、`workflow_branch`、`tool_policy`、`knowledge_summary`、`collaboration_template`
 - `sourceRefs`：WorkItem、AgentRun、Observation、审批或评测引用
+- `projectInstanceId`
 - `dataClassification`
 - `owner`
 - `createdAt`
@@ -93,6 +98,7 @@ flowchart LR
 - `baselineVersion`
 - `candidateVersion`
 - `rollbackRef`
+- `shareScope`：`private`、`instance`、`commons_candidate`、`public`
 
 没有来源引用、数据等级或适用范围的 LearningArtifact 不能进入评测。
 

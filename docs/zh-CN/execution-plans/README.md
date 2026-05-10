@@ -5,6 +5,7 @@
 ## Active
 
 - [active/phase-0-doc-foundation.md](active/phase-0-doc-foundation.md)
+- [active/phase-0-5-ai-hrms-repositioning.md](active/phase-0-5-ai-hrms-repositioning.md)
 - [active/phase-1-environment-isolation-guard.md](active/phase-1-environment-isolation-guard.md)
 
 ## Completed
@@ -15,6 +16,7 @@
 
 - 计划必须包含目标、范围、产出、风险和验收。
 - 若任务涉及跨上下文或高风险改动，必须先写计划再实施。
+- 涉及 AI-HRMS 定义、开源策略、传播机制、社区协议、自适应运行、Federation 或质量门禁的计划必须同步检查 README、ADR、路线图和术语表。
 
 ## 计划模板
 

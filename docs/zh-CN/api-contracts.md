@@ -31,13 +31,14 @@
     "env": "staging",
     "actorType": "HumanActor",
     "actorId": "uuid",
+    "projectInstanceId": "uuid",
     "workItemId": "uuid",
     "reason": "string"
   }
 }
 ```
 
-`reason` 在高风险动作中必填。`env` 必须与服务端运行环境一致，客户端传入值只能用于校验和审计，不能决定真实环境。
+`projectInstanceId` 用于绑定 AI-HRMS Instance。`reason` 在高风险动作中必填。`env` 必须与服务端运行环境一致，客户端传入值只能用于校验和审计，不能决定真实环境。
 
 ### ID 与时间
 
@@ -291,6 +292,148 @@
 - SLA 修改
 - 从智能体转人工或从人工转智能体
 
+### Project Instance API
+
+用途：维护 `ProjectInstance`、`InstanceMember`、运行档位和实例级治理边界。
+
+关键操作：
+- `POST /api/v1/instances`
+- `GET /api/v1/instances/{projectInstanceId}`
+- `PATCH /api/v1/instances/{projectInstanceId}`
+- `GET /api/v1/instances/{projectInstanceId}/members`
+- `POST /api/v1/instances/{projectInstanceId}/members`
+- `PATCH /api/v1/instances/{projectInstanceId}/members/{memberId}`
+
+核心字段：
+- `projectInstanceId`
+- `instanceType`
+- `runtimeMode`
+- `ownerActorId`
+- `memberId`
+- `memberRole`
+- `approvalResponsibilities`
+- `visibilityScope`
+
+边界说明：
+- 单人实例和多人实例必须使用同一 ProjectInstance 语言。
+- `runtimeMode` 必须使用 Tiny、Demo、Local、Community、Enterprise 的受控枚举。
+- 成员权限不能只由前端展示决定。
+
+审计点：
+- 实例创建、归档和运行档位变更
+- 成员新增、移除、角色变更
+- 审批责任和可见范围变更
+
+### Federation API
+
+用途：管理跨实例授权协作、能力发现、模板共享和脱敏评测摘要交换。
+
+关键操作：
+- `POST /api/v1/federation/peers`
+- `POST /api/v1/federation/links`
+- `PATCH /api/v1/federation/links/{federationLinkId}`
+- `POST /api/v1/federation/capability-offers`
+- `POST /api/v1/federation/capability-requests`
+- `POST /api/v1/federation/shared-templates/import`
+- `POST /api/v1/federation/shared-eval-summaries`
+
+核心字段：
+- `federationPeerId`
+- `federationLinkId`
+- `trustLevel`
+- `dataSharingLevel`
+- `allowedWorkItemTypes`
+- `allowedTemplateTypes`
+- `capabilityOfferId`
+- `capabilityRequestId`
+- `revocationRef`
+
+边界说明：
+- 默认不互信，默认不共享私有数据。
+- 远程实例不能直接调用本地高风险工具。
+- 高风险动作必须回到本实例 ApprovalGate。
+- `SharedEvalSummary` 只能包含聚合指标、样本类型、失败分类和版本信息。
+
+审计点：
+- Peer 登记和阻断
+- FederationLink 创建、权限变更和撤销
+- CapabilityOffer 发布
+- CapabilityRequest 调用、失败和回调
+- SharedTemplate 导入
+- SharedEvalSummary 导出
+
+### Runtime Profile API
+
+用途：记录 `ResourceProfile`、读取 `AdaptiveRuntimePolicy` 和解释资源降级决策。
+
+关键操作：
+- `POST /api/v1/runtime/resource-profiles`
+- `GET /api/v1/runtime/resource-profiles/{resourceProfileId}`
+- `GET /api/v1/runtime/adaptive-policy?projectInstanceId={projectInstanceId}`
+- `POST /api/v1/runtime/decisions`
+
+核心字段：
+- `resourceProfileId`
+- `projectInstanceId`
+- `runtimeMode`
+- `cpuCores`
+- `memoryBytes`
+- `gpuAvailable`
+- `networkStatus`
+- `localModelAvailable`
+- `remoteModelAvailable`
+- `budgetLimit`
+- `concurrencyLimit`
+- `privacyPreference`
+- `adaptiveDecision`
+
+边界说明：
+- ResourceProfile 只能作为策略输入，不能作为安全豁免。
+- 降级不能绕过 ApprovalGate、审计、预算和数据分级。
+
+审计点：
+- 运行档位识别
+- 模型路由降级
+- 任务暂停、拆分、阻塞或人工接管
+- 预算耗尽
+
+### Execution Report API
+
+用途：生成、查看、脱敏和分享 `ExecutionReportCard`。
+
+关键操作：
+- `POST /api/v1/reports/execution-cards`
+- `GET /api/v1/reports/execution-cards/{reportCardId}`
+- `POST /api/v1/reports/execution-cards/{reportCardId}/share`
+
+核心字段：
+- `reportCardId`
+- `workItemId`
+- `projectInstanceId`
+- `goal`
+- `requestedBy`
+- `executedBy`
+- `skillRefs`
+- `toolContractRefs`
+- `riskLevel`
+- `approvalResult`
+- `cost`
+- `latency`
+- `estimatedTimeSaved`
+- `failureAndHumanCorrection`
+- `templateRef`
+- `redactionStatus`
+- `publicShareLicense`
+
+边界说明：
+- 公开分享必须显式授权。
+- 报告卡不得包含用户私有数据、敏感字段、内部任务内容或原始模型上下文。
+
+审计点：
+- 报告卡生成
+- 脱敏状态变更
+- 公开分享授权和撤回
+
 ### Agent Run API
 
 用途：启动、查看、暂停、恢复和终止 agent run。
@@ -421,6 +564,10 @@ v1 固定使用以下事件前缀：
 - `memory.*`
 - `eval.*`
 - `policy.*`
+- `instance.*`
+- `federation.*`
+- `runtime.*`
+- `report.*`
 
 推荐事件：
 
@@ -444,6 +591,11 @@ v1 固定使用以下事件前缀：
 | `memory.artifact_created` | 生成新的学习沉淀 |
 | `eval.run_completed` | 评测完成 |
 | `policy.violation_detected` | 策略违规被发现 |
+| `instance.member_changed` | 实例成员、角色或审批责任发生变化 |
+| `federation.link_changed` | 跨实例授权连接发生变化 |
+| `federation.capability_requested` | 发起跨实例能力请求 |
+| `runtime.adaptive_decision_made` | 自适应运行做出降级、阻塞或人工接管决策 |
+| `report.execution_card_created` | 生成执行报告卡 |
 
 ## 事件封套
 
@@ -462,6 +614,7 @@ v1 固定使用以下事件前缀：
   },
   "trace": {
     "requestId": "uuid",
+    "projectInstanceId": "uuid",
     "workItemId": "uuid",
     "agentRunId": "uuid"
   },

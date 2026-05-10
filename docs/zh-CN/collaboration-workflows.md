@@ -9,6 +9,39 @@
 3. 谁承担审批责任？
 4. 从执行结果中学到了什么？
 
+在 AI 时代 HRMS 中，还必须能回答：
+
+5. 该工作属于哪个 `ProjectInstance`？
+6. 是否触发跨实例协作？
+7. 是否生成可复用模板、失败样本或 `ExecutionReportCard`？
+
+## 人机分工
+
+AI 适合承担样板代码、文档草稿、API schema、`ToolContract`、测试、质量门禁检查、一致性检查、日志摘要、失败复盘草稿、模板生成、重复性维护工作、运行报告生成和低风险任务执行。
+
+人类适合承担愿景取舍、价值判断、真实用户需求判断、高风险审批、安全与伦理边界、社区治理、冲突处理、许可证和商标决策、最终责任承担，以及判断哪些工作应交给 AI。
+
+原则：
+
+- 人类可以退出重复执行。
+- 人类保留目标、边界、责任和高风险判断。
+- AI 执行必须受策略、预算、权限、审批、审计和回滚约束。
+
+## 最小可传播闭环
+
+Demo Mode 的最小闭环：
+
+1. 创建 `WorkItem`。
+2. 分派给 `AgentActor`。
+3. `AgentActor` 调用 `ToolContract`。
+4. 命中高风险动作后进入 `ApprovalGate`。
+5. `HumanActor` 批准、拒绝或修改。
+6. 生成 `Observation`。
+7. 形成 `LearningArtifact` 或 `Eval sample`。
+8. 导出 `ExecutionReportCard`。
+
+该闭环可以使用 mock model、mock 工具、SQLite 或手动执行模式，但不能跳过审批、审计、预算和数据分级语义。
+
 ## WorkItem 生命周期
 
 ```mermaid
@@ -57,6 +90,7 @@ sequenceDiagram
     participant WF as Temporal
     participant AG as Agent Runtime
     participant AP as ApprovalGate
+    participant ER as ExecutionReportCard
 
     H->>UI: 创建或分派 WorkItem
     UI->>API: 提交任务与上下文
@@ -70,7 +104,8 @@ sequenceDiagram
     AP-->>WF: 返回决定
     WF->>AG: 继续或回退执行
     AG-->>API: 写回结果与 Observation
-    API-->>UI: 更新任务状态、审计与学习条目
+    API->>ER: 生成脱敏报告卡
+    API-->>UI: 更新任务状态、审计、报告卡与学习条目
 ```
 
 ## 典型场景
@@ -112,6 +147,21 @@ sequenceDiagram
 - `staging` 完成沙盒评测和流程回放。
 - 人类审批差异报告后，才能在 `prod` 进入灰度发布。
 - 观察窗口内若出现治理指标劣化、成本异常或审批漏触发，必须停止扩大并回滚。
+
+### 场景 6：开源项目 issue 分流
+
+- CommunityActor 在社区实例中导入或创建 issue 类 WorkItem。
+- AgentActor 使用 issue 分流模板提取主题、风险、复现信息和候选标签。
+- 低风险标签建议可自动生成，关闭 issue、@外部用户或修改权限相关内容必须进入 ApprovalGate。
+- 处理结果生成 ExecutionReportCard，可在脱敏并授权后公开分享。
+- 失败样本和人工修正进入 Eval sample 或 Failure case。
+
+### 场景 7：跨实例模板共享
+
+- 一个 ProjectInstance 通过 FederationLink 向 FederationPeer 请求 SharedTemplate。
+- 本地控制面检查信任等级、数据共享等级、速率限制和审计要求。
+- 模板进入本地实例后必须重新绑定本地 ToolContract、PolicyRule 和 ApprovalGate。
+- 远程模板不能携带本地敏感数据，也不能直接获得本地高风险工具权限。
 
 ## 人工中断点
 
