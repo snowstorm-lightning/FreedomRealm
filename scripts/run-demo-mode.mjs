@@ -30,15 +30,27 @@ function parseArgs(argv) {
     const arg = argv[index];
     const next = argv[index + 1];
     if (arg === "--template") {
+      if (!next) {
+        throw new Error("--template requires a value.");
+      }
       options.template = next;
       index += 1;
     } else if (arg === "--model") {
+      if (!next) {
+        throw new Error("--model requires a value.");
+      }
       options.model = next;
       index += 1;
     } else if (arg === "--out") {
+      if (!next) {
+        throw new Error("--out requires a value.");
+      }
       options.out = next;
       index += 1;
     } else if (arg === "--input") {
+      if (!next) {
+        throw new Error("--input requires a value.");
+      }
       options.inputs.push(next);
       index += 1;
     } else if (arg === "--help" || arg === "-h") {
@@ -169,6 +181,18 @@ function makeAuditRef(eventType, trace, extra = {}) {
   };
 }
 
+function ensureToolContractsAllowed(toolEvaluations) {
+  const denied = toolEvaluations.filter((evaluation) => evaluation.result.decision === "deny");
+  if (denied.length === 0) {
+    return;
+  }
+
+  const details = denied
+    .map((evaluation) => `${evaluation.toolName}: ${evaluation.result.reason}`)
+    .join(", ");
+  throw new Error(`Template ToolContract policy denied execution: ${details}`);
+}
+
 async function run() {
   const options = parseArgs(process.argv.slice(2));
   if (options.help) {
@@ -202,6 +226,7 @@ async function run() {
       actorType: "AgentActor"
     })
   }));
+  ensureToolContractsAllowed(toolEvaluations);
 
   const approvalRequired = toolEvaluations.some((evaluation) => evaluation.result.decision === "require_approval");
   const modelRoute =
@@ -274,6 +299,36 @@ async function run() {
       "No external connector was called.",
       "No source document was modified."
     ]
+  };
+
+  const learningArtifact = {
+    learningArtifactId: `learning-${randomUUID()}`,
+    artifactType: "Review note",
+    source: "ExecutionReportCard",
+    status: "candidate",
+    dataClassification: template.dataClassification,
+    redactionStatus: template.redactionStatus,
+    sharePermission: template.sharePermission,
+    approvalRequired: true,
+    retention: "local-demo-run",
+    note:
+      "Candidate learning artifact derived from a deterministic Demo Mode run. It cannot become training or public material without human review, approval, audit, and retention controls."
+  };
+
+  const evalSample = {
+    evalSampleId: `eval-sample-${randomUUID()}`,
+    sampleType: "demo_mode_minimal_loop",
+    status: "candidate",
+    sourceTemplateId: template.templateId,
+    inputRefIds: inputRefs.map((inputRef) => inputRef.refId),
+    expectedBehaviors: [
+      "Demo Mode completes without a real model key.",
+      "ToolContract policy requires human review before document changes.",
+      "ExecutionReportCard JSON remains the canonical source.",
+      "No source document is modified by the demo run."
+    ],
+    approvalRequired: true,
+    retention: "local-demo-run"
   };
 
   const outputDir = path.resolve(repoRoot, options.out);
@@ -356,6 +411,8 @@ async function run() {
       findingCount: analysis.findings.length,
       recommendationCount: analysis.recommendations.length,
       requiresHumanReview: analysis.requiresHumanReview,
+      candidateLearningArtifactCount: 1,
+      candidateEvalSampleCount: 1,
       modelRouteActual: modelRoute.actual,
       mock: modelRoute.mock
     },
@@ -372,6 +429,8 @@ async function run() {
         agentActor,
         approvalGate,
         observation,
+        learningArtifact,
+        evalSample,
         toolContractEvaluations: toolEvaluations,
         executionTrace: [
           "WorkItem.created",
@@ -379,6 +438,8 @@ async function run() {
           "ToolContract.evaluated",
           approvalRequired ? "ApprovalGate.required" : "ApprovalGate.not_required",
           "Observation.recorded",
+          "LearningArtifact.candidate_created",
+          "EvalSample.candidate_created",
           "ExecutionReportCard.generated"
         ],
         mockOutputNotice:

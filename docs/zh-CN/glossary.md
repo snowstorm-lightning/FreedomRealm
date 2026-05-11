@@ -16,6 +16,22 @@
 
 最小可管理工作单元，可被创建、分派、审批、关闭与学习。
 
+## WorkShard
+
+从较大的 WorkItem 中拆出的可独立理解、执行、验证和合并的子工作面。WorkShard 必须说明目标、输入、边界、owner、交付物、验证方式和失败恢复。
+
+## AgentWorkLease
+
+AgentActor 或 HumanActor 领取 WorkShard 时形成的工作租约，声明目标、readSet、writeSet、可用 ToolContract、禁止动作、超时、交付物、审计要求和回滚方式。租约不是永久所有权，超时、冲突或风险升级时必须回到调度和人工复核。
+
+## ChangePacket
+
+WorkShard 完成后提交的结构化交付包，至少包含变更摘要、文件列表、接口影响、测试结果、风险、人工复核点、失败复盘和回滚说明。
+
+## MergeGate
+
+多个 WorkShard 合并前的门禁，用于检查 writeSet 冲突、契约兼容、测试结果、文档一致性、审批要求、数据分级和统一 owner。MergeGate 不能绕过 ApprovalGate。
+
 ## ApprovalGate
 
 高风险动作前的显式人工审批闸门。
@@ -31,6 +47,10 @@
 ## Observation
 
 运行中产生的结构化观察记录，包括日志、指标、trace、反馈和输出。
+
+## RealityCapture
+
+后续探索能力，指通过手机或普通设备采集现实任务输入，例如照片、视频、OCR、定位、扫码、录音、转写和现场确认。RealityCapture 不属于当前软件层 MVP 前置条件；未来若进入实现，产生的数据必须作为受数据分级、脱敏、授权和保留期约束的 Observation 处理，不能默认进入训练资源或公开分享。
 
 ## LearningArtifact
 
@@ -59,6 +79,10 @@
 ## CapabilityProof
 
 能力证据，而不是单一能力分。它可以来自完成的任务、文档改进、模板贡献、review、评测样本、失败复盘或公开案例。
+
+## AI-assisted work proof
+
+用户在 AI-HRMS 中完成的一次可展示工作证明，通常包含目标、输入引用、受控 AI 协作过程、人工复核点、ExecutionReportCard，以及可选的 CapabilityProof、LearningPath 或后续 GrowthWorkItem。
 
 ## KeywordHelpOverlay
 

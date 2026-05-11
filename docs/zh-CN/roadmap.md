@@ -48,6 +48,8 @@
 - 脱敏评测摘要。
 - 公开案例库。
 - 贡献者声誉。
+- 传播型 Web Workbench 设计。
+- 固定入口、目标入口和自由探索入口。
 
 最小交付：
 
@@ -55,6 +57,8 @@
 - README -> Demo Mode -> 首个模板 -> ExecutionReportCard 的最短学习路径。
 - 首个低连接器依赖、低敏感数据依赖的模板，优先评估文档摘要与改进建议。
 - CLI-first 的 Demo Mode 执行入口，极简 Web UI 后续读取同一份执行数据展示。
+- Web-first onboarding 草案，允许用户从固定身份、目标描述或自由探索进入，而不是先被迫定义身份。
+- 第一批 AI-assisted work proof 模板草案，覆盖程序员、设计师、写作者、创作者、转型人群、小团队和社区组织者。
 - 默认 mock model 和可选 live model 路径；MVP 通过标准不得依赖真实模型 key。
 - ExecutionReportCard JSON schema 草案、Markdown 渲染规则和脱敏规则。
 - 模板贡献指南和失败案例贡献指南。
@@ -62,6 +66,7 @@
 - 案例库信息架构和公开分享许可规则。
 - 成员权利、拒绝 AI 建议分派和贡献记录机制。
 - 脱敏训练资源的数据生命周期和保留规则。
+- 现实感知层和现实执行层只登记为后续探索假设，不作为软件层 MVP 前置条件。
 
 不能进入下一阶段的条件：
 
@@ -73,6 +78,8 @@
 - Demo Mode 依赖 KeywordHelpOverlay、复杂自适应教学、真实外部连接器或完整企业栈才能跑通。
 - Demo Mode 必须依赖真实模型 key 才能跑通，或 mock model 输出不可测试。
 - Web UI 需要重新实现独立业务逻辑，或不能读取 CLI 产生的同一份执行数据。
+- Onboarding 把用户锁定为单一身份，无法从目标或自由探索开始。
+- 现实任务输入被提前作为 MVP 依赖，导致软件层 Web onboarding、模板运行和报告卡分享无法按期完成。
 
 ## Phase 0.7: Community contribution foundation
 
@@ -109,6 +116,7 @@
 - 建立基础审计与观测。
 - 建立跨平台开发入口、doctor 检查、文件组织基线和最小 CI。
 - 保留传统 HRMS 能力，包括组织、账号、员工档案、考勤、权限和协作内容。
+- 建立大型项目多 agent 分片协作的最小治理机制。
 
 最小交付：
 
@@ -125,6 +133,8 @@
 - ResourceProfile、ModelCapabilityProfile 和 AdaptiveRuntimePolicy 的最小策略模型。
 - ExecutionReportCard 的 JSON 生成、schemaVersion、Markdown 渲染和脱敏状态记录。
 - 基础 Playwright 场景覆盖审批流、人机协作流和 Demo Mode 闭环。
+- `WorkShard`、`AgentWorkLease`、`ChangePacket` 和 `MergeGate` 的最小数据结构或文档化流程。
+- 当任务超过单 agent 稳定处理能力时，系统能提示拆分，并记录拆分理由、`writeSet` 和合并门禁结果。
 
 不能进入下一阶段的条件：
 
@@ -138,6 +148,7 @@
 - 自适应降级可以绕过审批、安全、审计、预算或数据分级。
 - GovernanceBrain 可以替代人类 owner、自动批准高风险动作或把候选直接落地。
 - 生产模型路由没有 ModelCapabilityProfile、评测结果和回退策略。
+- 多 agent 并行开发没有 `writeSet` 边界、合并门禁、测试记录或统一 owner。
 
 ## Phase 2: 学习飞轮
 
@@ -147,6 +158,7 @@
 - 建立任务分派策略、模型能力画像和模型路由候选的评测流程。
 - 支持 Failure case、Review note 和 SharedEvalSummary 的沉淀。
 - 开始评估 LearningPath、CapabilityProof 和 TeachingStrategy 的数据化沉淀。
+- 基于软件层使用数据评估现实感知层和现实执行层是否值得进入后续试点。
 
 最小交付：
 
@@ -157,6 +169,7 @@
 - 生产灰度发布、观察窗口和回滚记录。
 - 脱敏评测摘要导出。
 - CapabilityProof 证据类型和 LearningPath 反馈样本。
+- RealityCapture 研究备忘录：明确候选场景、用户、数据边界、人工验收方式、商业化假设和暂不实现理由。
 
 不能进入下一阶段的条件：
 
@@ -164,6 +177,30 @@
 - 评测数据集没有版本或包含未脱敏生产数据。
 - 治理指标缺少发布门槛。
 - 模型升级、降级或供应商切换没有评测和回滚。
+- 在软件层模板、报告卡、学习路径和贡献入口未验证前，贸然把现实层能力作为交付主线。
+
+## 当前短期目标
+
+从当前 MVP 起算，AI-HRMS 的短期目标应优先证明三件事。这不是一年目标；在当前 AI 模型能力和 agent 工程工具已经足够强的前提下，这三项应作为接下来连续迭代的近期验收线：
+
+1. 可传播：非核心开发者能通过 Web-first onboarding 在 30 分钟内完成第一份 AI-assisted work proof。
+2. 可协作：大型项目可以通过 `WorkShard`、`AgentWorkLease`、`ChangePacket` 和 `MergeGate` 由多人和多 agent 安全推进。
+3. 可复用：模板、报告卡、失败复盘、学习路径和贡献入口能形成可持续的 Commons 资产循环。
+
+这些目标完成后，项目才算具备进一步讨论一年愿景、社区扩张和商业化试验的基础。
+
+## 一年发展目标
+
+一年目标不应停留在“能传播、能协作、能复用”。一年内 AI-HRMS 应在软件层形成可以持续增长的工作执行与治理底座：
+
+1. 产品形态成型：Web Workbench 成为默认入口，CLI 作为可测试内核继续存在；用户可以从固定入口、目标入口或自由探索入口创建 WorkItem、运行模板、触发审批、查看 Observation 并导出 ExecutionReportCard。
+2. 模板生态成型：至少形成一批可运行、可评测、可贡献的 Workflow Template、Skill Recipe、ToolContract、Failure case 和 Review note，覆盖开发者、设计师、写作者、创作者、小团队和开源维护者的高频软件层工作。
+3. 多 agent 工程成型：大型项目能通过 WorkShard、AgentWorkLease、ChangePacket、MergeGate 和质量门禁进行安全并行开发，避免单 agent 上下文溢出和写入冲突。
+4. 学习飞轮成型：ExecutionReportCard、CapabilityProof、LearningPath、失败复盘和人工修正能够进入评测、模板改进和贡献机制，但不能直接变成绩效、排名或强制分派。
+5. 社区增长成型：项目能吸引非代码贡献者、模板贡献者、失败案例贡献者和真实使用反馈，形成可署名、可追踪、可撤回、可复用的 Commons 资产。
+6. 治理边界成型：审批、审计、预算、数据分级、分享许可、成员权利和反捕获规则不只是文档原则，而是在 Demo / Local / Community 级别至少有可运行或可验证的切片。
+
+一年内仍不要求完整无人自治组织，也不要求一次性完成所有 HRMS 业务。现实感知、线下履约、复杂 3D、硬件和生产级跨实例网络不是当前软件层 MVP 的前置条件，但一年内可以基于真实用户和模板数据完成研究备忘录、候选试点判断和边界设计。
 
 ## Phase 3: 深化自治与社区协作
 

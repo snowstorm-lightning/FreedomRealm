@@ -27,6 +27,15 @@
 - 评测指标
 - 回滚路径
 
+当一个 `WorkItem` 拆成多个 `WorkShard` 或由多个 `AgentActor` / `HumanActor` 并行推进时，还必须定义：
+
+- 每个 `WorkShard` 的 owner、目标、输入、输出和验收标准。
+- 每个 `AgentWorkLease` 的 `readSet`、`writeSet`、允许 `ToolContract`、禁止动作、超时和回滚路径。
+- `writeSet` 是否互斥；如不互斥，必须说明冲突解决和人工 owner。
+- 每个 `ChangePacket` 的文件列表、接口影响、测试结果、风险和人工复核点。
+- `MergeGate` 的合并顺序、契约校验、测试命令、文档一致性检查和审批要求。
+- 统一 `ExecutionReportCard` 或 `Observation` 如何汇总所有 shard 的结果。
+
 每个 GovernanceBrain 能力还必须定义：
 
 - 来源引用和可信度规则。

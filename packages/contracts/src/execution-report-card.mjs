@@ -168,6 +168,8 @@ export function renderExecutionReportCardMarkdown(card) {
   const demo = card.extensions["ai-hrms.demo"] ?? {};
   const modelRoute = demo.modelRoute ?? {};
   const failureSample = card.failure?.sample;
+  const learningArtifact = demo.learningArtifact;
+  const evalSample = demo.evalSample;
 
   return `# ExecutionReportCard
 
@@ -206,6 +208,11 @@ ${renderList(card.nextActions)}
 ${failureSample ? `- Type: ${failureSample.failureType}
 - Simulated: ${failureSample.simulated === true ? "yes" : "no"}
 - Recovery: ${failureSample.recovery}` : "- None"}
+
+## Reusable Assets
+
+${learningArtifact ? `- LearningArtifact: ${learningArtifact.learningArtifactId} (${learningArtifact.status})
+- Eval sample: ${evalSample?.evalSampleId ?? "none"} (${evalSample?.status ?? "none"})` : "- None"}
 
 ## Output Refs
 

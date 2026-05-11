@@ -52,6 +52,47 @@
 - Docker/devcontainer 用于屏蔽复杂服务依赖和系统库差异，不应替代所有简单 CLI 工具。
 - 当脚本必须使用 OS-specific 能力时，必须给出替代路径或明确适用范围。
 
+### 9. 大型项目按 WorkShard 协作
+
+当项目超过单个 agent 的稳定上下文、注意力和验证能力时，AI-HRMS 应把项目拆成多个 `WorkShard`，由不同 `AgentActor` 或 `HumanActor` 在明确边界内处理。这里借鉴操作系统思想：`WorkItem` 类似进程，`ToolContract` 类似受控系统调用，`ProjectInstance` 类似命名空间，`Adaptive Task Scheduler` 类似调度器，`ApprovalGate` 类似特权边界，`Observation` 类似运行日志和审计 journal。
+
+多 agent 协作不应靠“大家都看完整仓库”来维持秩序，而应靠以下机制：
+
+- `WorkShard`：把一个大 `WorkItem` 切成可独立理解、实现和验证的子工作面。
+- `AgentWorkLease`：每个执行者领取工作前声明目标、`readSet`、`writeSet`、允许工具、禁止动作、超时、交付物和回滚方式。
+- `writeSet`：声明可写文件、目录、接口或文档范围。多个并行 shard 的 `writeSet` 默认不得重叠。
+- `ChangePacket`：每个 shard 交付的结构化结果，至少包含变更摘要、文件列表、接口影响、测试结果、风险、人工复核点和回滚说明。
+- `MergeGate`：合并前的门禁，负责检查 `writeSet` 冲突、契约变更、测试结果、文档一致性和人工审批要求。
+
+同一 ProjectInstance 内的多 agent 协作必须保留统一 owner。子 agent 可以并行探索、实现或评审，但不能各自把结果直接并入主线事实。最终合并必须通过 `MergeGate`，并生成总 `ExecutionReportCard` 或汇总型 `Observation`。
+
+推荐拆分边界：
+
+- 按模块拆分：`apps/web`、`apps/control-plane`、`apps/agent-runtime`、`packages/contracts`、`packages/policy`。
+- 按领域拆分：模板、报告卡、审批、成员权利、Federation、现实任务采集。
+- 按工作类型拆分：探索、实现、测试、文档、评审、迁移。
+- 按风险拆分：低风险自动执行，高风险只生成候选并进入 `ApprovalGate`。
+
+不推荐拆分的情况：
+
+- 需求仍不清楚。
+- 多个 agent 必须频繁修改同一组文件。
+- 没有稳定 schema、测试或合并门禁。
+- 变更会影响审批、安全、数据分级、预算或生产策略，但没有人类 owner。
+
+### 10. 上下文容量提醒
+
+当满足以下任一条件时，系统或主 agent 应提醒用户考虑拆成多个 `WorkShard`：
+
+- 影响 3 个以上边界上下文。
+- 预计需要读取或修改的文件超过单次上下文可稳定处理范围。
+- 任务预计超过 30 到 60 分钟，且需要中途 checkpoint。
+- 同时涉及产品策略、接口契约、实现、测试和文档。
+- agent 已开始反复压缩上下文、遗漏约束、混淆术语或无法说明完整影响面。
+- 一次变更会影响多个 `ToolContract`、`ApprovalGate`、`ExecutionReportCard` 或数据分级规则。
+
+提醒只意味着建议拆分，不意味着强制分派。`HumanActor` 仍可选择继续单 agent、小范围收敛或先补执行计划。
+
 ## 推荐仓库结构
 
 ```text
@@ -76,6 +117,8 @@ config/
 - 每个高风险流程必须有审批闸门和回滚设计
 - 每个重要输出必须定义评测标准
 - 每个新增脚本或本地运行入口必须通过开发环境可移植性门禁
+- 每个并行 `WorkShard` 必须声明 `AgentWorkLease`、`writeSet`、交付物和合并门禁
+- 多 agent 交付必须通过 `MergeGate` 验证冲突、契约、测试、文档和人工复核点
 
 ## 文档完备性要求
 
