@@ -14,6 +14,7 @@
 5. 该工作属于哪个 `ProjectInstance`？
 6. 是否触发跨实例协作？
 7. 是否生成可复用模板、失败样本或 `ExecutionReportCard`？
+8. GovernanceBrain 是否给出了可追溯的分派建议、模型能力要求和人类 owner？
 
 ## 人机分工
 
@@ -26,6 +27,8 @@ AI 适合承担样板代码、文档草稿、API schema、`ToolContract`、测�
 - 人类可以退出重复执行。
 - 人类保留目标、边界、责任和高风险判断。
 - AI 执行必须受策略、预算、权限、审批、审计和回滚约束。
+- GovernanceBrain 可以建议分派和协调协作，但高风险任务必须保留人类 owner 和 ApprovalGate。
+- AI 分派默认是建议，不是命令；成员可以拒绝、延后、协商、缩小范围或转交建议分派，拒绝建议本身不得自动成为负面贡献记录。
 
 ## 最小可传播闭环
 
@@ -69,7 +72,7 @@ stateDiagram-v2
 | --- | --- | --- |
 | `Draft -> Triaged` | HumanActor 或分流策略 | 目标、请求方、风险等级、业务上下文完整 |
 | `Triaged -> AssignedToHuman` | 任务路由 | 目标人类具备权限和可用性 |
-| `Triaged -> AssignedToAgent` | 任务路由 | AgentActor 具备能力、预算、工具授权和模型路由 |
+| `Triaged -> AssignedToAgent` | 任务路由 | AgentActor 具备能力、预算、工具授权和模型路由；若采用 GovernanceBrain 建议，必须保留 TaskFitAssessment 引用 |
 | `AssignedToAgent -> InProgress` | Temporal | 已创建 AgentRun，绑定策略版本和 checkpoint |
 | `InProgress -> AwaitingApproval` | PolicyRule | 命中高风险动作或敏感数据边界 |
 | `AwaitingApproval -> Approved` | ApprovalGate | 审批人具备权限，记录审批理由和输入输出引用 |
@@ -78,6 +81,8 @@ stateDiagram-v2
 | `Completed -> Learned` | 学习管道 | Observation 已采集，敏感数据已处理 |
 
 任何状态迁移都必须追加审计事件，且不能删除历史状态。
+
+涉及成员画像、贡献记录和拒绝权的协作规则见 [member-rights-and-contribution.md](member-rights-and-contribution.md)。
 
 ## 标准协作流
 
@@ -163,6 +168,15 @@ sequenceDiagram
 - 模板进入本地实例后必须重新绑定本地 ToolContract、PolicyRule 和 ApprovalGate。
 - 远程模板不能携带本地敏感数据，也不能直接获得本地高风险工具权限。
 
+### 场景 8：GovernanceBrain 协调多人开发
+
+- HumanActor 提出一个跨文档、接口和实现的目标。
+- GovernanceBrain 读取项目上下文图谱，生成当前基线解释、影响范围和 `TaskFitAssessment`。
+- 系统根据成员技能、兴趣、负载、权限、数据可见范围、学习目标和可承担风险等级建议 human owner、reviewer、AgentActor contributor 和候选模型路由。
+- 人类确认或修改分派后，Temporal 创建或推进对应 WorkItem。
+- AgentActor 可以并行产出草稿、测试、文档或迁移 PR，但高风险变更仍进入 ApprovalGate。
+- 分派接受、人工改派、模型失败、review 结果和阻塞原因进入 Observation，供后续评测和学习飞轮使用。
+
 ## 人工中断点
 
 以下场景默认要求人工中断：
@@ -188,3 +202,4 @@ sequenceDiagram
 - LearningArtifact 必须带来源 WorkItem、数据分级、适用范围和环境标签。
 - 含敏感字段的样本进入评测前必须脱敏或摘要化。
 - 学习沉淀不能改变生产策略，只能进入 [learning-flywheel.md](learning-flywheel.md) 定义的受控飞轮。
+- GovernanceBrain 生成的分派策略、模型路由或上下文图谱修正也只能作为候选进入受控飞轮。

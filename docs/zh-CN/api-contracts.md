@@ -313,22 +313,83 @@
 - `memberRole`
 - `approvalResponsibilities`
 - `visibilityScope`
+- `memberCapabilityProfileRef`
 
 边界说明：
 - 单人实例和多人实例必须使用同一 ProjectInstance 语言。
 - `runtimeMode` 必须使用 Tiny、Demo、Local、Community、Enterprise 的受控枚举。
 - 成员权限不能只由前端展示决定。
+- `MemberCapabilityProfile` 只能作为分派建议输入，不能扩大数据可见范围或替代审批责任。
 
 审计点：
 - 实例创建、归档和运行档位变更
 - 成员新增、移除、角色变更
 - 审批责任和可见范围变更
+- 成员能力、兴趣、可用性、负载、偏好任务类型和可承担风险等级变更
+
+### Governance Brain API
+
+用途：维护 `GovernanceBrain` 的项目上下文图谱、成员能力画像、任务适配评估、模型能力画像引用和治理建议。
+
+关键操作：
+- `GET /api/v1/governance-brain/context-baseline?projectInstanceId={projectInstanceId}`
+- `POST /api/v1/governance-brain/task-fit-assessments`
+- `GET /api/v1/governance-brain/task-fit-assessments/{assessmentId}`
+- `POST /api/v1/governance-brain/member-capability-profiles`
+- `PATCH /api/v1/governance-brain/member-capability-profiles/{profileId}`
+- `POST /api/v1/governance-brain/conflict-reports`
+- `POST /api/v1/governance-brain/improvement-candidates`
+
+核心字段：
+- `governanceBrainId`
+- `projectInstanceId`
+- `sourceRefs`
+- `baselineVersion`
+- `memberCapabilityProfileId`
+- `skills`
+- `interests`
+- `learningGoals`
+- `availability`
+- `currentLoad`
+- `preferredWorkTypes`
+- `deliveryQualitySignals`
+- `reviewQualitySignals`
+- `riskLevelAllowed`
+- `dataVisibilityScope`
+- `assessmentId`
+- `workItemId`
+- `candidateAssignees`
+- `recommendedHumanOwner`
+- `recommendedAgentContributors`
+- `fitScore`
+- `confidence`
+- `reason`
+- `requiresHumanConfirmation`
+- `modelCapabilityRequirements`
+
+边界说明：
+- `TaskFitAssessment` 是可审计建议，不是强制分派结果。
+- 高风险任务必须保留人类 owner 和 `ApprovalGate` 责任链。
+- 成员画像不能用于绕过权限、扩大可见范围或降低数据分级。
+- 改进候选必须进入 `LearningArtifact`、`Experiment`、`EvalRun` 和审批流程，不能直接覆盖生产配置。
+
+审计点：
+- 项目基线解释生成
+- 成员画像创建和修改
+- 任务适配评估生成
+- 分派建议被接受、修改或拒绝
+- 文档、接口、术语或治理冲突报告生成
+- 自我迭代候选生成
 
 ### Federation API
 
 用途：管理跨实例授权协作、能力发现、模板共享和脱敏评测摘要交换。
 
 关键操作：
+- `GET /.well-known/ai-hrms-instance.json`
+- `GET /api/v1/federation/manifest`
+- `POST /api/v1/federation/messages`
+- `GET /api/v1/federation/messages/{messageId}/receipt`
 - `POST /api/v1/federation/peers`
 - `POST /api/v1/federation/links`
 - `PATCH /api/v1/federation/links/{federationLinkId}`
@@ -340,6 +401,14 @@
 核心字段：
 - `federationPeerId`
 - `federationLinkId`
+- `protocol`
+- `protocolVersion`
+- `messageId`
+- `messageType`
+- `messageVersion`
+- `correlationId`
+- `federationReceiptId`
+- `receiptStatus`
 - `trustLevel`
 - `dataSharingLevel`
 - `allowedWorkItemTypes`
@@ -350,11 +419,17 @@
 
 边界说明：
 - 默认不互信，默认不共享私有数据。
+- 跨实例互操作必须使用 `FederationMessage` envelope，二次开发不能修改标准 envelope 字段语义。
+- 自定义跨实例能力必须通过 `CapabilityOffer`、JSON Schema 和 namespaced `extensions` 扩展。
+- 接收方必须对 `messageId` 幂等处理。
+- 不支持的 `protocolVersion`、`messageType` 或已撤销 `FederationLink` 必须明确拒绝。
 - 远程实例不能直接调用本地高风险工具。
 - 高风险动作必须回到本实例 ApprovalGate。
 - `SharedEvalSummary` 只能包含聚合指标、样本类型、失败分类和版本信息。
 
 审计点：
+- Manifest 读取和协议版本协商
+- FederationMessage 接收、拒绝、入队和回执
 - Peer 登记和阻断
 - FederationLink 创建、权限变更和撤销
 - CapabilityOffer 发布
@@ -369,6 +444,8 @@
 关键操作：
 - `POST /api/v1/runtime/resource-profiles`
 - `GET /api/v1/runtime/resource-profiles/{resourceProfileId}`
+- `POST /api/v1/runtime/model-capability-profiles`
+- `GET /api/v1/runtime/model-capability-profiles/{modelCapabilityProfileId}`
 - `GET /api/v1/runtime/adaptive-policy?projectInstanceId={projectInstanceId}`
 - `POST /api/v1/runtime/decisions`
 
@@ -385,14 +462,27 @@
 - `budgetLimit`
 - `concurrencyLimit`
 - `privacyPreference`
+- `modelCapabilityProfileId`
+- `modelRouteId`
+- `capabilityScores`
+- `contextWindow`
+- `structuredOutputSupport`
+- `toolCallingSupport`
+- `dataClassificationAllowed`
+- `riskLevelAllowed`
+- `evalRunRefs`
+- `knownFailureModes`
+- `fallbackModelRouteIds`
 - `adaptiveDecision`
 
 边界说明：
 - ResourceProfile 只能作为策略输入，不能作为安全豁免。
 - 降级不能绕过 ApprovalGate、审计、预算和数据分级。
+- ModelCapabilityProfile 只能作为路由和评测输入，不能因为模型能力强而放宽审批、权限或数据分级。
 
 审计点：
 - 运行档位识别
+- 模型能力画像创建、变更和失效
 - 模型路由降级
 - 任务暂停、拆分、阻塞或人工接管
 - 预算耗尽
@@ -408,31 +498,85 @@
 
 核心字段：
 - `reportCardId`
-- `workItemId`
+- `schemaVersion`
+- `generatedAt`
 - `projectInstanceId`
-- `goal`
-- `requestedBy`
-- `executedBy`
+- `workItemId`
+- `agentRunId`
+- `templateId`
+- `templateVersion`
+- `taskGoal`
+- `inputRefs`
+- `outputRefs`
+- `agentActorId`
+- `humanOwnerId`
 - `skillRefs`
 - `toolContractRefs`
 - `riskLevel`
-- `approvalResult`
-- `cost`
-- `latency`
-- `estimatedTimeSaved`
-- `failureAndHumanCorrection`
-- `templateRef`
+- `approvalStatus`
+- `auditRefs`
+- `dataClassification`
 - `redactionStatus`
-- `publicShareLicense`
+- `sharePermission`
+- `status`
+- `summary`
+- `findings`
+- `recommendations`
+- `nextActions`
+- `metrics`
+- `failure`
+- `extensions`
 
 边界说明：
+- `ExecutionReportCard` 的 canonical source 必须是结构化 JSON；Markdown、HTML 或 Web UI 都只是该 JSON 的渲染物。
+- `schemaVersion` 从首版开始必填。后续兼容性变更只能追加可选字段；字段改名、删除或语义改变必须提升 schema version 并提供迁移说明。
+- `inputRefs` 和 `outputRefs` 只能保存引用、摘要或脱敏快照，不能保存原始敏感数据。
+- `metrics`、`failure` 和 `extensions` 首版可以为空对象，但字段位置必须保留。
+- `extensions` 必须使用 namespaced key，不能覆盖标准字段语义。
 - 公开分享必须显式授权。
 - 报告卡不得包含用户私有数据、敏感字段、内部任务内容或原始模型上下文。
+
+最小 JSON 骨架：
+
+```json
+{
+  "reportCardId": "uuid",
+  "schemaVersion": "execution-report-card.v1",
+  "generatedAt": "2026-05-10T00:00:00Z",
+  "projectInstanceId": "uuid",
+  "workItemId": "uuid",
+  "agentRunId": "uuid",
+  "templateId": "docs_review_and_improvement",
+  "templateVersion": "0.1.0",
+  "taskGoal": "Review selected docs and suggest MVP improvements.",
+  "inputRefs": [],
+  "outputRefs": [],
+  "agentActorId": "uuid",
+  "humanOwnerId": "uuid",
+  "skillRefs": [],
+  "toolContractRefs": [],
+  "riskLevel": "low",
+  "approvalStatus": "not_required",
+  "auditRefs": [],
+  "dataClassification": "internal",
+  "redactionStatus": "redacted",
+  "sharePermission": "private",
+  "status": "needs_review",
+  "summary": "string",
+  "findings": [],
+  "recommendations": [],
+  "nextActions": [],
+  "metrics": {},
+  "failure": null,
+  "extensions": {}
+}
+```
 
 审计点：
 - 报告卡生成
 - 脱敏状态变更
 - 公开分享授权和撤回
+- schema version 迁移或兼容渲染
 
 ### Agent Run API
 
@@ -565,6 +709,7 @@ v1 固定使用以下事件前缀：
 - `eval.*`
 - `policy.*`
 - `instance.*`
+- `governance_brain.*`
 - `federation.*`
 - `runtime.*`
 - `report.*`
@@ -592,8 +737,15 @@ v1 固定使用以下事件前缀：
 | `eval.run_completed` | 评测完成 |
 | `policy.violation_detected` | 策略违规被发现 |
 | `instance.member_changed` | 实例成员、角色或审批责任发生变化 |
+| `governance_brain.task_fit_assessed` | GovernanceBrain 生成任务适配评估 |
+| `governance_brain.context_conflict_reported` | 项目上下文、术语、接口或治理规则冲突被报告 |
+| `governance_brain.improvement_candidate_created` | GovernanceBrain 生成受控改进候选 |
+| `federation.message_received` | 收到跨实例 FederationMessage |
+| `federation.message_rejected` | 跨实例消息因协议、签名、策略或 schema 被拒绝 |
+| `federation.receipt_created` | 生成跨实例消息回执 |
 | `federation.link_changed` | 跨实例授权连接发生变化 |
 | `federation.capability_requested` | 发起跨实例能力请求 |
+| `runtime.model_capability_profile_changed` | 模型能力画像创建、更新或失效 |
 | `runtime.adaptive_decision_made` | 自适应运行做出降级、阻塞或人工接管决策 |
 | `report.execution_card_created` | 生成执行报告卡 |
 
@@ -661,6 +813,9 @@ v1 固定使用以下事件前缀：
 - 任何新增工具都必须先有 `ToolContract`。
 - 任何新增高风险动作都必须先有 `ApprovalGate` 绑定策略。
 - 任何新增 HR 事实字段都必须同时定义请求边界、响应边界、事件语义和审计点。
+- 任何新增 GovernanceBrain 能力都必须定义来源引用、建议边界、人工责任、审计事件和失败恢复方式。
+- 任何新增生产 ModelRoute 都必须绑定 ModelCapabilityProfile、评测结果、数据分级范围、风险等级范围和回退策略。
+- 任何新增跨实例能力都必须保持 FederationMessage envelope 兼容，并提供 messageType、messageVersion、payload schema、错误处理、幂等和撤销语义。
 - 接口名称必须使用 v1 正式命名，不能引入未注册的历史路径或别名。
 - 契约测试必须覆盖成功、权限不足、审批触发、策略拒绝、幂等重放和依赖失败。
 - 面向模型或工具的结构化输出必须禁止未声明字段，并在写入控制面前再次校验。

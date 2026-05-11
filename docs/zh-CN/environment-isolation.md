@@ -2,7 +2,7 @@
 
 ## 目标
 
-环境隔离的目标是防止开发、评测、灰度和生产之间发生数据、配置、网络、身份、模型路由、工作流状态或智能体行为污染。v1 采用“分层环境 + 独立资源 + 受控晋级 + 可审计回滚”的方式实现。
+环境隔离的目标是防止开发、评测、灰度和生产之间发生数据、配置、网络、身份、模型路由、GovernanceBrain 记忆、工作流状态或智能体行为污染。v1 采用“分层环境 + 独立资源 + 受控晋级 + 可审计回滚”的方式实现。
 
 本方案约束所有后续实现，包括本地开发、CI、staging、prod、模型网关、Agent Runtime、Temporal、数据库、对象存储、观测系统和评测数据集。
 
@@ -13,6 +13,7 @@
 - 控制面独立：不同环境使用独立配置源、策略版本、模型路由、预算和审批策略。
 - 网络面独立：默认拒绝跨环境访问，只允许经过明确登记的只读同步、备份恢复或发布晋级链路。
 - 变更单向晋级：代码、配置、prompt、workflow、策略和模型路由只能从 `dev` 到 `staging` 再到 `prod` 晋级，不能反向覆盖。
+- 治理记忆独立：GovernanceBrain 的上下文图谱、成员画像、任务适配评估和模型能力画像必须按环境隔离。
 - 生产数据不下沉：`prod` 数据不能直接复制到 `dev`；进入 `staging` 的生产样本必须脱敏、抽样、授权和审计。
 - 高风险动作受闸门控制：任何影响生产事实、策略、预算、模型路由或学习结果发布的动作都必须经过 `ApprovalGate`。
 
@@ -37,6 +38,7 @@
 | Keycloak | 每环境独立 realm 或独立实例 | OIDC client、role、service account 不复用 |
 | LiteLLM Proxy | 每环境独立部署和配置 | 模型 key、预算、路由、限流规则独立 |
 | Langfuse | 每环境独立 project | prompt、trace、score、dataset 不混写 |
+| GovernanceBrain 记忆 | 每环境独立上下文图谱、成员画像和模型能力画像 | 不得把 prod 成员画像、任务适配评估或私有上下文复制到 dev |
 | OTel/Loki/Tempo/Grafana | 可共享平台，但必须强制环境标签和访问控制 | 所有日志、指标、trace 必须带 `env` 标签 |
 | 对象存储 | 每环境独立 bucket 或强隔离前缀 | 生产附件、导出文件和评测样本不得混放 |
 | Secret 管理 | 每环境独立 secret path 和轮换策略 | 禁止在仓库、镜像和日志中落盘明文 secret |
@@ -163,6 +165,7 @@ Agent Runtime 是污染风险最高的运行面，必须额外约束：
 - PolicyRule、预算策略、工具白名单。
 - prompt、workflow、agent graph 配置。
 - 模型路由、限流和降级策略。
+- GovernanceBrain 上下文图谱规则、分派策略候选和 ModelCapabilityProfile。
 - Keycloak realm 配置。
 
 ### 晋级规则
@@ -207,6 +210,22 @@ Agent Runtime 是污染风险最高的运行面，必须额外约束：
 - 本地数据库、Temporal、Keycloak、LiteLLM mock 或开发实例必须使用 `dev` 前缀。
 - 本地 `.env` 只能引用 `dev` 资源。
 - 本地 seed 数据只能是合成数据。
+
+## 跨平台开发约束
+
+开发体验优先要求命令和脚本与操作系统无关，而不是要求所有开发者使用同一种宿主机。Windows、Linux、macOS 或 WSL 都应能通过同一组项目级命令完成安装、验证和本地运行。
+
+约束：
+
+- 可跨平台安装的运行时工具本身不视为环境风险，例如 Node、pnpm、uv、Docker CLI。风险来自未钉住版本、未声明安装方式或脚本依赖某个 shell。
+- `package.json` scripts 必须优先使用 Node 脚本、跨平台 CLI 或工具自身命令，避免直接依赖 `bash`、`sh`、`PowerShell`、`cmd.exe`、`rm`、`cp`、`sed`、`grep`、`chmod` 等 OS-specific 命令。
+- 路径处理必须使用运行时提供的 path API 或配置引用，不能硬编码 `C:\...`、`/tmp/...`、`/home/...`、反斜杠分隔或当前开发者主目录。
+- 文档命令应从仓库根目录执行，并优先使用正斜杠展示路径；涉及 Windows 专用命令时必须给出等价 POSIX 命令，反之亦然。
+- Docker、Compose 或 devcontainer 是隔离复杂服务依赖的推荐兜底，不是每个可跨平台工具的强制替代品。
+- 只有当本地运行依赖数据库、Temporal、Keycloak、LiteLLM、对象存储、系统库或平台服务时，才必须提供 Docker/Compose/devcontainer 入口。
+- 若某个任务只能在特定操作系统或 shell 下运行，必须在执行计划、README 或 runbook 中标注原因、替代路径和影响范围。
+
+pnpm 可以在 Windows、Linux 和容器中安装使用。项目对 pnpm 的要求应聚焦在 `packageManager` 版本、`pnpm-lock.yaml` 可复现性和命令跨平台性，而不是把 Windows 上使用 pnpm 视为风险。
 
 建议的本地边界：
 

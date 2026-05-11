@@ -20,10 +20,14 @@
 ## 影响范围
 
 - `package.json`
+- `.gitattributes`
+- `.github/workflows/ci.yml`
+- `scripts/`
 - `packages/contracts/`
 - `packages/policy/`
 - `config/environments/`
 - `docs/zh-CN/deployment-and-operations.md`
+- `docs/zh-CN/developer-experience.md`
 - `docs/zh-CN/quality-gates.md`
 
 ## 交付物
@@ -31,12 +35,15 @@
 - 共享契约常量：环境、风险等级、actor 类型、telemetry 必填标签和 ToolContract 必填字段。
 - 环境配置校验：资源命名、secret 引用、跨环境只读访问、生产数据下沉控制和单步晋级。
 - ToolContract 校验与执行策略：生产高风险工具禁止自动执行，高风险动作返回 `require_approval`。
+- 仓库级跨平台检查：`pnpm check`、`pnpm doctor`、`pnpm validate:workspace` 和 `pnpm validate:env:all`。
+- 最小 CI：Linux/Windows matrix、Node 24 LTS、pnpm 10、仓库检查和空白检查。
 - Node 内置测试覆盖关键隔离规则。
 
 ## 依赖和前置条件
 
-- Node.js 24 LTS。
+- Node.js 24 LTS；当前仓库脚本不使用尚未进入 LTS 的 Node Current 版本作为强制基线。
 - 使用 `pnpm` 作为唯一 Node 包管理器；不依赖外部运行时包。
+- 当前脚本必须保持 OS-neutral，后续新增复杂脚本优先沉淀到 `scripts/*.mjs` 或包内 `bin/`。
 - 样例配置只能包含引用和占位信息，不能包含真实 secret。
 
 ## 风险与缓解措施
@@ -44,6 +51,7 @@
 - 风险：策略实现与文档术语漂移。缓解：契约常量集中在 `packages/contracts`，文档同步更新。
 - 风险：误以为 CLI 通过即可生产发布。缓解：文档明确该守卫只是 Phase 1 最小检查，不能替代审批、审计、评测和发布流程。
 - 风险：后续服务绕过策略包。缓解：质量门禁要求新增环境、ToolContract 或高风险动作必须覆盖策略测试。
+- 风险：后续目录扩展失控。缓解：新增目录必须通过文件组织门禁，并遵守 developer-experience 目标结构。
 
 ## 环境隔离影响
 
@@ -60,12 +68,19 @@
 
 - `pnpm test` 执行 Node 内置测试。
 - `pnpm validate:env -- config/environments/<env>.sample.json` 验证样例配置。
+- `pnpm validate:env:all` 批量验证全部环境样例。
+- `pnpm validate:workspace` 验证根目录组织、workspace 清单和跨平台脚本。
+- `pnpm check` 串联 workspace、环境样例和测试。
+- `pnpm doctor` 执行本地诊断。
 
 ## 验收标准
 
 - 所有测试通过。
 - 四个样例环境配置均通过 CLI 校验。
+- 仓库级 `pnpm check` 在 Linux 与 Windows CI 中通过。
+- 新增根目录资产均属于当前阶段正式入口、CI 或跨平台守卫。
 - 文档说明当前新增实现与后续服务边界。
+- 新增目录仍局限于当前阶段正式资产，未为尚未实现服务创建空目录。
 
 ## 完成后的归档说明
 

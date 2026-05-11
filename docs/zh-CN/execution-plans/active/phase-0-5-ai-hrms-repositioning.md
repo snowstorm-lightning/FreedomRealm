@@ -8,14 +8,15 @@ Active
 
 AI-HRMS 的既有文档偏向单企业私有化部署的 agent-first 人力资源管理与协作平台。该定位保留了强治理边界，但不利于个人、社区、开源项目、小团队和多人协作体理解并试用 AI-HRMS。
 
-本阶段保留 AI-HRMS 名称，扩展 HRMS 定义：AI-HRMS 是 AI 时代的人类与智能体资源管理系统。它统一管理 HumanActor、AgentActor、WorkItem、ToolContract、ApprovalGate、PolicyRule、Observation、LearningArtifact、ProjectInstance 和 DomainWorkflow，让标准化工作可以在明确约束下由 AI 执行，由人类设定目标、定义边界、审批高风险动作、审查结果和承担最终责任。
+本阶段保留 AI-HRMS 名称，扩展 HRMS 定义：AI-HRMS 是 AI 时代的人类与智能体资源管理系统。它统一管理 HumanActor、AgentActor、WorkItem、ToolContract、ApprovalGate、PolicyRule、Observation、LearningArtifact、ProjectInstance、GovernanceBrain 和 DomainWorkflow，让标准化工作可以在明确约束下由 AI 执行，由人类设定目标、定义边界、审批高风险动作、审查结果和承担最终责任。
 
 ## 目标
 
 - 扩展 AI 时代 HRMS 定义。
 - 明确个人与社区优先原则。
-- 定义 ProjectInstance 和跨实例协作边界。
+- 定义 ProjectInstance、跨实例协作边界和 FederationProtocol 兼容规则。
 - 定义资源自适应运行体系。
+- 定义 GovernanceBrain、智能分派和模型能力治理边界。
 - 定义开源策略和反商业捕获原则。
 - 定义传播机制和最小可运行闭环。
 - 准备 Demo Mode 的文档基础。
@@ -34,7 +35,7 @@ AI-HRMS 的既有文档偏向单企业私有化部署的 agent-first 人力资�
 
 - README 和 AGENTS 工作规则。
 - 愿景、业务蓝图、架构蓝图、质量门禁、路线图和术语表。
-- 新增开源战略、传播增长、社区网络、自适应运行和社区治理专题文档。
+- 新增开源战略、传播增长、社区网络、自适应运行、治理型 AI 中枢和社区治理专题文档。
 - 新增 ADR 和 ADR 索引。
 - 新增执行计划索引。
 
@@ -48,6 +49,7 @@ AI-HRMS 的既有文档偏向单企业私有化部署的 agent-first 人力资�
 - 新增 `adoption-and-growth.md`。
 - 新增 `community-network.md`。
 - 新增 `adaptive-runtime.md`。
+- 新增 `governance-ai-brain.md`。
 - 新增 `community-governance.md`。
 - 更新 `roadmap.md`。
 - 新增 ADR-0004，必要时新增 ADR-0005 和 ADR-0006。
@@ -65,7 +67,10 @@ AI-HRMS 的既有文档偏向单企业私有化部署的 agent-first 人力资�
 | --- | --- |
 | AI-HRMS 被误解为泛泛 agent framework | 文档持续强调 HRMS 边界扩展，而不是放弃 HRMS |
 | 新增跨实例协作导致安全边界模糊 | 明确默认不互信、不共享私有数据、高风险动作回到本实例 ApprovalGate |
+| 二次开发破坏跨实例通信兼容性 | 固化 FederationMessage envelope、Manifest、Receipt、协议版本和 namespaced extensions 规则 |
 | 自适应降级削弱治理 | 将降级不能绕过审批、安全、审计、预算和数据分级写入架构与质量门禁 |
+| GovernanceBrain 被误解为超级 Agent | 明确它只能生成建议、候选和审计记录，不能替代人类 owner 或绕过 ApprovalGate |
+| 模型能力差异导致输出质量不可控 | 引入 ModelCapabilityProfile、EvalRun 绑定、适用任务范围和回退策略 |
 | 开源策略被误读为法律结论 | 明确许可证选择需要人工确认且不是法律意见 |
 | 文档新增术语不一致 | 更新 glossary、README、业务蓝图、架构蓝图和索引 |
 
@@ -73,7 +78,7 @@ AI-HRMS 的既有文档偏向单企业私有化部署的 agent-first 人力资�
 
 - 安全：新增 Federation 和 Adaptive Runtime 边界，不放宽既有数据分级、环境隔离和模型网关约束。
 - 审批：所有高风险动作仍必须经过 ApprovalGate，跨实例和低资源降级都不能绕过。
-- 审计：跨实例消息、资源降级、模型路由降级和 ExecutionReportCard 生成都需要审计引用。
+- 审计：跨实例消息、资源降级、模型路由降级、GovernanceBrain 分派建议和 ExecutionReportCard 生成都需要审计引用。
 - 回滚：本阶段为文档改动，可通过 git 回滚；未来代码实现必须另行定义迁移和回滚。
 
 ## 文档一致性检查
@@ -83,15 +88,17 @@ AI-HRMS 的既有文档偏向单企业私有化部署的 agent-first 人力资�
 - 传统 HRMS 能力继续保留。
 - Enterprise Mode 保留企业私有化部署和强治理架构。
 - Tiny / Demo / Local / Community / Enterprise 成为运行档位。
-- Federation 使用 ProjectInstance、CapabilityOffer、CapabilityRequest、SharedTemplate 和 SharedEvalSummary 语言。
+- Federation 使用 ProjectInstance、FederationProtocol、FederationMessage、CapabilityOffer、CapabilityRequest、SharedTemplate 和 SharedEvalSummary 语言。
 - 自适应运行不能绕过审批、安全、审计、预算和数据分级。
+- GovernanceBrain 不能替代人类 owner，不能自动批准高风险动作，不能将候选直接落地生产。
+- ModelRoute 必须通过 ModelCapabilityProfile、评测结果和回退策略治理。
 
 ## 验收标准
 
 - README 首屏能解释 AI-HRMS 是什么、AI 时代 HRMS 管理什么、个人和多人如何使用、Demo Mode 能跑通什么。
-- business-blueprint 出现 ProjectInstance、InstanceMember、CommunityActor、FederationLink、CapabilityOffer、CapabilityRequest、SharedTemplate、SharedEvalSummary、ExecutionReportCard、ResourceProfile、AdaptiveRuntimePolicy、DomainWorkflow 和 DomainPack。
-- architecture-blueprint 出现 Adaptive Runtime Layer、Federation Gateway、Execution Report Generator、Resource Profile Detector、Adaptive Model Router 和 Adaptive Task Scheduler。
+- business-blueprint 出现 ProjectInstance、GovernanceBrain、InstanceMember、MemberCapabilityProfile、TaskFitAssessment、CommunityActor、FederationLink、CapabilityOffer、CapabilityRequest、SharedTemplate、SharedEvalSummary、ExecutionReportCard、ResourceProfile、ModelCapabilityProfile、AdaptiveRuntimePolicy、DomainWorkflow 和 DomainPack。
+- architecture-blueprint 出现 GovernanceBrain Layer、Adaptive Runtime Layer、Federation Gateway、FederationProtocol、Execution Report Generator、Resource Profile Detector、Adaptive Model Router 和 Adaptive Task Scheduler。
 - roadmap 出现 Phase 0.5、0.6、0.7，并调整 Phase 1 为 AI-HRMS Core 基础能力。
-- quality-gates 出现 Adoption、Adaptive runtime、Anti-capture、Federation safety 和 Community contribution gate。
+- quality-gates 出现 Adoption、Adaptive runtime、Model capability、GovernanceBrain、Anti-capture、Federation safety、Federation compatibility 和 Community contribution gate。
 - glossary 新增相关术语。
 - ADR 和执行计划索引已更新。

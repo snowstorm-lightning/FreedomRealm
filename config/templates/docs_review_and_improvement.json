@@ -1,0 +1,84 @@
+{
+  "templateId": "docs_review_and_improvement",
+  "templateVersion": "0.1.0",
+  "displayName": "Docs Review And Improvement",
+  "runtimeMode": "Demo Mode",
+  "taskGoal": "Review selected AI-HRMS docs and generate mock summary, findings, recommendations, failure review, and an ExecutionReportCard.",
+  "dataClassification": "internal",
+  "redactionStatus": "redacted",
+  "sharePermission": "private",
+  "riskLevel": "medium",
+  "skillRefs": [
+    "skill://docs.review.v1",
+    "skill://execution-report-card.render.v1"
+  ],
+  "toolContracts": [
+    {
+      "toolName": "docs.read_local_files",
+      "description": "Read selected repository documents as local input references for Demo Mode.",
+      "inputSchemaRef": "schema://ai-hrms.demo.docs.read_local_files.input.v1",
+      "outputSchemaRef": "schema://ai-hrms.demo.docs.read_local_files.output.v1",
+      "requiredPermissions": [
+        "docs:read"
+      ],
+      "riskLevel": "low",
+      "allowedActorTypes": [
+        "AgentActor"
+      ],
+      "allowedEnvironments": [
+        "dev",
+        "ci"
+      ],
+      "autoExecute": true,
+      "budgetLimit": {
+        "currency": "token",
+        "amount": 1000
+      },
+      "auditTags": [
+        "docs",
+        "read",
+        "demo"
+      ]
+    },
+    {
+      "toolName": "docs.propose_review_card",
+      "description": "Generate recommendations and report-card outputs without modifying source documents.",
+      "inputSchemaRef": "schema://ai-hrms.demo.docs.propose_review_card.input.v1",
+      "outputSchemaRef": "schema://ai-hrms.demo.docs.propose_review_card.output.v1",
+      "requiredPermissions": [
+        "reports:create"
+      ],
+      "riskLevel": "medium",
+      "allowedActorTypes": [
+        "AgentActor"
+      ],
+      "allowedEnvironments": [
+        "dev",
+        "ci"
+      ],
+      "autoExecute": false,
+      "budgetLimit": {
+        "currency": "token",
+        "amount": 2000
+      },
+      "auditTags": [
+        "docs",
+        "recommendation",
+        "ApprovalGate",
+        "demo"
+      ]
+    }
+  ],
+  "mockModel": {
+    "modelRouteId": "mock.docs-review.v1",
+    "modelCapabilityProfileRef": "model-capability-profile://mock.docs-review.v1",
+    "structuredOutputSupport": true,
+    "toolCallingSupport": false
+  },
+  "failureSample": {
+    "failureType": "live_model_unavailable",
+    "simulated": true,
+    "statusIfTriggered": "blocked",
+    "recovery": "Fall back to the mock model route, keep the same report-card schema, and require human review before any document change."
+  }
+}

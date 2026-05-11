@@ -4,7 +4,7 @@
 
 AI-HRMS v1 围绕“工作被谁执行、如何被分派、如何被审批、如何被学习、由哪个实例负责”建立统一模型。系统既保留传统 HRMS 场景，也支持 agent-first、个人、社区、多人成员实例和跨实例协作场景。所有自动化都必须服从事实、审批、预算、数据分级和审计边界。
 
-AI-HRMS 是 AI 时代的人类与智能体资源管理系统。它不只管理员工、组织、考勤、档案、审批和协作内容，还管理 HumanActor、AgentActor、WorkItem、ToolContract、ApprovalGate、PolicyRule、Observation、LearningArtifact、ProjectInstance、DomainWorkflow、模板、评测和实例间协作关系。
+AI-HRMS 是 AI 时代的人类与智能体资源管理系统。它不只管理员工、组织、考勤、档案、审批和协作内容，还管理 HumanActor、AgentActor、WorkItem、ToolContract、ApprovalGate、PolicyRule、Observation、LearningArtifact、ProjectInstance、GovernanceBrain、DomainWorkflow、模板、评测和实例间协作关系。
 
 ## 核心概念
 
@@ -19,6 +19,18 @@ AI-HRMS 是 AI 时代的人类与智能体资源管理系统。它不只管理�
 ### InstanceMember
 
 ProjectInstance 的成员。可以拥有不同角色、权限、审批责任、资源配额和可见范围。
+
+### MemberCapabilityProfile
+
+用于支持智能分派的成员画像，记录技能、兴趣、学习目标、偏好任务类型、当前负载、可用时间、历史交付质量、review 质量、数据可见范围、审批责任和可承担风险等级。它只能作为分派建议输入，不能绕过权限或强制改变成员职责。
+
+### MemberRights
+
+成员围绕 AI 分派、成员画像、贡献记录和个人权益影响拥有查看、拒绝、协商、修正、撤回、申诉和复审权利。AI 分派默认是建议，不是命令；成员拒绝 AI 建议分派不得被自动记为负面贡献。
+
+### ContributionRecord
+
+对代码、文档、模板、评测样本、工具契约、失败复盘、翻译、设计讨论、review、真实使用反馈、维护和社区协调等贡献的结构化记录。贡献记录应按类型呈现，不能压缩成单一贡献分或自动绩效结论。
 
 ### AgentActor
 
@@ -48,6 +60,34 @@ ProjectInstance 内注册的 AI 执行者。具备注册身份、能力、工具
 
 可进入学习飞轮的沉淀物，如优质提示词、任务分解模板、工具调用策略、知识摘要、评分样本或失败复盘。
 
+### CapabilityDiscovery
+
+发现成员显性能力和潜在能力的候选分析过程。它可以参考成员自述、兴趣、学习目标、ContributionRecord、review、WorkItem 结果和人工确认，但只能形成可解释候选，不能自动生成绩效、处罚、排名或强制分派结论。
+
+### TeachingMaterial
+
+面向学习和上手的教材资产。MVP 阶段优先使用文档教材，围绕“这是什么、为什么重要、如何跑通、常见失败、可复制模板、下一步入口”组织。
+
+### LearningPath
+
+围绕角色、任务、模板或 DomainPack 的学习路径。MVP 只要求存在从 README 到 Demo Mode、首个模板和 ExecutionReportCard 的最短学习路径。
+
+### TeachingStrategy
+
+系统提供教学的方式。MVP 固定为 document-first，后续可以扩展为示例、问答、练习、pair review、任务反馈和错题复盘。
+
+### GrowthWorkItem
+
+同时具备生产价值和学习价值的 WorkItem。它可以被 AI 推荐，但领取应保持自愿；拒绝、延后、缩小范围或转交不构成负面贡献。
+
+### CapabilityProof
+
+能力证据，而不是单一能力分。它可以来自完成的任务、文档改进、模板贡献、review、评测样本、失败复盘或公开案例。
+
+### KeywordHelpOverlay
+
+后续文档体验能力。用户阅读文档时，可通过快捷键或聚焦关键词唤起弹窗，查看术语解释、来源文档、示例、相关概念和下一步链接。它不属于 MVP 阻塞项。
+
 ### Experiment
 
 面向提示词、工作流或策略候选项的受控试验单元，必须具备假设、样本、指标和退出条件。
@@ -59,6 +99,14 @@ ProjectInstance 内注册的 AI 执行者。具备注册身份、能力、工具
 ### ProjectInstance
 
 一个 AI-HRMS 运行实例，也可称为 AI-HRMS Instance。它可以是个人工作系统、开源项目工作台、小团队工作台、社区组织、合作社、工作室、企业内部团队或临时项目组。
+
+### GovernanceBrain
+
+ProjectInstance 内长期陪伴项目演化的治理型 AI 中枢。它连接项目上下文、成员画像、任务分派、模型能力画像、评测、审批、失败样本和学习候选，用于理解项目、提出分派建议、协调多人协作和生成受控自我迭代候选。它不能替代人类 owner，不能自动批准高风险动作，也不能绕过审计、预算、数据分级和回滚。
+
+### TaskFitAssessment
+
+GovernanceBrain 对 WorkItem 与 HumanActor、CommunityActor、AgentActor 或跨实例能力之间适配度的结构化评估，必须包含候选执行者、理由、风险、权限边界、数据可见范围、替代方案、信心分和是否需要人工确认。
 
 ### FederationPeer
 
@@ -86,11 +134,19 @@ ProjectInstance 内注册的 AI 执行者。具备注册身份、能力、工具
 
 ### ExecutionReportCard
 
-AI 完成任务后生成的可分享执行报告卡。字段包括任务目标、发起者、执行者、使用的 Skill、调用的 ToolContract、风险等级、审批结果、成本、延迟、节省时间估算、失败与人工修正、可复用模板引用、脱敏状态和公开分享许可。
+AI 完成任务后生成的可分享执行报告卡。它的事实源必须是带 `schemaVersion` 的结构化 JSON，Markdown、HTML 和 Web UI 都只是渲染物。首版字段必须覆盖身份、任务引用、模板引用、输入输出引用、执行者、工具、治理、数据、结果和扩展骨架；成本、延迟、节省时间估算、多模型对比和完整 trace 可以后续追加。
+
+### DesensitizedTrainingResource
+
+敏感或受限数据经过脱敏、审批、审计、用途限定和保留期约束后形成的训练、评测或模型能力改进资源。原始敏感数据不得直接作为训练资源保留。
 
 ### ResourceProfile
 
 系统启动或配置时记录的资源画像，包括 CPU、内存、GPU、磁盘、网络、本地模型、远程模型、用户预算、并发上限和隐私偏好。
+
+### ModelCapabilityProfile
+
+对某个 ModelRoute 背后模型能力的可评测画像，描述推理、代码、长上下文、结构化输出、工具调用、检索配合、多语言、安全拒答、一致性、成本、延迟、数据分级适用范围、风险等级适用范围、已通过评测和已知失败模式。它是模型路由和降级策略的输入，不是安全豁免。
 
 ### AdaptiveRuntimePolicy
 
@@ -119,6 +175,8 @@ AI 完成任务后生成的可分享执行报告卡。字段包括任务目标�
 - `WorkItem` 创建、拆分、分派、升级、关闭。
 - 任务 SLA、优先级、依赖与补偿。
 - 人类、AgentActor、CommunityActor 和跨实例协作能力的统一分派。
+- `TaskFitAssessment` 只能作为分派建议；高风险任务必须保留人类 owner 和审批责任。
+- 成员可拒绝、延后、协商或转交 AI 建议分派；拒绝建议本身不构成负面贡献记录。
 - 与员工、部门、ProjectInstance、政策、知识和审批动作之间的引用关系。
 
 ### 3. Agent Operations
@@ -133,6 +191,10 @@ AI 完成任务后生成的可分享执行报告卡。字段包括任务目标�
 - 知识采集、索引、检索和记忆。
 - `Observation` 汇聚。
 - `LearningArtifact`、`Experiment`、评测数据集。
+- `DesensitizedTrainingResource` 的脱敏、审批、保留、撤回和训练用途约束。
+- `TeachingMaterial`、`LearningPath` 和 `TeachingStrategy` 的文档优先学习材料。
+- `CapabilityDiscovery` 和 `CapabilityProof` 的候选生成、人工确认和成员权利约束。
+- `GovernanceBrain` 的项目上下文图谱、来源可信度、版本和失效条件。
 - 公告、帖子、评论、FAQ 等协作内容可进入知识索引，但不是人事事实真相。
 
 ### 5. Governance & Audit
@@ -154,6 +216,7 @@ AI 完成任务后生成的可分享执行报告卡。字段包括任务目标�
 
 - ResourceProfile。
 - AdaptiveRuntimePolicy。
+- ModelCapabilityProfile。
 - Adaptive Model Router。
 - Adaptive Task Scheduler。
 - Tiny / Demo / Local / Community / Enterprise 运行档位。
@@ -162,9 +225,12 @@ AI 完成任务后生成的可分享执行报告卡。字段包括任务目标�
 ### 8. Growth & Adoption
 
 - 最小可传播 Demo。
+- 文档教学优先的 MVP 上手路径。
+- 首个低依赖模板。
 - ExecutionReportCard。
 - 模板传播机制。
 - 案例库、指标面板和贡献者声誉。
+- 后续 `KeywordHelpOverlay` 体验增强。
 - 面向个人、社区、开源项目和企业内部创新者的采用路径。
 
 ## 核心对象状态
@@ -282,12 +348,21 @@ AI 完成任务后生成的可分享执行报告卡。字段包括任务目标�
 - 前端不得直接拼接后端服务地址并通过跨域方式耦合多个服务。
 - v1 不实现完整分布式计算网络，不承诺完全无人自治组织。
 - v1 不默认上传用户私有数据，不允许跨实例协作绕过本地 ApprovalGate。
+- v1 不允许 GovernanceBrain 作为超级管理员存在；它只能生成建议、候选和审计记录。
+- MVP 不实现完整自适应教学引擎、KeywordHelpOverlay 或复杂潜能挖掘。
+- MVP 不依赖真实外部连接器、完整企业身份系统、完整观测栈或完整工作流引擎。
 
 ## v1 关键能力
 
 - 统一的人机工作台与工作单模型。
+- 文档教学优先的 Demo Mode 上手路径。
+- 首个低连接器依赖、低敏感数据依赖的模板。
 - 组织、账号、员工档案与考勤事实的一体化控制面。
 - ProjectInstance、InstanceMember 和 CommunityActor 的最小模型。
+- MemberCapabilityProfile 和 TaskFitAssessment 的最小分派建议模型。
+- TeachingMaterial、LearningPath、CapabilityDiscovery 和 CapabilityProof 的最小文档与概念边界。
+- GovernanceBrain 的项目上下文、治理建议和审计边界。
+- ModelCapabilityProfile 的最小模型能力画像。
 - 任务分派给人类或智能体的统一路由。
 - 高风险动作的审批闸门。
 - 角色、权限和审批策略的显式治理。
@@ -319,10 +394,16 @@ AI 完成任务后生成的可分享执行报告卡。字段包括任务目标�
 | 考勤 | 普通打卡、补签、人工修正和导出使用不同接口与审计标签 |
 | 权限 | 有效权限能追溯到角色、权限资源、策略和授权操作者 |
 | ProjectInstance | 单人和多人实例能区分成员、角色、审批责任和可见范围 |
+| GovernanceBrain | 能解释当前项目基线、生成可追溯分派建议和改进候选，但不能绕过审批和人类 owner |
+| MemberCapabilityProfile | 能记录技能、兴趣、负载、权限和风险责任，且成员画像变更可审计 |
+| TeachingMaterial | 能让新用户按文档在 5 到 10 分钟内跑通 Demo Mode，且不依赖关键词弹窗或自适应教学引擎 |
+| CapabilityDiscovery | 只能生成候选能力发现，必须可解释、可修正、可撤回，不能生成绩效、排名或强制分派 |
+| CapabilityProof | 能按证据类型展示任务、文档、模板、review、评测样本或复盘贡献，不能压缩成单一能力分 |
+| ModelCapabilityProfile | 能说明模型适用任务、评测结果、数据分级、风险范围和失败模式 |
 | WorkItem | 每次状态迁移都有 actor、原因、时间、输入输出引用和失败恢复方式 |
 | AgentActor | 能力、工具、预算、模型范围和禁止动作按环境和 ProjectInstance 绑定 |
 | ApprovalGate | 高风险动作不能绕过审批，审批结果能驱动流程继续、回退或升级 |
 | LearningArtifact | 只能作为候选进入评测和灰度流程，不能直接替换生产策略 |
-| ExecutionReportCard | 可生成脱敏报告卡，公开分享必须有许可和审计引用 |
+| ExecutionReportCard | 可生成带 schemaVersion 的 JSON 报告卡，并渲染 Markdown；公开分享必须有许可、脱敏状态和审计引用 |
 | FederationLink | 默认不互信，显式授权，可撤销，跨实例消息可审计 |
 | AdaptiveRuntimePolicy | 资源不足时降级、阻塞或转人工，不能绕过审批和审计 |

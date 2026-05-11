@@ -9,10 +9,15 @@
     "packages/policy"
   ],
   "scripts": {
-    "test": "node --test packages/**/*.test.mjs",
-    "validate:env": "node packages/policy/bin/validate-environment.mjs"
+    "check": "node scripts/check.mjs",
+    "demo": "node scripts/run-demo-mode.mjs",
+    "doctor": "node scripts/doctor.mjs",
+    "test": "node scripts/run-tests.mjs",
+    "validate:env": "node packages/policy/bin/validate-environment.mjs",
+    "validate:env:all": "node scripts/validate-env-all.mjs",
+    "validate:workspace": "node scripts/validate-workspace.mjs"
   },
   "engines": {
-    "node": ">=24.0.0"
+    "node": ">=24.0.0 <26.0.0"
   }
 }

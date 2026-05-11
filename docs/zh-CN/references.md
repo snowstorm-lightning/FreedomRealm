@@ -12,19 +12,27 @@
 
 ## Web 与前端
 
-- Next.js 15: <https://nextjs.org/blog/next-15>
+- Next.js 16: <https://nextjs.org/blog/next-16>
+- Next.js 16.2: <https://nextjs.org/blog/next-16-2>
 - React 19: <https://react.dev/blog/2024/12/05/react-19>
 - Tailwind CSS v4: <https://tailwindcss.com/blog/tailwindcss-v4>
+- TypeScript 6.0: <https://devblogs.microsoft.com/typescript/announcing-typescript-6-0/>
 - Playwright: <https://playwright.dev/docs/intro>
 
 ## 后端与运行面
 
 - NestJS: <https://docs.nestjs.com/first-steps>
+- NestJS 11 migration: <https://docs.nestjs.com/migration-guide>
 - Prisma ORM: <https://docs.prisma.io/docs/orm>
+- Prisma system requirements: <https://docs.prisma.io/docs/orm/reference/system-requirements>
 - FastAPI: <https://fastapi.tiangolo.com/tutorial/first-steps/>
+- pnpm installation: <https://pnpm.io/installation>
 - uv: <https://docs.astral.sh/uv/>
 - LangGraph: <https://docs.langchain.com/oss/python/langgraph/overview>
 - Temporal: <https://docs.temporal.io/>
+- Python 3.14 release schedule: <https://peps.python.org/pep-0745/>
+- Python 3.14 whatsnew: <https://docs.python.org/3/whatsnew/3.14.html>
+- Node.js release schedule: <https://github.com/nodejs/Release>
 
 ## 数据、身份与治理
 
@@ -32,6 +40,11 @@
 - pgvector: <https://github.com/pgvector/pgvector>
 - Keycloak: <https://www.keycloak.org/getting-started/getting-started-zip>
 - OpenTelemetry: <https://opentelemetry.io/docs/>
+- AWS Well-Architected data classification and lifecycle management: <https://docs.aws.amazon.com/wellarchitected/latest/framework/sec_data_classification_lifecycle_management.html>
+- NIST AI Risk Management Framework: <https://www.nist.gov/itl/ai-risk-management-framework>
+- ISO/IEC 42001 AI management system: <https://www.iso.org/standard/42001>
+- Workday Responsible AI: <https://www.workday.com/en-us/why-workday/our-technology/artificial-intelligence/responsible-ai.html>
+- Salesforce Trusted AI principles: <https://www.salesforce.com/artificial-intelligence/architecture/>
 
 ## 模型网关与可观测性
 

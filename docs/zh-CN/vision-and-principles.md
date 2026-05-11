@@ -4,7 +4,7 @@
 
 AI-HRMS 是 AI 时代的人类与智能体资源管理系统。它为个人、多人协作组织、社区、开源项目、小型工作室、合作社、企业内部团队和更复杂组织提供统一的工作执行与治理底座。
 
-AI-HRMS 把 `HumanActor`、`AgentActor`、`WorkItem`、`ToolContract`、`ApprovalGate`、`PolicyRule`、`Observation`、`LearningArtifact`、`ProjectInstance` 和 `DomainWorkflow` 统一管理，让标准化工作可以在明确约束下由 AI 执行，由人类设定目标、定义边界、审批高风险动作、审查结果和承担最终责任。
+AI-HRMS 把 `HumanActor`、`AgentActor`、`WorkItem`、`ToolContract`、`ApprovalGate`、`PolicyRule`、`Observation`、`LearningArtifact`、`ProjectInstance`、`GovernanceBrain` 和 `DomainWorkflow` 统一管理，让标准化工作可以在明确约束下由 AI 执行，由人类设定目标、定义边界、审批高风险动作、审查结果和承担最终责任。
 
 当前项目仍然叫 AI-HRMS，本轮不处理正式更名。
 
@@ -19,6 +19,7 @@ AI-HRMS 把 `HumanActor`、`AgentActor`、`WorkItem`、`ToolContract`、`Approva
 - 评测、观察、失败案例和学习沉淀。
 - 模板、实例成员、实例权限和跨实例协作关系。
 - 资源档位、模型路由和自适应任务调度。
+- 治理型 AI 中枢、成员能力画像、智能分派和模型能力画像。
 
 这不是放弃 HRMS，而是重新定义 HRMS，使其具备 AI 时代的灵活性、扩展性和社区适应性。
 
@@ -38,6 +39,10 @@ AI-HRMS 要成为这样的系统底座：
 - 每个 ProjectInstance 可由一个人运行，也可由多个人共同运行。
 - 多个 ProjectInstance 可以在授权、信任、审计和数据分级约束下协作。
 
+长期看，AI-HRMS 还应成为能力发展系统：它帮助成员发现显性能力和潜在能力，为不同成员提供合适的学习材料和教学方式，让工作不只是输出，也成为输入、学习和能力证明。多个 ProjectInstance 协同时，价值应优先沉淀为开放协议、模板、评测、失败案例、复盘和 Commons 资产，而不是被封闭商业平台捕获。
+
+当前阶段必须先让项目生存下来。MVP 优先使用文档教学、最小模板和 Demo Mode 跑通闭环，先证明“可理解、可运行、可复盘、可分享、可贡献”，再逐步扩展能力发现、自适应教学和跨实例资源协作。
+
 ## 优先服务对象
 
 - 个人。
@@ -55,9 +60,12 @@ AI-HRMS 要成为这样的系统底座：
 
 - 聚焦 AI-HRMS Core、ProjectInstance、最小人机协作闭环和强治理边界。
 - 先建设控制面、运行面、审批面、审计面、学习飞轮、自适应运行和传播闭环。
+- 治理型 AI 中枢只负责解释、建议、协调和生成候选，不能替代人类 owner 或绕过治理边界。
 - 保留传统 HRMS 能力，特别是组织、账号、员工档案、考勤、权限和协作内容。
 - 支持 Tiny / Demo / Local / Community / Enterprise 的运行档位定义。
 - 定义 Federation、Commons 和跨实例协作边界，但不实现完整分布式计算网络。
+- MVP 阶段以文档教学和最小教程为主，默认早期参与者具备较好的自学能力。
+- 关键词弹窗、复杂能力发现和自适应教学属于后续体验增强，不阻塞 MVP。
 
 ## v1 成功标准
 
@@ -78,6 +86,8 @@ AI-HRMS 要成为这样的系统底座：
 - Agent Runtime 持有 HR 主数据真相，或绕过 Temporal 自行完成长流程状态推进。
 - 新接口、新事件或新字段没有同步记录请求边界、响应边界、事件语义和审计点。
 - 生产学习结果没有评测基线、审批记录、灰度范围或回滚版本。
+- GovernanceBrain 自动批准高风险动作、隐藏来源、替代人类责任主体或把候选直接落地。
+- 生产 ModelRoute 没有 ModelCapabilityProfile、评测结果、数据分级范围或回退策略。
 - `dev`、`ci`、`staging`、`prod` 复用数据库、模型 key、OIDC client、AgentActor 身份或长期记忆。
 - 审计日志只记录“发生了什么”，无法说明“谁、为什么、基于什么策略、可如何恢复”。
 - 跨实例协作默认共享私有数据或允许远程实例直接调用本地高风险工具。
@@ -93,6 +103,7 @@ AI-HRMS 要成为这样的系统底座：
 - v1 不默认上传用户私有数据。
 - v1 不让跨实例协作绕过审批和审计。
 - v1 不从零构建全套 ERP/CRM/财务系统。
+- MVP 不实现完整自适应教学引擎、关键词弹窗或复杂潜能挖掘。
 - 本轮不处理项目正式更名。
 
 ## 核心原则

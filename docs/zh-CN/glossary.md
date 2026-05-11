@@ -36,6 +36,34 @@
 
 可被系统再次利用的学习沉淀物，如 prompt、模板、策略、优质案例、失败样本或复盘报告。
 
+## CapabilityDiscovery
+
+发现成员显性能力和潜在能力的候选分析过程。它可以参考成员自述、兴趣、学习目标、ContributionRecord、review、WorkItem 结果和人工确认，但不能自动生成绩效、处罚、排名或强制分派结论。
+
+## TeachingMaterial
+
+面向学习和上手的教材资产。MVP 阶段优先使用文档教材，围绕“这是什么、为什么重要、如何跑通、常见失败、可复制模板、下一步入口”组织。
+
+## LearningPath
+
+围绕角色、任务、模板或 DomainPack 的学习路径。MVP 只要求存在从 README 到 Demo Mode、首个模板和 ExecutionReportCard 的最短路径。
+
+## TeachingStrategy
+
+系统提供教学的方式。MVP 固定为 document-first，后续可以扩展为示例、问答、练习、pair review、任务反馈和错题复盘。
+
+## GrowthWorkItem
+
+同时具备生产价值和学习价值的 WorkItem。它可以被 AI 推荐，但领取应保持自愿。
+
+## CapabilityProof
+
+能力证据，而不是单一能力分。它可以来自完成的任务、文档改进、模板贡献、review、评测样本、失败复盘或公开案例。
+
+## KeywordHelpOverlay
+
+后续文档体验能力。用户阅读文档时，可通过快捷键或聚焦关键词唤起弹窗，查看术语解释、来源文档、示例、相关概念和下一步链接。
+
 ## Experiment
 
 对候选变更进行假设检验和对照评估的受控试验单元。
@@ -56,6 +84,26 @@ ProjectInstance 的同义表达，强调它是一个独立运行、独立治理�
 
 ProjectInstance 的成员，拥有实例内角色、权限、审批责任、资源配额和可见范围。
 
+## MemberCapabilityProfile
+
+用于智能分派的成员画像，记录技能、兴趣、学习目标、偏好任务类型、负载、可用时间、历史交付质量、review 质量、数据可见范围、审批责任和可承担风险等级。它只能作为分派建议输入，不能扩大权限或替代审批责任。
+
+## MemberRights
+
+成员围绕 AI 分派、成员画像、贡献记录和个人权益影响拥有的查看、拒绝、协商、修正、撤回、申诉和复审权利。AI-HRMS 不能把成员变成服从 AI 分派的执行资源。
+
+## ContributionRecord
+
+对 code、docs、templates、eval samples、tool contracts、failure reports、translations、design discussions、review notes、usage reports、维护和社区协调等贡献的结构化记录。贡献记录应按类型呈现，不能压缩成单一贡献分或自动绩效结论。
+
+## GovernanceBrain
+
+ProjectInstance 内长期陪伴项目演化的治理型 AI 中枢。它连接项目上下文、成员画像、任务、模型能力画像、评测、审批、失败样本和学习候选，用于项目理解、智能分派、多人协调、模型能力治理和受控自我迭代。它不能替代人类 owner，也不能绕过 ApprovalGate、审计、预算和数据分级。
+
+## TaskFitAssessment
+
+GovernanceBrain 对 WorkItem 与候选 HumanActor、CommunityActor、AgentActor 或跨实例能力之间适配度的结构化评估，包含候选执行者、理由、风险、权限边界、替代方案、信心分和是否需要人工确认。
+
 ## FederationPeer
 
 另一个可协作的 AI-HRMS 实例。Peer 不代表默认信任。
@@ -67,6 +115,22 @@ ProjectInstance 的成员，拥有实例内角色、权限、审批责任、资�
 ## FederationGateway
 
 处理跨实例能力发现、授权校验、消息审计、模板交换和脱敏评测摘要交换的网关或连接器边界。
+
+## FederationProtocol
+
+不同 ProjectInstance 之间通信的最小稳定协议面，定义实例发现、消息封套、版本兼容、回执、错误和扩展规则。
+
+## FederationManifest
+
+实例公开的协议发现文档，声明支持的协议版本、消息类型、schema、公开端点、速率限制和公开联系信息，不包含私有数据。
+
+## FederationMessage
+
+跨实例通信的统一消息封套，包含 protocolVersion、messageId、messageType、messageVersion、发送方、接收方、FederationLink、trace、policy、payload、extensions、audit 和 signature。
+
+## FederationReceipt
+
+接收方对 FederationMessage 的处理回执，说明消息被接受、拒绝、入队、阻塞、需要审批或被识别为重复。回执不等同于业务动作完成。
 
 ## CapabilityOffer
 
@@ -86,7 +150,15 @@ ProjectInstance 的成员，拥有实例内角色、权限、审批责任、资�
 
 ## ExecutionReportCard
 
-AI 完成任务后生成的可分享执行报告卡，包含任务目标、发起者、执行者、Skill、ToolContract、风险等级、审批结果、成本、延迟、节省时间估算、失败与人工修正、模板引用、脱敏状态和公开分享许可。
+AI 完成任务后生成的可分享执行报告卡。它的 canonical source 是带 `schemaVersion` 的结构化 JSON；Markdown、HTML、Web UI 卡片和案例库页面都是渲染物。
+
+## FairnessAnalysisReport
+
+AI 对分派、贡献评价、冲突处理或 HR 高风险场景生成的公平分析报告。它只能作为人工复核输入，必须说明事实来源、个人权益影响、集体权益影响、不确定性、替代方案和申诉路径，不能替代人类裁决。
+
+## DesensitizedTrainingResource
+
+敏感或受限数据经过脱敏、审批、审计、用途限定和保留期约束后形成的训练、评测或模型能力改进资源。原始敏感数据不得直接作为训练资源保留。
 
 ## Community Commons
 
@@ -103,6 +175,10 @@ AI 完成任务后生成的可分享执行报告卡，包含任务目标、发�
 ## AdaptiveRuntimePolicy
 
 根据 ResourceProfile 决定模型路由、embedding、长期记忆、观测、并发、降级、拆分任务和人工接管的策略。
+
+## ModelCapabilityProfile
+
+某个 ModelRoute 背后模型能力的可评测画像，描述推理、代码、长上下文、结构化输出、工具调用、检索配合、多语言、安全拒答、一致性、成本、延迟、数据分级适用范围、风险等级适用范围、已通过评测和已知失败模式。
 
 ## Adaptive Model Router
 

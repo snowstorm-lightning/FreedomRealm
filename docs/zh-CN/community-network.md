@@ -4,6 +4,8 @@
 
 AI-HRMS 可以由一个人运行，也可以由多人共同运行。多个 AI-HRMS 实例可以在授权、信任、审计和数据分级约束下协作，但默认不互信、默认不共享私有数据、默认不允许远程实例直接调用本地高风险工具。
 
+跨实例通信的稳定协议面以 [federation-protocol.md](federation-protocol.md) 为准。二次开发可以扩展能力和 payload，但不能修改 `FederationMessage` 标准封套语义。
+
 ## ProjectInstance
 
 `ProjectInstance` 是一个 AI-HRMS 运行实例，也可称为 `AI-HRMS Instance`。它可以表示：
@@ -18,6 +20,8 @@ AI-HRMS 可以由一个人运行，也可以由多人共同运行。多个 AI-HR
 - 临时项目组。
 
 每个 ProjectInstance 都拥有自己的成员、策略、预算、审计、模板、工具契约和数据分级边界。
+
+每个 ProjectInstance 可以拥有自己的 `GovernanceBrain`，用于解释项目基线、生成智能分派建议、协调多人协作和沉淀学习候选。GovernanceBrain 的记忆、成员画像和任务适配评估默认只属于本实例，不能默认跨实例共享。
 
 ## 单人实例
 
@@ -38,6 +42,7 @@ AI-HRMS 可以由一个人运行，也可以由多人共同运行。多个 AI-HR
 多人实例必须增加：
 
 - 成员身份与角色。
+- MemberCapabilityProfile 和 TaskFitAssessment 的审计边界。
 - 权限和审批责任。
 - 模板共享范围。
 - 审计查询。
@@ -52,6 +57,7 @@ AI-HRMS 可以由一个人运行，也可以由多人共同运行。多个 AI-HR
 
 - 贡献者 onboarding。
 - issue 分流。
+- 按贡献者技能、兴趣、可用性、信任等级和学习目标进行低风险任务建议。
 - 模板贡献。
 - 失败样本和复盘报告贡献。
 - 公开 ExecutionReportCard。
@@ -85,6 +91,24 @@ AI-HRMS 可以由一个人运行，也可以由多人共同运行。多个 AI-HR
 
 授权必须可撤销。撤销后不能继续调用能力、读取共享模板或交换评测摘要。
 
+## FederationProtocol
+
+实例间通信使用最小稳定协议：
+
+- `FederationManifest`：公开实例支持的协议版本、消息类型、schema、速率限制和公开端点。
+- `FederationMessage`：所有跨实例消息的统一 envelope，包含 `messageId`、`messageType`、`protocolVersion`、`FederationLink`、策略、审计和签名引用。
+- `FederationReceipt`：接收方对消息接收、入队、拒绝、阻塞或需要审批的回执。
+
+协议规则：
+
+- `messageId` 必须幂等。
+- 不认识的 messageType 不能当作成功。
+- 已撤销 FederationLink 的消息必须拒绝。
+- 自定义扩展必须通过 namespaced `extensions`、自定义 schema 和 `CapabilityOffer` 声明。
+- 标准 envelope 不允许二次开发修改字段语义。
+
+详细规范见 [federation-protocol.md](federation-protocol.md)。
+
 ## CapabilityOffer
 
 `CapabilityOffer` 是一个实例对外公开的能力描述。包括：
@@ -117,6 +141,8 @@ CapabilityOffer 不是远程执行许可。调用仍需符合 FederationLink、�
 - 失败处理。
 
 敏感数据不得进入跨实例消息。高风险动作必须回到发起实例或本地实例的 `ApprovalGate`，不能被远程实例绕过。
+
+GovernanceBrain 可以建议向哪个 FederationPeer 发起 CapabilityRequest，但该建议必须遵守 FederationLink、CapabilityOffer、预算、数据分级和审批策略。
 
 ## SharedTemplate
 
@@ -176,6 +202,8 @@ CapabilityOffer 不是远程执行许可。调用仍需符合 FederationLink、�
 
 跨实例通信必须记录：
 
+- messageId。
+- protocolVersion。
 - 本地实例 ID。
 - 对方实例 ID。
 - FederationLink 版本。

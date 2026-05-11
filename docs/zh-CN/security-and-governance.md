@@ -23,10 +23,13 @@
 | `AgentActor` | 智能体执行者 | 不能登录 UI，不能复用人类 session |
 | `ServiceAccount` | CI、部署、迁移、备份、网关调用 | 只授予单一职责所需权限 |
 | `ExternalConnector` | 受控外部系统连接器 | 必须登记出网目的和审计标签 |
+| `GovernanceBrain` | ProjectInstance 内治理型 AI 中枢 | 只能生成建议、候选和审计记录，不能拥有超级管理员权限 |
 
 权限判断必须同时考虑 actor、环境、数据等级、业务范围、工具风险和策略版本。
 
 ProjectInstance 内权限还必须考虑实例成员角色、审批责任、资源配额和可见范围。
+
+`MemberCapabilityProfile` 和 `TaskFitAssessment` 只能用于任务适配建议。它们不能扩大成员权限、改变数据可见范围、降低审批要求或替代人类 owner。
 
 ## 工具治理
 
@@ -60,6 +63,20 @@ ProjectInstance 内权限还必须考虑实例成员角色、审批责任、资�
 | `internal` | 内部流程、普通协作内容 | 可进入受控模型上下文 | 按权限导出 |
 | `restricted` | 员工档案、考勤明细、内部评价 | 默认不得外发，需摘要或脱敏 | 需权限和审计，批量导出触发审批 |
 | `sensitive` | 身份证、银行卡、薪酬、合同、健康信息 | 默认禁止进入外部模型上下文 | 默认触发 ApprovalGate |
+
+## 数据生命周期与训练资源
+
+数据进入 AI-HRMS 时必须尽早绑定来源、owner、用途、`ProjectInstance`、环境、数据分级和保留策略。业务主数据、协作内容、模型上下文、Observation、LearningArtifact、Eval sample、审计日志、备份和公开资产必须分开治理，不能因为进入 AI 流程就失去原始约束。
+
+敏感数据可以在脱敏后保留为训练、评测或模型能力改进资源，但原始敏感数据不得直接作为训练资源保留。脱敏训练资源必须满足：
+
+- 有来源引用、用途、owner、审批引用、审计事件和保留期。
+- 通过脱敏和重识别风险评估。
+- 继承原始数据的使用限制，除非经过明确降级审批。
+- 使用外部模型供应商训练或长期存储前，必须确认供应商的数据保留、训练使用、删除、区域、加密和审计能力。
+- 可撤回、可停止后续训练或共享，不破坏必要审计。
+
+详细规则见 [data-lifecycle-and-training-resources.md](data-lifecycle-and-training-resources.md)。
 
 ## 网络治理
 
@@ -101,6 +118,7 @@ ProjectInstance 内权限还必须考虑实例成员角色、审批责任、资�
 - 每个 AgentActor 的日/月预算
 - 每个 ProjectInstance 的资源预算和并发上限
 - 每种模型的可用范围
+- 每个 ModelCapabilityProfile 的数据分级、风险等级、任务类型和评测门槛
 - 高风险工具白名单
 - 允许的知识域
 - 最大自动执行步数
@@ -152,6 +170,8 @@ ProjectInstance 内权限还必须考虑实例成员角色、审批责任、资�
 - 默认不共享私有数据。
 - 默认不允许远程实例直接调用本地高风险工具。
 - FederationLink 必须显式授权并可撤销。
+- 跨实例通信必须使用稳定 FederationMessage envelope、messageId 幂等、schema 校验和审计回执。
+- 二次开发不能修改标准 envelope 字段语义，只能通过 CapabilityOffer、JSON Schema 和 namespaced extensions 扩展。
 - CapabilityRequest 必须声明请求目标、输入引用、数据分级、预算、截止时间、审批要求和失败处理。
 - SharedEvalSummary 只能包含聚合指标、样本类型、失败分类和版本信息。
 - 高风险动作必须回到本实例 ApprovalGate。
@@ -159,6 +179,8 @@ ProjectInstance 内权限还必须考虑实例成员角色、审批责任、资�
 ## 自适应运行治理
 
 ResourceProfile 和 AdaptiveRuntimePolicy 只能决定运行方式，不能放宽治理边界。
+
+ModelCapabilityProfile 只能决定某个 ModelRoute 是否适合某类任务，不能因为模型能力更强而放宽权限、审批、预算、数据分级或审计要求。
 
 资源不足时允许：
 
@@ -176,6 +198,24 @@ ResourceProfile 和 AdaptiveRuntimePolicy 只能决定运行方式，不能放�
 - 将敏感原文自动发送到远程模型。
 - 伪造工具成功。
 
+## GovernanceBrain 治理
+
+GovernanceBrain 必须遵守：
+
+- 所有项目基线解释、分派建议、模型路由建议和自我迭代候选必须保留来源引用。
+- 高风险 WorkItem 的分派建议必须包含人类 owner、审批责任和回滚路径。
+- 自我迭代候选必须进入 LearningArtifact、Experiment、EvalRun、ApprovalGate、灰度和回滚流程。
+- 成员画像、分派建议和模型能力画像变更必须审计。
+- 公开或跨实例共享只能使用 SharedTemplate 或 SharedEvalSummary。
+
+GovernanceBrain 禁止：
+
+- 自动批准高风险动作。
+- 根据模型输出直接提升权限、改变审批责任或扩大数据可见范围。
+- 将草稿、讨论或模型输出当作正式文档事实。
+- 把私有上下文、敏感字段或内部任务内容写入公共记忆。
+- 在模型能力不足时用低成本模型输出伪装成高置信结论。
+
 ## 安全事件处理
 
 以下情况必须作为安全事件处理：
@@ -185,8 +225,11 @@ ResourceProfile 和 AdaptiveRuntimePolicy 只能决定运行方式，不能放�
 - 生产数据未经审批进入非生产环境。
 - 模型上下文包含未脱敏的 `restricted` 或 `sensitive` 数据。
 - 审批、审计、预算或模型网关策略被绕过。
+- GovernanceBrain 越权分派、隐藏来源、替代人类 owner 或将候选直接落地。
 - FederationLink 泄漏私有数据或被远程实例滥用。
 - AdaptiveRuntimePolicy 降级导致安全治理被绕过。
+- 敏感原文被保存为训练资源，或脱敏训练资源被发现可重识别个人、组织或内部任务。
+- 撤回公开分享或训练授权后，系统仍继续用于训练、评测、公开传播或跨实例共享。
 
 处理流程：
 

@@ -1,0 +1,214 @@
+import {
+  APPROVAL_STATUSES,
+  EXECUTION_REPORT_CARD_REQUIRED_FIELDS,
+  EXECUTION_REPORT_CARD_SCHEMA_VERSION,
+  REPORT_CARD_STATUSES,
+  RISK_LEVELS
+} from "./index.mjs";
+
+function issue(code, message, path = "$") {
+  return { code, message, path };
+}
+
+function isPlainObject(value) {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+function hasText(value) {
+  return typeof value === "string" && value.trim().length > 0;
+}
+
+function validateArray(errors, card, field) {
+  if (!Array.isArray(card[field])) {
+    errors.push(issue("validation_failed", `${field} must be an array.`, field));
+  }
+}
+
+function validateObject(errors, card, field) {
+  if (!isPlainObject(card[field])) {
+    errors.push(issue("validation_failed", `${field} must be an object.`, field));
+  }
+}
+
+function validateNamespacedExtensions(errors, extensions) {
+  if (!isPlainObject(extensions)) {
+    return;
+  }
+
+  const namespacedKeyPattern = /^[a-z0-9][a-z0-9-]*(?:\.[a-z0-9][a-z0-9-]*)+$/u;
+  for (const key of Object.keys(extensions)) {
+    if (!namespacedKeyPattern.test(key)) {
+      errors.push(
+        issue(
+          "invalid_extension_namespace",
+          "extensions keys must be namespaced and must not override standard fields.",
+          `extensions.${key}`
+        )
+      );
+    }
+  }
+}
+
+export function validateExecutionReportCard(card) {
+  const errors = [];
+
+  if (!isPlainObject(card)) {
+    return {
+      ok: false,
+      errors: [issue("validation_failed", "ExecutionReportCard must be an object.")]
+    };
+  }
+
+  for (const field of EXECUTION_REPORT_CARD_REQUIRED_FIELDS) {
+    if (!(field in card)) {
+      errors.push(issue("missing_report_card_field", `${field} is required.`, field));
+    }
+  }
+
+  for (const field of [
+    "reportCardId",
+    "schemaVersion",
+    "generatedAt",
+    "projectInstanceId",
+    "workItemId",
+    "agentRunId",
+    "templateId",
+    "templateVersion",
+    "taskGoal",
+    "agentActorId",
+    "humanOwnerId",
+    "riskLevel",
+    "approvalStatus",
+    "dataClassification",
+    "redactionStatus",
+    "sharePermission",
+    "status",
+    "summary"
+  ]) {
+    if (field in card && !hasText(card[field])) {
+      errors.push(issue("validation_failed", `${field} must be a non-empty string.`, field));
+    }
+  }
+
+  if (card.schemaVersion !== EXECUTION_REPORT_CARD_SCHEMA_VERSION) {
+    errors.push(
+      issue(
+        "unsupported_schema_version",
+        `schemaVersion must be ${EXECUTION_REPORT_CARD_SCHEMA_VERSION}.`,
+        "schemaVersion"
+      )
+    );
+  }
+
+  if ("generatedAt" in card && Number.isNaN(Date.parse(card.generatedAt))) {
+    errors.push(issue("validation_failed", "generatedAt must be an ISO 8601 timestamp.", "generatedAt"));
+  }
+
+  if ("riskLevel" in card && !RISK_LEVELS.includes(card.riskLevel)) {
+    errors.push(issue("invalid_risk_level", "riskLevel is invalid.", "riskLevel"));
+  }
+
+  if ("approvalStatus" in card && !APPROVAL_STATUSES.includes(card.approvalStatus)) {
+    errors.push(issue("invalid_approval_status", "approvalStatus is invalid.", "approvalStatus"));
+  }
+
+  if ("status" in card && !REPORT_CARD_STATUSES.includes(card.status)) {
+    errors.push(issue("invalid_report_status", "status is invalid.", "status"));
+  }
+
+  for (const field of [
+    "inputRefs",
+    "outputRefs",
+    "skillRefs",
+    "toolContractRefs",
+    "auditRefs",
+    "findings",
+    "recommendations",
+    "nextActions"
+  ]) {
+    validateArray(errors, card, field);
+  }
+
+  validateObject(errors, card, "metrics");
+
+  if ("failure" in card && card.failure !== null && !isPlainObject(card.failure)) {
+    errors.push(issue("validation_failed", "failure must be null or an object.", "failure"));
+  }
+
+  validateObject(errors, card, "extensions");
+  validateNamespacedExtensions(errors, card.extensions);
+
+  return { ok: errors.length === 0, errors };
+}
+
+function renderList(items, fallback = "None") {
+  if (!Array.isArray(items) || items.length === 0) {
+    return `- ${fallback}`;
+  }
+
+  return items
+    .map((item) => {
+      if (typeof item === "string") {
+        return `- ${item}`;
+      }
+      const title = item.title ?? item.id ?? item.action ?? item.path ?? "Item";
+      const detail = item.detail ?? item.description ?? item.reason ?? item.status ?? "";
+      return detail ? `- ${title}: ${detail}` : `- ${title}`;
+    })
+    .join("\n");
+}
+
+export function renderExecutionReportCardMarkdown(card) {
+  const validation = validateExecutionReportCard(card);
+  if (!validation.ok) {
+    const details = validation.errors.map((error) => `${error.path}: ${error.code}`).join(", ");
+    throw new Error(`Cannot render invalid ExecutionReportCard: ${details}`);
+  }
+
+  const demo = card.extensions["ai-hrms.demo"] ?? {};
+  const modelRoute = demo.modelRoute ?? {};
+  const failureSample = card.failure?.sample;
+
+  return `# ExecutionReportCard
+
+- Report: ${card.reportCardId}
+- Schema: ${card.schemaVersion}
+- Generated: ${card.generatedAt}
+- Template: ${card.templateId}@${card.templateVersion}
+- Status: ${card.status}
+- Risk: ${card.riskLevel}
+- Approval: ${card.approvalStatus}
+- Data: ${card.dataClassification}, ${card.redactionStatus}, ${card.sharePermission}
+- Model route: ${modelRoute.actual ?? "unknown"}${modelRoute.mock === true ? " (mock)" : ""}
+
+## Task
+
+${card.taskGoal}
+
+## Summary
+
+${card.summary}
+
+## Findings
+
+${renderList(card.findings)}
+
+## Recommendations
+
+${renderList(card.recommendations)}
+
+## Next Actions
+
+${renderList(card.nextActions)}
+
+## Failure Path Sample
+
+${failureSample ? `- Type: ${failureSample.failureType}
+- Simulated: ${failureSample.simulated === true ? "yes" : "no"}
+- Recovery: ${failureSample.recovery}` : "- None"}
+
+## Output Refs
+
+${renderList(card.outputRefs)}
+`;
+}

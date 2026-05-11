@@ -82,7 +82,8 @@ flowchart TB
 
 - 控制面与运行面独立发布
 - 学习结果只能灰度发布
-- 新模型路由先经过 staging 和限流验证
+- 新模型路由先经过 ModelCapabilityProfile、EvalRun、staging 和限流验证
+- GovernanceBrain 的分派策略、上下文图谱规则和模型路由建议只能作为候选灰度，不能直接覆盖生产规则
 - 代码、配置、prompt、workflow、策略和模型路由必须按 `dev` -> `staging` -> `prod` 单向晋级
 - 每个生产发布单元必须声明回滚版本、回滚条件和观察窗口
 
@@ -115,6 +116,10 @@ flowchart TB
 | 审批漏触发率 | 零容忍 | 立即停止相关自动化 |
 | 策略违规率 | 零容忍或接近零 | 冻结相关工具或 AgentActor |
 | 模型调用成本 | 受预算约束 | 限流、降级或调整模型路由 |
+| 模型能力匹配率 | 越高越好 | 检查 ModelCapabilityProfile、EvalRun 和任务切片 |
+| 模型间分歧率 | 受场景约束 | 高风险场景升强模型、转人工或补评测样本 |
+| GovernanceBrain 分派接受率 | 越高越好 | 检查成员画像、任务切片和分派规则 |
+| 人工改派率 | 越低越好 | 检查 TaskFitAssessment 依据、负载和权限边界 |
 | Temporal workflow backlog | 稳定可控 | 扩容 worker 或暂停入口 |
 | 首次启动时间 | 越低越好 | 检查依赖启动、配置和资源档位 |
 | Demo 跑通时间 | 5 到 10 分钟内 | 降低依赖、补充 mock/stub 或修复引导 |
@@ -133,6 +138,18 @@ flowchart TB
 - 权限和 secret 轮换步骤。
 - 关联 dashboard、日志查询和告警规则。
 
+## 开发环境策略
+
+本项目不要求所有开发者使用同一种宿主机。Windows、Linux、macOS 和 WSL 都应被视为有效开发环境，只要项目级命令保持跨平台。
+
+原则：
+
+- 对 Node、pnpm、uv、Docker CLI 等可跨平台安装的工具，文档应声明版本和安装入口，不把宿主机差异视为产品风险。
+- 本地脚本必须优先使用跨平台命令；需要 shell 能力时，优先使用 Node/Python 小脚本封装。
+- Docker Compose、devcontainer 或 mock 服务用于封装数据库、Temporal、Keycloak、LiteLLM、对象存储和系统库差异。
+- Tiny/Demo/Local Mode 的本地开发路径不应要求开发者先启动完整 Enterprise 依赖。
+- README 或 runbook 必须把“本机安装路径”和“容器兜底路径”分开描述。
+
 ## 当前代码仓结构
 
 当前 Phase 1 已先落地不连接真实基础设施的环境隔离守卫：
@@ -141,11 +158,14 @@ flowchart TB
 - `packages/policy`：环境隔离和 ToolContract 执行边界校验。
 - `config/environments`：`dev`、`ci`、`staging`、`prod` 样例配置。
 
-后续服务目录仍按以下结构扩展：
+后续服务目录仍按 [developer-experience.md](developer-experience.md) 的目标结构逐步扩展。首批服务目录包括：
 
 - `apps/web`
 - `apps/control-plane`
 - `apps/agent-runtime`
 - `packages/evals`
+- `packages/federation`
+- `packages/devtools`
 - `infra/`
-- `docs/runbooks/`
+- `scripts/`
+- `docs/zh-CN/runbooks/`

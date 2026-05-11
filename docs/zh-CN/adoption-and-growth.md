@@ -4,7 +4,7 @@
 
 AI-HRMS 需要让用户在 30 秒内理解它是什么，在 5 到 10 分钟内跑通最小闭环，并能把一次执行结果转化为可分享、可复用、可贡献的资产。
 
-传播不是单纯营销。它要帮助个人、社区和组织更快理解 AI 时代 HRMS 的新定义：AI-HRMS 管理 HumanActor、AgentActor、WorkItem、ToolContract、ApprovalGate、PolicyRule、Observation、LearningArtifact、ProjectInstance 和 DomainWorkflow，让标准化工作在明确约束下由 AI 执行，由人类设定目标、定义边界、审批高风险动作、审查结果和承担最终责任。
+传播不是单纯营销。它要帮助个人、社区和组织更快理解 AI 时代 HRMS 的新定义：AI-HRMS 管理 HumanActor、AgentActor、WorkItem、ToolContract、ApprovalGate、PolicyRule、Observation、LearningArtifact、ProjectInstance、GovernanceBrain 和 DomainWorkflow，让标准化工作在明确约束下由 AI 执行，由人类设定目标、定义边界、审批高风险动作、审查结果和承担最终责任。
 
 ## 最小可传播 Demo
 
@@ -19,28 +19,52 @@ Demo Mode 的最小闭环：
 7. 形成 `LearningArtifact` 或 `Eval sample`。
 8. 导出 `ExecutionReportCard`。
 
-Demo 可以使用 SQLite、mock 工具、mock model 或用户自带模型 API key。它不要求 Keycloak、Temporal、完整 OTel、Langfuse 或 Grafana。
+Demo 可以使用 SQLite、mock 工具和 mock model 跑通。用户自带模型 API key 或本地模型只作为 live model 增强路径。它不要求 Keycloak、Temporal、完整 OTel、Langfuse 或 Grafana。
+
+MVP 采用 CLI-first、Web UI-follow：
+
+- CLI 负责让 Demo Mode 可运行、可测试、可复现。
+- CLI 必须生成 JSON 形式的 `ExecutionReportCard` 作为事实源，并默认导出 Markdown 渲染物。
+- 默认 `mock` 模式必须在无真实模型 key 的情况下生成固定、结构完整且有真实感的样例输出。
+- 可选 `live` 模式只增强分析质量，不能改变报告卡 schema、审批、审计和数据分级语义。
+- 极简 Web UI 在后续读取同一份执行数据，用于展示工作台、审批台、报告卡和文档教学入口。
+- Web UI 不能重新实现一套绕过 CLI 数据契约、策略和审计语义的业务逻辑。
+
+## 文档教学入口
+
+早期采用路径默认用户具备较好的自学能力，因此最重要的增长资产不是复杂教学系统，而是能让用户快速跑通的文档教材。
+
+MVP 文档教学入口必须覆盖：
+
+- AI-HRMS 是什么，以及它与传统 HRMS、泛泛 agent framework 的区别。
+- Demo Mode 如何启动。
+- 首个模板如何运行。
+- `WorkItem`、`AgentActor`、`ToolContract`、`ApprovalGate`、`Observation` 和 `ExecutionReportCard` 的关系。
+- 失败后如何查看复盘和报告卡。
+- 如何贡献模板、失败案例或文档修正。
+
+`KeywordHelpOverlay` 可作为后续体验增强，通过快捷键或聚焦关键词弹窗展示术语解释、来源文档、示例和下一步链接，但它不应成为 MVP 跑通的前置条件。
 
 ## ExecutionReportCard
 
 每次 AI 完成任务后，可以生成可分享的 `ExecutionReportCard`。它默认是脱敏输出物，公开分享必须显式授权。
 
+`ExecutionReportCard` 的 canonical source 是 JSON。Markdown、HTML、Web UI 卡片和案例库页面都只能从该 JSON 渲染。首版可以只默认导出 Markdown，但必须同时保存 JSON，并从第一版开始包含 `schemaVersion`。
+
 字段：
 
-- 任务目标。
-- 发起者。
-- 执行者。
-- 使用的 `Skill`。
-- 调用的 `ToolContract`。
-- 风险等级。
-- 审批结果。
-- 成本。
-- 延迟。
-- 节省时间估算。
-- 失败与人工修正。
-- 可复用模板引用。
-- 脱敏状态。
-- 公开分享许可。
+- 身份：`reportCardId`、`schemaVersion`、`generatedAt`。
+- 任务引用：`projectInstanceId`、`workItemId`、`agentRunId`。
+- 模板引用：`templateId`、`templateVersion`。
+- 输入输出引用：`inputRefs`、`outputRefs`。
+- 执行者：`agentActorId`、`humanOwnerId`。
+- 工具：`skillRefs`、`toolContractRefs`。
+- 治理：`riskLevel`、`approvalStatus`、`auditRefs`。
+- 数据：`dataClassification`、`redactionStatus`、`sharePermission`。
+- 结果：`status`、`summary`、`findings`、`recommendations`、`nextActions`。
+- 扩展：`metrics`、`failure`、`extensions`。
+
+首版可以让 `metrics`、`failure` 和 `extensions` 为空，但不能省略这些扩展位置。后续新增成本、延迟、节省时间估算、多模型对比、完整 trace 或跨实例共享记录时，应追加兼容字段，而不是改变已有字段语义。
 
 ## 模板传播机制
 
@@ -52,6 +76,8 @@ Demo 可以使用 SQLite、mock 工具、mock model 或用户自带模型 API ke
 - `Eval sample`
 - `Failure case`
 - `Review note`
+- `TaskFitAssessment`
+- `ModelCapabilityProfile`
 
 首批示例模板：
 
@@ -123,6 +149,8 @@ Demo 可以使用 SQLite、mock 工具、mock model 或用户自带模型 API ke
 
 每类贡献都要可署名、可追踪、可复用。贡献者声誉应优先反映长期维护、真实使用反馈、失败复盘质量和对社区资产的改善，而不是只统计代码行数。
 
+贡献者声誉不能压缩成全局单一贡献分，也不能把拒绝 AI 建议分派、响应速度、在线时长或模型推断作为负面贡献依据。成员权利和贡献记录规则见 [member-rights-and-contribution.md](member-rights-and-contribution.md)。
+
 ## 推广资产
 
 需要沉淀的推广资产：
@@ -145,7 +173,7 @@ Demo 可以使用 SQLite、mock 工具、mock model 或用户自带模型 API ke
 | 个人开发者 | 用 AI-HRMS 管理自己的任务、工具、审批和学习资产，避免把工作流锁在封闭平台里 |
 | 自由职业者 | 用模板和报告卡复用标准化交付，保留人工验收和客户边界 |
 | 开源维护者 | 用 WorkItem、AgentActor 和 ApprovalGate 分流 issue、生成草稿、沉淀失败样本 |
-| 小团队 | 多人共用一个 ProjectInstance，统一任务、权限、审批和模板 |
+| 小团队 | 多人共用一个 ProjectInstance，用 GovernanceBrain 辅助任务分派、权限边界、审批和模板复用 |
 | 社区组织 | 用 Community Instance 管理成员协作、贡献者 onboarding 和公开 Commons 资产 |
 | AI agent 开发者 | 用 ToolContract、PolicyRule 和 Eval sample 让 agent 能被治理和复盘 |
 | 研究者 | 使用脱敏 SharedEvalSummary、失败分类和版本指标研究人机协作质量 |
@@ -156,8 +184,10 @@ Demo 可以使用 SQLite、mock 工具、mock model 或用户自带模型 API ke
 - README 首屏理解率。
 - Demo 跑通时间。
 - Demo 完成率。
+- CLI 首次运行成功率。
 - 首个模板运行成功率。
 - 首张 ExecutionReportCard 生成率。
+- 报告卡被打开或分享的次数。
 - 模板贡献转化率。
 - 失败样本贡献数量。
 - 非代码贡献者数量。
@@ -173,3 +203,4 @@ Demo 可以使用 SQLite、mock 工具、mock model 或用户自带模型 API ke
 - Commons 资产只接受用户明确发布的内容。
 - `SharedEvalSummary` 只能包含聚合指标、样本类型、失败分类和版本信息。
 - 敏感数据、原始上下文、内部任务和非公开日志不得进入传播资产。
+- 脱敏训练资源不得默认成为公开传播资产；公开前必须重新经过显式授权、脱敏检查和分享许可确认。

@@ -20,7 +20,10 @@
 - 定义个人与社区优先原则。
 - 定义 ProjectInstance。
 - 定义跨实例协作边界。
+- 定义 FederationProtocol 的最小通信面、消息封套和二次开发兼容规则。
 - 定义资源自适应运行体系。
+- 定义 GovernanceBrain、智能分派和模型能力治理边界。
+- 定义能力发展愿景、文档教学优先和 MVP 收敛边界。
 - 定义开源策略。
 - 定义传播机制。
 - 定义最小可运行闭环。
@@ -29,14 +32,17 @@
 退出标准：
 
 - README 首屏能在 30 秒内解释 AI-HRMS 是什么、AI 时代 HRMS 管理什么、个人和多人如何使用、AI 如何执行标准化工作、人类如何审批和治理。
-- `business-blueprint.md` 出现 ProjectInstance、FederationLink、CapabilityOffer、CapabilityRequest、SharedTemplate、SharedEvalSummary、ExecutionReportCard、ResourceProfile、AdaptiveRuntimePolicy、DomainWorkflow 和 DomainPack。
-- `architecture-blueprint.md` 出现 Adaptive Runtime Layer、Federation Gateway、Execution Report Generator、Resource Profile Detector、Adaptive Model Router 和 Adaptive Task Scheduler。
+- `business-blueprint.md` 出现 ProjectInstance、GovernanceBrain、MemberCapabilityProfile、TaskFitAssessment、ModelCapabilityProfile、FederationLink、CapabilityOffer、CapabilityRequest、SharedTemplate、SharedEvalSummary、ExecutionReportCard、ResourceProfile、AdaptiveRuntimePolicy、DomainWorkflow 和 DomainPack。
+- `architecture-blueprint.md` 出现 Adaptive Runtime Layer、Federation Gateway、FederationProtocol、Execution Report Generator、Resource Profile Detector、Adaptive Model Router 和 Adaptive Task Scheduler。
 - `open-source-strategy.md`、`adoption-and-growth.md`、`community-network.md`、`adaptive-runtime.md` 和 `community-governance.md` 已进入索引。
+- `governance-ai-brain.md` 已进入索引，并说明治理型 AI 中枢不能替代人类 owner 或绕过审批。
+- `capability-development-and-mvp.md` 已进入索引，并说明复杂能力发现、自适应教学和 KeywordHelpOverlay 不阻塞 MVP。
 - ADR-0004 已记录 AI 时代 HRMS 定义。
 
 ## Phase 0.6: Template and report-card growth loop
 
 - 示例模板。
+- MVP 文档教学入口。
 - ExecutionReportCard。
 - 模板贡献指南。
 - 脱敏评测摘要。
@@ -46,16 +52,27 @@
 最小交付：
 
 - GitHub issue 分流、会议纪要整理、文档摘要、政策问答、开源项目维护和社区贡献者 onboarding 等示例模板。
-- ExecutionReportCard schema 草案和脱敏规则。
+- README -> Demo Mode -> 首个模板 -> ExecutionReportCard 的最短学习路径。
+- 首个低连接器依赖、低敏感数据依赖的模板，优先评估文档摘要与改进建议。
+- CLI-first 的 Demo Mode 执行入口，极简 Web UI 后续读取同一份执行数据展示。
+- 默认 mock model 和可选 live model 路径；MVP 通过标准不得依赖真实模型 key。
+- ExecutionReportCard JSON schema 草案、Markdown 渲染规则和脱敏规则。
 - 模板贡献指南和失败案例贡献指南。
 - SharedEvalSummary 的聚合指标和失败分类格式。
 - 案例库信息架构和公开分享许可规则。
+- 成员权利、拒绝 AI 建议分派和贡献记录机制。
+- 脱敏训练资源的数据生命周期和保留规则。
 
 不能进入下一阶段的条件：
 
 - 报告卡公开分享无法标注脱敏状态和许可。
 - 模板缺少风险等级、审批要求和失败处理。
 - 贡献者署名和追踪机制缺失。
+- AI 分派被实现成强制命令，或拒绝建议被自动记为负面贡献。
+- 敏感原文可直接作为训练资源保留。
+- Demo Mode 依赖 KeywordHelpOverlay、复杂自适应教学、真实外部连接器或完整企业栈才能跑通。
+- Demo Mode 必须依赖真实模型 key 才能跑通，或 mock model 输出不可测试。
+- Web UI 需要重新实现独立业务逻辑，或不能读取 CLI 产生的同一份执行数据。
 
 ## Phase 0.7: Community contribution foundation
 
@@ -86,20 +103,27 @@
 
 - 建立控制面与工作台。
 - 建立 `ProjectInstance`、`InstanceMember`、`WorkItem`、`ApprovalGate`、`AgentActor`、`PolicyRule` 最小闭环。
-- 建立 `ResourceProfile`、`AdaptiveRuntimePolicy`、`ExecutionReportCard` 的最小实现方向。
+- 建立 `GovernanceBrain`、`MemberCapabilityProfile`、`TaskFitAssessment`、`ModelCapabilityProfile`、`ResourceProfile`、`AdaptiveRuntimePolicy`、`ExecutionReportCard` 的最小实现方向。
+- 建立 `TeachingMaterial`、`LearningPath`、`CapabilityDiscovery`、`CapabilityProof` 和 `KeywordHelpOverlay` 的边界，其中 KeywordHelpOverlay 延后实现。
 - 建立受控模型网关与知识底座。
 - 建立基础审计与观测。
+- 建立跨平台开发入口、doctor 检查、文件组织基线和最小 CI。
 - 保留传统 HRMS 能力，包括组织、账号、员工档案、考勤、权限和协作内容。
 
 最小交付：
 
 - `apps/web`、`apps/control-plane`、`apps/agent-runtime`、`packages/contracts`、`packages/policy` 基础结构。
+- `developer-experience.md` 目标结构落地到首批目录，包含 `scripts/doctor.mjs`、`pnpm-lock.yaml` 和 Linux CI；关键脚本准备 Windows 验证。
+- CLI-first 的 Demo runner，能保存 JSON `ExecutionReportCard` 并默认导出 Markdown 渲染物。
+- mock model 固定输出和 live model 可选增强路径。
 - 组织、账号、员工档案、考勤、权限、协作内容的核心 API。
 - ProjectInstance 和 InstanceMember 的最小 API。
+- GovernanceBrain 的项目基线解释、成员画像、任务适配评估和冲突报告 API 草案。
+- 文档教学优先的 Demo 教程和首个模板说明。
 - WorkItem 状态迁移、ApprovalGate 决策、AgentRun 记录和审计事件。
 - LiteLLM Proxy 的 dev/staging/prod 分环境配置样例。
-- ResourceProfile 和 AdaptiveRuntimePolicy 的最小策略模型。
-- ExecutionReportCard 的生成和脱敏状态记录。
+- ResourceProfile、ModelCapabilityProfile 和 AdaptiveRuntimePolicy 的最小策略模型。
+- ExecutionReportCard 的 JSON 生成、schemaVersion、Markdown 渲染和脱敏状态记录。
 - 基础 Playwright 场景覆盖审批流、人机协作流和 Demo Mode 闭环。
 
 不能进入下一阶段的条件：
@@ -108,49 +132,64 @@
 - Agent Runtime 可直接修改 HR 主数据。
 - 没有可追溯的审计事件和策略判断。
 - Demo Mode 无法跑通最小闭环。
+- 新用户无法按文档在 5 到 10 分钟内跑通首个模板。
+- 新开发者无法通过本机路径或容器兜底路径完成最小验证。
+- 新目录不符合文件组织门禁，或根目录出现临时实验资产。
 - 自适应降级可以绕过审批、安全、审计、预算或数据分级。
+- GovernanceBrain 可以替代人类 owner、自动批准高风险动作或把候选直接落地。
+- 生产模型路由没有 ModelCapabilityProfile、评测结果和回退策略。
 
 ## Phase 2: 学习飞轮
 
 - 建立 Observation 汇聚管道。
 - 建立数据集管理、评测运行和候选发布流程。
 - 建立提示词、工作流和策略的灰度发布能力。
+- 建立任务分派策略、模型能力画像和模型路由候选的评测流程。
 - 支持 Failure case、Review note 和 SharedEvalSummary 的沉淀。
+- 开始评估 LearningPath、CapabilityProof 和 TeachingStrategy 的数据化沉淀。
 
 最小交付：
 
 - LearningArtifact、Experiment、EvalRun 的 API 与存储模型。
+- TaskFitAssessment、ModelCapabilityProfile 和模型间分歧报告的评测切片。
 - 固定基线数据集和评分器版本。
 - staging 沙盒回放能力。
 - 生产灰度发布、观察窗口和回滚记录。
 - 脱敏评测摘要导出。
+- CapabilityProof 证据类型和 LearningPath 反馈样本。
 
 不能进入下一阶段的条件：
 
 - 学习结果可直接覆盖生产配置。
 - 评测数据集没有版本或包含未脱敏生产数据。
 - 治理指标缺少发布门槛。
+- 模型升级、降级或供应商切换没有评测和回滚。
 
 ## Phase 3: 深化自治与社区协作
 
 - 建立更多 AgentActor 角色与跨部门协作能力。
 - 扩展更复杂的流程编排与多代理协同。
+- 使用 GovernanceBrain 协调多人、多 AgentActor 和跨实例协作的依赖、冲突、review 和交接。
 - 在严格审批边界内扩大自动执行范围。
 - 试验 Community Mode 中的模板共享、贡献者声誉和可选 FederationLink。
+- 试验 FederationProtocol 的 Manifest、Message、Receipt 和 schema 互操作。
 
 最小交付：
 
 - 多个 AgentActor 的能力、工具和预算隔离。
+- GovernanceBrain 对多人任务分派、review 链路、模型能力匹配和阻塞升级的审计。
 - 跨部门 WorkItem 协作、升级和补偿流程。
 - 更细粒度的 ToolContract 风险等级和自动执行策略。
 - 多代理协同的审计和冲突处理规则。
 - FederationLink 的只读或模板共享试验，不包含高风险远程工具执行。
+- FederationProtocol 的最小互操作测试，覆盖重复 messageId、未知 messageType、撤销 link 和 SharedEvalSummary 脱敏。
 
 不能进入下一阶段的条件：
 
 - 多代理协作缺少统一 owner 或冲突解决规则。
 - 自动执行范围扩大但评测覆盖没有同步扩大。
 - FederationLink 无显式授权、审计或撤销方式。
+- 跨实例通信依赖未登记内部 API，或二次开发修改 FederationMessage 标准封套语义。
 
 ## Phase 4: AI-HRMS 跨域扩展
 

@@ -1,6 +1,6 @@
 # AI-HRMS
 
-AI-HRMS 是 AI 时代的人类与智能体资源管理系统。它把 `HumanActor`、`AgentActor`、`WorkItem`、`ToolContract`、`ApprovalGate`、`PolicyRule`、`Observation`、`LearningArtifact`、`ProjectInstance` 和 `DomainWorkflow` 统一管理，让标准化工作可以在明确约束下由 AI 执行，由人类设定目标、定义边界、审批高风险动作、审查结果和承担最终责任。
+AI-HRMS 是 AI 时代的人类与智能体资源管理系统。它把 `HumanActor`、`AgentActor`、`WorkItem`、`ToolContract`、`ApprovalGate`、`PolicyRule`、`Observation`、`LearningArtifact`、`ProjectInstance`、`GovernanceBrain` 和 `DomainWorkflow` 统一管理，让标准化工作可以在明确约束下由 AI 执行，由人类设定目标、定义边界、审批高风险动作、审查结果和承担最终责任。
 
 ## AI 时代 HRMS 的定义
 
@@ -38,6 +38,8 @@ AI-HRMS 面向个人、多人协作组织、社区、开源项目、小型工作
 - `Observation`：运行日志、指标、trace、反馈、输出和失败样本。
 - `LearningArtifact`：可进入评测、审批、灰度和回滚流程的学习沉淀。
 - `ProjectInstance`：一个 AI-HRMS 运行实例，可由个人、团队、社区或企业内部团队运行。
+- `GovernanceBrain`：ProjectInstance 内长期陪伴项目演化的治理型 AI 中枢，用于项目理解、智能分派、多人协调、模型能力治理和受控自我迭代；它不能替代人类 owner，也不能绕过审批、审计、预算和数据分级。
+- `ModelCapabilityProfile`：用于描述模型在推理、代码、长上下文、结构化输出、工具调用、安全、成本和延迟等方面能力的评测画像，是 `ModelRoute` 选择和降级的依据。
 - `DomainWorkflow`：面向 HR、开源维护、社区运营、项目协作等领域的可复用工作流。
 
 ## 最小可运行闭环
@@ -53,7 +55,19 @@ AI-HRMS 面向个人、多人协作组织、社区、开源项目、小型工作
 7. 形成 `LearningArtifact` 或 `Eval sample`。
 8. 导出 `ExecutionReportCard`。
 
-`ExecutionReportCard` 用于展示任务目标、发起者、执行者、使用的 Skill、调用的 ToolContract、风险等级、审批结果、成本、延迟、节省时间估算、失败与人工修正、可复用模板引用、脱敏状态和公开分享许可。
+`ExecutionReportCard` 用于展示任务目标、输入输出引用、执行者、使用的 Skill、调用的 ToolContract、风险等级、审批结果、发现、建议、失败与人工修正、脱敏状态和公开分享许可。它的事实源是带 `schemaVersion` 的 JSON；Markdown、HTML 和 Web UI 都只是渲染物。
+
+MVP 执行顺序采用 CLI-first、Web UI-follow。首版 CLI 用于跑通最小闭环，保存 JSON `ExecutionReportCard` 并默认导出 Markdown；极简 Web UI 在 CLI 闭环稳定后读取同一份执行数据，用于展示工作台、审批台、报告卡和文档教学入口。
+
+Demo Mode 默认使用 `mock` 模式，无需真实模型 key；`live` 模式只作为用户自带模型 API key 或本地模型的增强路径，不能改变 schema、审批、审计、数据分级或报告卡结构。
+
+首版 CLI 已提供 `docs_review_and_improvement` 模板：
+
+```text
+pnpm demo
+```
+
+默认输出写入 `dist/demo-mode/`：JSON 是 `ExecutionReportCard` 的 canonical source，Markdown 是从 JSON 渲染出的默认阅读版本。更多参数见 [docs/zh-CN/runbooks/demo-mode.md](docs/zh-CN/runbooks/demo-mode.md)。
 
 ## 运行档位
 
@@ -118,8 +132,14 @@ AI-HRMS 的反商业捕获策略是组合式的，而不是承诺许可证可以
 - [docs/zh-CN/README.md](docs/zh-CN/README.md)：中文解释文档库总索引。
 - [docs/zh-CN/open-source-strategy.md](docs/zh-CN/open-source-strategy.md)：开源战略与反商业捕获。
 - [docs/zh-CN/adoption-and-growth.md](docs/zh-CN/adoption-and-growth.md)：传播、Demo、报告卡和模板增长机制。
+- [docs/zh-CN/governance-ai-brain.md](docs/zh-CN/governance-ai-brain.md)：治理型 AI 中枢、智能分派和模型能力治理。
+- [docs/zh-CN/member-rights-and-contribution.md](docs/zh-CN/member-rights-and-contribution.md)：成员拒绝权、贡献机制和 AI 分派边界。
+- [docs/zh-CN/capability-development-and-mvp.md](docs/zh-CN/capability-development-and-mvp.md)：能力发展愿景、文档教学优先和 MVP 生存优先级。
+- [docs/zh-CN/data-lifecycle-and-training-resources.md](docs/zh-CN/data-lifecycle-and-training-resources.md)：数据生命周期、脱敏训练资源和撤回删除规则。
 - [docs/zh-CN/community-network.md](docs/zh-CN/community-network.md)：ProjectInstance 与跨实例协作。
+- [docs/zh-CN/federation-protocol.md](docs/zh-CN/federation-protocol.md)：跨实例通信协议和二次开发兼容性规则。
 - [docs/zh-CN/adaptive-runtime.md](docs/zh-CN/adaptive-runtime.md)：资源自适应运行体系。
+- [docs/zh-CN/developer-experience.md](docs/zh-CN/developer-experience.md)：跨平台开发体验与文件组织规划。
 - [docs/zh-CN/community-governance.md](docs/zh-CN/community-governance.md)：社区治理和企业参与边界。
 
 ## 路线图摘要
@@ -127,4 +147,4 @@ AI-HRMS 的反商业捕获策略是组合式的，而不是承诺许可证可以
 - `Phase 0.5`：AI-HRMS repositioning and adaptive demo foundation。
 - `Phase 0.6`：Template and report-card growth loop。
 - `Phase 0.7`：Community contribution foundation。
-- `Phase 1`：AI-HRMS Core 基础能力，保留传统 HRMS 能力，并最小实现 `AgentActor`、`WorkItem`、`ApprovalGate`、`AdaptiveRuntimePolicy`、`ExecutionReportCard` 和 `ProjectInstance`。
+- `Phase 1`：AI-HRMS Core 基础能力，保留传统 HRMS 能力，并最小实现 `AgentActor`、`WorkItem`、`ApprovalGate`、`GovernanceBrain`、`ModelCapabilityProfile`、`AdaptiveRuntimePolicy`、`ExecutionReportCard` 和 `ProjectInstance`。
