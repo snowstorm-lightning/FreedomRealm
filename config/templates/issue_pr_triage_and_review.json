@@ -1,0 +1,92 @@
+{
+  "templateId": "issue_pr_triage_and_review",
+  "templateVersion": "0.1.0",
+  "displayName": "Issue PR Triage And Review",
+  "runtimeMode": "Demo Mode",
+  "taskGoal": "Review pasted issue or PR context, classify it, identify risk, and recommend next WorkItems without posting comments or merging code.",
+  "workItemTitle": "Demo issue or PR triage",
+  "agentActorId": "agent-demo-triage-reviewer",
+  "agentRole": "DemoTriageReviewer",
+  "agentGoal": "Generate reviewable issue and PR triage suggestions without external connector side effects.",
+  "approvalAction": "human_review_before_external_comment_or_merge",
+  "dataClassification": "internal",
+  "redactionStatus": "redacted",
+  "sharePermission": "private",
+  "riskLevel": "medium",
+  "skillRefs": [
+    "skill://issue.triage.v1",
+    "skill://pr.review.v1",
+    "skill://execution-report-card.render.v1"
+  ],
+  "toolContracts": [
+    {
+      "toolName": "issue_pr.read_pasted_context",
+      "description": "Read pasted issue or PR context from local demo inputs.",
+      "inputSchemaRef": "schema://ai-hrms.demo.issue_pr.read_pasted_context.input.v1",
+      "outputSchemaRef": "schema://ai-hrms.demo.issue_pr.read_pasted_context.output.v1",
+      "requiredPermissions": [
+        "issue_pr:read"
+      ],
+      "riskLevel": "low",
+      "allowedActorTypes": [
+        "AgentActor"
+      ],
+      "allowedEnvironments": [
+        "dev",
+        "ci"
+      ],
+      "autoExecute": true,
+      "budgetLimit": {
+        "currency": "token",
+        "amount": 1000
+      },
+      "auditTags": [
+        "issue",
+        "pr",
+        "read",
+        "demo"
+      ]
+    },
+    {
+      "toolName": "issue_pr.propose_triage",
+      "description": "Generate triage and review recommendations without posting comments, changing labels, or merging code.",
+      "inputSchemaRef": "schema://ai-hrms.demo.issue_pr.propose_triage.input.v1",
+      "outputSchemaRef": "schema://ai-hrms.demo.issue_pr.propose_triage.output.v1",
+      "requiredPermissions": [
+        "reports:create"
+      ],
+      "riskLevel": "medium",
+      "allowedActorTypes": [
+        "AgentActor"
+      ],
+      "allowedEnvironments": [
+        "dev",
+        "ci"
+      ],
+      "autoExecute": false,
+      "budgetLimit": {
+        "currency": "token",
+        "amount": 2000
+      },
+      "auditTags": [
+        "issue",
+        "pr",
+        "triage",
+        "ApprovalGate",
+        "demo"
+      ]
+    }
+  ],
+  "mockModel": {
+    "modelRouteId": "mock.issue-pr-triage.v1",
+    "modelCapabilityProfileRef": "model-capability-profile://mock.issue-pr-triage.v1",
+    "structuredOutputSupport": true,
+    "toolCallingSupport": false
+  },
+  "failureSample": {
+    "failureType": "missing_diff_or_issue_context",
+    "simulated": true,
+    "statusIfTriggered": "blocked",
+    "recovery": "Ask the human owner for the issue body, PR summary, or diff excerpt before making a review recommendation."
+  }
+}

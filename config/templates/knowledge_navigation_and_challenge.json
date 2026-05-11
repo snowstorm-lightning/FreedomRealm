@@ -1,0 +1,147 @@
+{
+  "templateId": "knowledge_navigation_and_challenge",
+  "templateVersion": "0.1.0",
+  "displayName": "Knowledge Navigation And Challenge",
+  "runtimeMode": "Demo Mode",
+  "taskGoal": "Answer a user question by locating maintained repository documentation, then create a draft challenge for any disputed source without modifying documents.",
+  "workItemTitle": "Demo knowledge navigation and challenge",
+  "agentActorId": "agent-demo-knowledge-navigator",
+  "agentRole": "DemoKnowledgeNavigator",
+  "agentGoal": "Generate sourced AnswerCard and DocChallengeDraft outputs using local deterministic mock semantic search.",
+  "approvalAction": "human_review_before_document_change",
+  "dataClassification": "internal",
+  "redactionStatus": "redacted",
+  "sharePermission": "private",
+  "riskLevel": "medium",
+  "skillRefs": [
+    "skill://knowledge.navigate.v1",
+    "skill://answer-card.draft.v1",
+    "skill://doc-challenge.draft.v1",
+    "skill://execution-report-card.render.v1"
+  ],
+  "toolContracts": [
+    {
+      "toolName": "knowledge.index_local_docs",
+      "description": "Index selected local repository Markdown documents into SourceChunks for Demo Mode.",
+      "inputSchemaRef": "schema://ai-hrms.demo.knowledge.index_local_docs.input.v1",
+      "outputSchemaRef": "schema://ai-hrms.demo.knowledge.index_local_docs.output.v1",
+      "requiredPermissions": [
+        "knowledge:read"
+      ],
+      "riskLevel": "low",
+      "allowedActorTypes": [
+        "AgentActor"
+      ],
+      "allowedEnvironments": [
+        "dev",
+        "ci"
+      ],
+      "autoExecute": true,
+      "budgetLimit": {
+        "currency": "token",
+        "amount": 1200
+      },
+      "auditTags": [
+        "knowledge",
+        "index",
+        "demo"
+      ]
+    },
+    {
+      "toolName": "knowledge.locate_sources",
+      "description": "Locate relevant source chunks through deterministic local mock semantic scoring.",
+      "inputSchemaRef": "schema://ai-hrms.demo.knowledge.locate_sources.input.v1",
+      "outputSchemaRef": "schema://ai-hrms.demo.knowledge.locate_sources.output.v1",
+      "requiredPermissions": [
+        "knowledge:read"
+      ],
+      "riskLevel": "low",
+      "allowedActorTypes": [
+        "AgentActor"
+      ],
+      "allowedEnvironments": [
+        "dev",
+        "ci"
+      ],
+      "autoExecute": true,
+      "budgetLimit": {
+        "currency": "token",
+        "amount": 1200
+      },
+      "auditTags": [
+        "knowledge",
+        "search",
+        "source-ref",
+        "demo"
+      ]
+    },
+    {
+      "toolName": "knowledge.propose_answer_card",
+      "description": "Generate an AnswerCard with source references and limitations without creating a production fact.",
+      "inputSchemaRef": "schema://ai-hrms.demo.knowledge.propose_answer_card.input.v1",
+      "outputSchemaRef": "schema://ai-hrms.demo.knowledge.propose_answer_card.output.v1",
+      "requiredPermissions": [
+        "reports:create"
+      ],
+      "riskLevel": "medium",
+      "allowedActorTypes": [
+        "AgentActor"
+      ],
+      "allowedEnvironments": [
+        "dev",
+        "ci"
+      ],
+      "autoExecute": false,
+      "budgetLimit": {
+        "currency": "token",
+        "amount": 1800
+      },
+      "auditTags": [
+        "knowledge",
+        "AnswerCard",
+        "ApprovalGate",
+        "demo"
+      ]
+    },
+    {
+      "toolName": "knowledge.create_doc_challenge_draft",
+      "description": "Create a draft challenge for human review without editing the source document.",
+      "inputSchemaRef": "schema://ai-hrms.demo.knowledge.create_doc_challenge_draft.input.v1",
+      "outputSchemaRef": "schema://ai-hrms.demo.knowledge.create_doc_challenge_draft.output.v1",
+      "requiredPermissions": [
+        "reports:create"
+      ],
+      "riskLevel": "medium",
+      "allowedActorTypes": [
+        "AgentActor"
+      ],
+      "allowedEnvironments": [
+        "dev",
+        "ci"
+      ],
+      "autoExecute": false,
+      "budgetLimit": {
+        "currency": "token",
+        "amount": 1200
+      },
+      "auditTags": [
+        "knowledge",
+        "DocChallengeDraft",
+        "ApprovalGate",
+        "demo"
+      ]
+    }
+  ],
+  "mockModel": {
+    "modelRouteId": "mock.knowledge-navigation.v1",
+    "modelCapabilityProfileRef": "model-capability-profile://mock.knowledge-navigation.v1",
+    "structuredOutputSupport": true,
+    "toolCallingSupport": false
+  },
+  "failureSample": {
+    "failureType": "source_confidence_too_low",
+    "simulated": true,
+    "statusIfTriggered": "blocked",
+    "recovery": "Ask the human owner to narrow the question, add maintained source documents, or submit a DocChallengeDraft for review without modifying source files."
+  }
+}

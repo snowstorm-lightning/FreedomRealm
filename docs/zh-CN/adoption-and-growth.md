@@ -71,6 +71,38 @@ CLI-tested core, Web-first onboarding, reality layer later.
 - 现实感知和现实执行只作为后续探索，不阻塞软件层 MVP。
 - 所有入口都必须遵守同一套 `ToolContract`、`ApprovalGate`、审计、数据分级和分享许可。
 
+### Web MVP 第一屏
+
+第一屏目标不是解释所有概念，而是让用户立刻进入一次可复盘的 AI 协作任务。首屏应围绕一个主动作组织：
+
+```text
+Generate your first AI-assisted work proof.
+```
+
+首屏结构：
+
+- 顶部一句话说明：AI-HRMS 把 AI 协作变成可复核、可审批、可分享的工作证明。
+- 三个入口并列展示：
+  - 我有目标：用户直接描述想完成的任务。
+  - 我想探索：用户提供兴趣、材料、时间和约束，由系统推荐路径。
+  - 我想看示例：使用内置 demo 数据直接生成报告卡。
+- 一个主按钮：生成第一张报告卡。
+- 一个次按钮：查看 CLI / GitHub / 文档。
+- 首屏下方只展示一张示例 `ExecutionReportCard` 预览，不展示复杂平台架构。
+
+首屏不得要求用户先注册、先选择固定身份、先配置模型 key、先连接外部工具或先理解完整术语。固定身份只作为快捷筛选，不作为必填字段。
+
+最短流程：
+
+1. 用户选择入口或使用示例。
+2. 系统推荐一个模板和输入要求。
+3. 用户确认或编辑目标。
+4. Demo 使用 mock model 运行。
+5. 生成 JSON-first `ExecutionReportCard` 和可读报告卡视图。
+6. 用户可以下载、复制、继续改进或创建下一步 `GrowthWorkItem`。
+
+Web UI 必须读取与 CLI 相同的模板 manifest、执行数据和报告卡 schema。任何 Web-only 状态都只能是展示状态，不能成为独立业务事实。
+
 ## 最合适传播方案
 
 当前最合适的传播方案不是“先做完整平台”，而是“先做一个能被立刻试用、能解释信任问题、能生成可分享结果的小工具”。
@@ -140,14 +172,18 @@ AI-HRMS Workbench: turn AI-assisted work into a reviewable proof.
 - 一张 JSON-first 的 `ExecutionReportCard`。
 - 可选的 `CapabilityProof`、`LearningPath` 或下一步 `GrowthWorkItem`。
 
-首批模板应覆盖多种自由路径，而不是只覆盖单一职业身份：
+首批模板应覆盖多种自由路径，而不是只覆盖单一职业身份。为了避免范围扩散，传播型 Web MVP 先只做 4 个用户可见模板；`docs_review_and_improvement` 保留为工程 smoke template 和文档基线模板。
 
-- 程序员：旧项目理解、bug triage、测试补齐、PR review。
-- 设计师：作品集重组、品牌视觉审查、商品图或落地页改进建议。
-- 写作者：文章改稿、选题验证、内容产品化、投稿包生成。
-- 创作者：作品说明、授权包、商品化 mockup、委托报价。
-- 转型人群：技能盘点、7 天学习路径、第一份可展示任务报告卡。
-- 小团队或社区：任务拆解、贡献者 onboarding、客户反馈整理。
+用户可见首批 4 个模板：
+
+- `repo_understanding_and_work_plan`：面向开发者、开源维护者和转型技术人。输入仓库说明、目录摘要或关键文件引用；输出项目理解、风险、下一步工作计划和可选 `WorkShard` 建议。不自动改代码。
+- `knowledge_navigation_and_challenge`：面向所有需要可信答案的用户。输入问题和可选文档范围；输出带来源引用的 `AnswerCard`、`DocChallengeDraft` 和报告卡。不自动修改文档。
+- `issue_pr_triage_and_review`：面向开源维护者、小团队和开发者。输入 issue、PR 描述、diff 摘要或 review 文字；输出分类、风险、建议 owner、审查要点和后续 WorkItem。不自动评论或合并。
+- `personal_work_proof`：面向不确定身份的探索者、设计师、写作者、创作者和转型人群。输入目标、已有材料和可用时间；输出候选 `LearningPath`、可执行小任务、能力证明摘要和第一张报告卡。
+
+模板 0：
+
+- `docs_review_and_improvement`：继续作为 CLI Demo、文档协作和报告卡 schema 的稳定样例。它可以在 Web 中作为“看示例”入口，但不是传播型 MVP 的唯一主线。
 
 ## 文档教学入口
 
@@ -200,11 +236,15 @@ MVP 文档教学入口必须覆盖：
 
 首批示例模板：
 
-- GitHub issue 分流。
+- `repo_understanding_and_work_plan`。
+- `issue_pr_triage_and_review`。
+- `personal_work_proof`。
+- `knowledge_navigation_and_challenge`。
+- `docs_review_and_improvement`。
+
+后续模板池：
+
 - 会议纪要整理。
-- 文档摘要。
-- 简历筛选。
-- 入职流程。
 - 政策问答。
 - 任务拆解。
 - 资料收集。
@@ -213,6 +253,8 @@ MVP 文档教学入口必须覆盖：
 - 社区贡献者 onboarding。
 - 小团队任务分派。
 - 客户反馈整理。
+- 作品集重组。
+- 内容产品化。
 
 模板必须声明适用场景、输入要求、输出形状、风险等级、是否需要审批、数据分级、失败处理和评测样本。
 

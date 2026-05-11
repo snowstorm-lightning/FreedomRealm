@@ -23,7 +23,7 @@ AI-HRMS 面向个人、多人协作组织、社区、开源项目、小型工作
 ## 当前状态
 
 - 当前仓库仍以文档、ADR、执行计划、评测基线和最小工程守卫为主，不交付生产 HR 业务代码。
-- 已保留 `packages/contracts`、`packages/policy` 和 `config/environments`，用于把环境隔离和 `ToolContract` 高风险边界转成可测试规则。
+- 已保留 `packages/contracts`、`packages/demo`、`packages/knowledge`、`packages/policy`、`config/environments` 和 `config/templates`，用于把报告卡契约、Demo Mode、知识导航、环境隔离和 `ToolContract` 高风险边界转成可测试规则。
 - `docs/zh-CN/` 是设计与后续实现阶段的主要 system of record。
 - 传统 HRMS 能力继续保留，企业私有化部署作为 `Enterprise Mode` 保留。
 
@@ -68,6 +68,22 @@ pnpm demo
 ```
 
 默认输出写入 `dist/demo-mode/`：JSON 是 `ExecutionReportCard` 的 canonical source，Markdown 是从 JSON 渲染出的默认阅读版本。更多参数见 [docs/zh-CN/runbooks/demo-mode.md](docs/zh-CN/runbooks/demo-mode.md)。
+
+静态 Web Workbench 可通过同一 Demo engine 生成：
+
+```text
+pnpm web:demo
+```
+
+默认输出写入 `dist/web/index.html`，展示 `repo_understanding_and_work_plan`、`knowledge_navigation_and_challenge`、`issue_pr_triage_and_review`、`personal_work_proof` 和 `docs_review_and_improvement`，并包含 3 个内置知识问答样例。
+
+知识导航与异议闭环可单独运行：
+
+```text
+pnpm knowledge:demo -- --query "AI-HRMS 下一步应该做什么？"
+```
+
+该命令使用本地 deterministic mock semantic search，不需要 embedding、模型 key 或外部连接器，会生成 `AnswerCard`、`DocChallengeDraft` 和引用二者的 `ExecutionReportCard`。
 
 ## 运行档位
 

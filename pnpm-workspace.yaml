@@ -1,3 +1,6 @@
 packages:
+  - "apps/web"
   - "packages/contracts"
+  - "packages/demo"
+  - "packages/knowledge"
   - "packages/policy"

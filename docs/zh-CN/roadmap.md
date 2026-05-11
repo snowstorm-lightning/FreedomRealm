@@ -58,7 +58,10 @@
 - 首个低连接器依赖、低敏感数据依赖的模板，优先评估文档摘要与改进建议。
 - CLI-first 的 Demo Mode 执行入口，极简 Web UI 后续读取同一份执行数据展示。
 - Web-first onboarding 草案，允许用户从固定身份、目标描述或自由探索进入，而不是先被迫定义身份。
-- 第一批 AI-assisted work proof 模板草案，覆盖程序员、设计师、写作者、创作者、转型人群、小团队和社区组织者。
+- Web MVP 第一屏草案：目标入口、自由探索入口、示例入口和报告卡预览。
+- 第一批用户可见 AI-assisted work proof 模板草案：`repo_understanding_and_work_plan`、`issue_pr_triage_and_review`、`personal_work_proof`。
+- 知识导航与异议闭环模板：`knowledge_navigation_and_challenge`，生成带来源引用的 `AnswerCard`、`DocChallengeDraft` 和报告卡。
+- `docs_review_and_improvement` 保留为工程 smoke template、CLI Demo 和文档协作样例。
 - 默认 mock model 和可选 live model 路径；MVP 通过标准不得依赖真实模型 key。
 - ExecutionReportCard JSON schema 草案、Markdown 渲染规则和脱敏规则。
 - 模板贡献指南和失败案例贡献指南。
@@ -79,6 +82,7 @@
 - Demo Mode 必须依赖真实模型 key 才能跑通，或 mock model 输出不可测试。
 - Web UI 需要重新实现独立业务逻辑，或不能读取 CLI 产生的同一份执行数据。
 - Onboarding 把用户锁定为单一身份，无法从目标或自由探索开始。
+- 首屏需要用户先注册、先配置模型 key、先连接外部工具或先理解完整平台架构。
 - 现实任务输入被提前作为 MVP 依赖，导致软件层 Web onboarding、模板运行和报告卡分享无法按期完成。
 
 ## Phase 0.7: Community contribution foundation

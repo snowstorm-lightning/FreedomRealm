@@ -1,0 +1,91 @@
+{
+  "templateId": "repo_understanding_and_work_plan",
+  "templateVersion": "0.1.0",
+  "displayName": "Repo Understanding And Work Plan",
+  "runtimeMode": "Demo Mode",
+  "taskGoal": "Understand a repository or project snapshot, identify risks, and produce a reviewable work plan with optional WorkShard suggestions.",
+  "workItemTitle": "Demo repo understanding and work plan",
+  "agentActorId": "agent-demo-repo-planner",
+  "agentRole": "DemoRepoPlanner",
+  "agentGoal": "Generate project understanding and work planning suggestions without modifying files.",
+  "approvalAction": "human_review_before_work_assignment",
+  "dataClassification": "internal",
+  "redactionStatus": "redacted",
+  "sharePermission": "private",
+  "riskLevel": "medium",
+  "skillRefs": [
+    "skill://repo.understand.v1",
+    "skill://work.plan.v1",
+    "skill://execution-report-card.render.v1"
+  ],
+  "toolContracts": [
+    {
+      "toolName": "repo.read_local_snapshot",
+      "description": "Read selected repository documents as local input references for Demo Mode.",
+      "inputSchemaRef": "schema://ai-hrms.demo.repo.read_local_snapshot.input.v1",
+      "outputSchemaRef": "schema://ai-hrms.demo.repo.read_local_snapshot.output.v1",
+      "requiredPermissions": [
+        "repo:read"
+      ],
+      "riskLevel": "low",
+      "allowedActorTypes": [
+        "AgentActor"
+      ],
+      "allowedEnvironments": [
+        "dev",
+        "ci"
+      ],
+      "autoExecute": true,
+      "budgetLimit": {
+        "currency": "token",
+        "amount": 1200
+      },
+      "auditTags": [
+        "repo",
+        "read",
+        "demo"
+      ]
+    },
+    {
+      "toolName": "repo.propose_work_plan",
+      "description": "Generate a work plan and optional WorkShard suggestions without writing files or creating assignments.",
+      "inputSchemaRef": "schema://ai-hrms.demo.repo.propose_work_plan.input.v1",
+      "outputSchemaRef": "schema://ai-hrms.demo.repo.propose_work_plan.output.v1",
+      "requiredPermissions": [
+        "reports:create"
+      ],
+      "riskLevel": "medium",
+      "allowedActorTypes": [
+        "AgentActor"
+      ],
+      "allowedEnvironments": [
+        "dev",
+        "ci"
+      ],
+      "autoExecute": false,
+      "budgetLimit": {
+        "currency": "token",
+        "amount": 2500
+      },
+      "auditTags": [
+        "repo",
+        "planning",
+        "WorkShard",
+        "ApprovalGate",
+        "demo"
+      ]
+    }
+  ],
+  "mockModel": {
+    "modelRouteId": "mock.repo-understanding.v1",
+    "modelCapabilityProfileRef": "model-capability-profile://mock.repo-understanding.v1",
+    "structuredOutputSupport": true,
+    "toolCallingSupport": false
+  },
+  "failureSample": {
+    "failureType": "repo_context_too_large",
+    "simulated": true,
+    "statusIfTriggered": "blocked",
+    "recovery": "Ask the human owner to narrow inputs, split the request into WorkShards, and rerun the template without modifying source files."
+  }
+}

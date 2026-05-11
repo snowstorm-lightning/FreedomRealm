@@ -1,0 +1,91 @@
+{
+  "templateId": "personal_work_proof",
+  "templateVersion": "0.1.0",
+  "displayName": "Personal Work Proof",
+  "runtimeMode": "Demo Mode",
+  "taskGoal": "Turn a user's goal, materials, and available time into a small AI-assisted work proof with a candidate LearningPath and next GrowthWorkItem.",
+  "workItemTitle": "Demo personal work proof",
+  "agentActorId": "agent-demo-work-proof-guide",
+  "agentRole": "DemoWorkProofGuide",
+  "agentGoal": "Generate a private, reviewable capability proof candidate without creating rankings, scores, or forced assignments.",
+  "approvalAction": "human_review_before_capability_claim_or_public_share",
+  "dataClassification": "internal",
+  "redactionStatus": "redacted",
+  "sharePermission": "private",
+  "riskLevel": "medium",
+  "skillRefs": [
+    "skill://learning-path.suggest.v1",
+    "skill://capability-proof.draft.v1",
+    "skill://execution-report-card.render.v1"
+  ],
+  "toolContracts": [
+    {
+      "toolName": "work_proof.read_user_materials",
+      "description": "Read user-provided goals and materials from local demo inputs.",
+      "inputSchemaRef": "schema://ai-hrms.demo.work_proof.read_user_materials.input.v1",
+      "outputSchemaRef": "schema://ai-hrms.demo.work_proof.read_user_materials.output.v1",
+      "requiredPermissions": [
+        "work_proof:read"
+      ],
+      "riskLevel": "low",
+      "allowedActorTypes": [
+        "AgentActor"
+      ],
+      "allowedEnvironments": [
+        "dev",
+        "ci"
+      ],
+      "autoExecute": true,
+      "budgetLimit": {
+        "currency": "token",
+        "amount": 1000
+      },
+      "auditTags": [
+        "work-proof",
+        "read",
+        "demo"
+      ]
+    },
+    {
+      "toolName": "work_proof.propose_learning_path",
+      "description": "Generate candidate LearningPath, CapabilityProof, and GrowthWorkItem suggestions without assigning tasks or publishing data.",
+      "inputSchemaRef": "schema://ai-hrms.demo.work_proof.propose_learning_path.input.v1",
+      "outputSchemaRef": "schema://ai-hrms.demo.work_proof.propose_learning_path.output.v1",
+      "requiredPermissions": [
+        "reports:create"
+      ],
+      "riskLevel": "medium",
+      "allowedActorTypes": [
+        "AgentActor"
+      ],
+      "allowedEnvironments": [
+        "dev",
+        "ci"
+      ],
+      "autoExecute": false,
+      "budgetLimit": {
+        "currency": "token",
+        "amount": 2000
+      },
+      "auditTags": [
+        "work-proof",
+        "LearningPath",
+        "CapabilityProof",
+        "ApprovalGate",
+        "demo"
+      ]
+    }
+  ],
+  "mockModel": {
+    "modelRouteId": "mock.personal-work-proof.v1",
+    "modelCapabilityProfileRef": "model-capability-profile://mock.personal-work-proof.v1",
+    "structuredOutputSupport": true,
+    "toolCallingSupport": false
+  },
+  "failureSample": {
+    "failureType": "goal_too_broad",
+    "simulated": true,
+    "statusIfTriggered": "blocked",
+    "recovery": "Ask the user to narrow the goal to one small proof, keep the output private, and avoid producing scores or rankings."
+  }
+}

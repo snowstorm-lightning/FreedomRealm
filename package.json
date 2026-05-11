@@ -5,14 +5,19 @@
   "type": "module",
   "packageManager": "pnpm@10.0.0",
   "workspaces": [
+    "apps/web",
     "packages/contracts",
+    "packages/demo",
+    "packages/knowledge",
     "packages/policy"
   ],
   "scripts": {
     "check": "node scripts/check.mjs",
     "demo": "node scripts/run-demo-mode.mjs",
     "doctor": "node scripts/doctor.mjs",
+    "knowledge:demo": "node scripts/run-knowledge-demo.mjs",
     "test": "node scripts/run-tests.mjs",
+    "web:demo": "node apps/web/bin/build-demo.mjs",
     "validate:env": "node packages/policy/bin/validate-environment.mjs",
     "validate:env:all": "node scripts/validate-env-all.mjs",
     "validate:workspace": "node scripts/validate-workspace.mjs"

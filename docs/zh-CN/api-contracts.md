@@ -647,8 +647,88 @@
 关键操作：
 - `POST /api/v1/knowledge/documents`
 - `POST /api/v1/knowledge/search`
+- `POST /api/v1/knowledge/answer-cards`
+- `POST /api/v1/knowledge/doc-challenges`
 - `POST /api/v1/memory/artifacts`
 - `GET /api/v1/memory/artifacts/{artifactId}`
+
+核心字段：
+- `sourceChunkId`
+- `path`
+- `heading`
+- `lineStart`
+- `lineEnd`
+- `preview`
+- `score`
+- `matchReasons`
+- `digest`
+- `answerCardId`
+- `challengeId`
+
+`SearchHit` 最小结构：
+
+```json
+{
+  "sourceRefId": "source-1",
+  "path": "docs/zh-CN/roadmap.md",
+  "heading": "Phase 0.6",
+  "lineStart": 1,
+  "lineEnd": 8,
+  "preview": "string",
+  "score": 12,
+  "matchReasons": ["heading:mvp"],
+  "digest": "sha256:..."
+}
+```
+
+`AnswerCard` 最小结构：
+
+```json
+{
+  "answerCardId": "uuid",
+  "schemaVersion": "answer-card.v1",
+  "question": "string",
+  "answer": "string",
+  "sourceRefs": [],
+  "confidence": "medium",
+  "limitations": [],
+  "nextActions": [],
+  "dataClassification": "internal",
+  "redactionStatus": "redacted",
+  "sharePermission": "private",
+  "extensions": {}
+}
+```
+
+`DocChallengeDraft` 最小结构：
+
+```json
+{
+  "challengeId": "uuid",
+  "schemaVersion": "doc-challenge-draft.v1",
+  "sourceRef": {},
+  "objection": "string",
+  "evidenceRefs": [],
+  "proposedReviewAction": "create_follow_up_doc_review_work_item",
+  "status": "draft",
+  "humanOwnerId": "uuid",
+  "approvalStatus": "requires_human_review"
+}
+```
+
+边界说明：
+- `AnswerCard` 必须引用维护文档来源；无来源或低置信度时必须说明限制，不能伪装成生产事实。
+- `DocChallengeDraft` 只是可审查草稿，不能自动修改文档、创建 PR、评论 issue 或发布公开结论。
+- `sourceRefs` 只能保存路径、行号、摘要、分数、匹配原因和 digest；不得保存未授权敏感原文。
+- 本地 Demo 的 `local-mock-semantic` 只能作为 deterministic mock 搜索路径；真实 embedding 或 file search 只能作为增强路径，且必须保留相同输出契约和数据分级。
+- `AnswerCard`、`DocChallengeDraft` 被报告卡引用时，`ExecutionReportCard.outputRefs` 必须保留对应 JSON 路径和 schemaVersion。
+
+审计点：
+- 知识文档索引
+- 来源定位
+- AnswerCard 生成
+- DocChallengeDraft 创建、提交、接受、拒绝或关闭
+- 公开分享授权和撤回
 
 ### Policy/Eval API
 

@@ -110,6 +110,7 @@
 - 是否能生成可分享且不泄漏隐私的输出物。
 - 是否有模板或示例。
 - 是否能形成 ExecutionReportCard、Failure case 或 Review note。
+- 如果能力回答用户问题，是否能展示维护文档来源、限制说明和人工异议入口。
 
 ## MVP Survival Gate
 
@@ -201,6 +202,21 @@
 - 是否让摘要、embedding、报告卡、评测样本和训练资源继承原始数据的限制。
 - 是否确认外部模型供应商的数据保留、训练使用、删除、区域、加密和审计能力。
 - 是否为公开分享、Community Commons 和跨实例共享设置显式授权和脱敏检查。
+- 知识问答输出是否只保存来源引用、摘要和 digest，不把未授权敏感原文写入报告卡或公开资产。
+- 文档异议是否先进入 `DocChallengeDraft` 和人工复核，而不是让 AI 自动修改维护文档。
+
+## Knowledge Navigation Gate
+
+涉及语义搜索、文档问答、来源定位、`AnswerCard` 或 `DocChallengeDraft` 的能力必须回答：
+
+- 是否默认可用本地 mock/stub 路径运行，不依赖真实 embedding、模型 key 或外部连接器。
+- 是否输出 `SearchHit`，并包含 path、heading、line range、preview、score、matchReasons 和 digest。
+- 是否生成带 `schemaVersion` 的 JSON-first `AnswerCard`，并声明 confidence、limitations、dataClassification、redactionStatus 和 sharePermission。
+- 是否在 `AnswerCard` 中保留来源引用；无足够来源时是否明确低置信度或阻塞。
+- 是否把异议生成为 `DocChallengeDraft`，并默认 `approvalStatus=requires_human_review`。
+- 是否禁止自动修改文档、自动创建 PR、自动评论 issue 或自动发布公开结论。
+- 是否让 `ExecutionReportCard.outputRefs` 引用 AnswerCard 和 DocChallengeDraft。
+- 是否在公开分享前执行显式授权、脱敏检查和分享许可确认。
 
 ## Anti-Capture Gate
 

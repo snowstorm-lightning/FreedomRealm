@@ -22,6 +22,10 @@ export const POLICY_DECISIONS = Object.freeze([
 
 export const EXECUTION_REPORT_CARD_SCHEMA_VERSION = "execution-report-card.v1";
 
+export const ANSWER_CARD_SCHEMA_VERSION = "answer-card.v1";
+
+export const DOC_CHALLENGE_DRAFT_SCHEMA_VERSION = "doc-challenge-draft.v1";
+
 export const EXECUTION_REPORT_CARD_REQUIRED_FIELDS = Object.freeze([
   "reportCardId",
   "schemaVersion",
@@ -69,6 +73,14 @@ export const APPROVAL_STATUSES = Object.freeze([
   "escalated"
 ]);
 
+export const DOC_CHALLENGE_STATUSES = Object.freeze([
+  "draft",
+  "submitted",
+  "accepted",
+  "rejected",
+  "closed"
+]);
+
 export const REQUIRED_TELEMETRY_LABELS = Object.freeze([
   "env",
   "service",
@@ -111,3 +123,8 @@ export {
   renderExecutionReportCardMarkdown,
   validateExecutionReportCard
 } from "./execution-report-card.mjs";
+
+export {
+  validateAnswerCard,
+  validateDocChallengeDraft
+} from "./knowledge-cards.mjs";

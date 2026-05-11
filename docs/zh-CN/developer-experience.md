@@ -21,7 +21,7 @@
 | 文档编辑 | 支持 | 支持 | 支持 | 支持 | Git + 编辑器 |
 | Node 策略包开发 | 支持 | 支持 | 支持 | 支持 | Node 24 + pnpm |
 | Python Agent Runtime | 后续支持 | 后续支持 | 后续支持 | 后续支持 | Python 3.14 stable + uv |
-| 轻量 Demo | 后续支持 | 后续支持 | 后续支持 | 后续支持 | SQLite/mock/stub 优先 |
+| 轻量 Demo | 支持 | 支持 | 支持 | 支持 | Node + mock/stub；CLI 与静态 Web Workbench |
 | 完整本地栈 | 通过容器兜底 | 通过容器兜底 | 通过容器兜底 | 通过容器兜底 | Docker/Compose/devcontainer |
 
 ## 推荐开发入口
@@ -40,6 +40,9 @@ pnpm doctor
 
 ```text
 pnpm test
+pnpm demo
+pnpm knowledge:demo -- --query "AI-HRMS 下一步应该做什么？"
+pnpm web:demo
 pnpm validate:workspace
 pnpm validate:env:all
 pnpm validate:env -- config/environments/dev.sample.json
@@ -47,7 +50,7 @@ pnpm validate:env -- config/environments/dev.sample.json
 
 ### 本机开发路径
 
-适合只改文档、contracts、policy、schemas、eval samples 或轻量 Demo。
+适合只改文档、contracts、policy、schemas、eval samples、Demo engine、Knowledge engine 或轻量 Web Workbench。
 
 - 安装 Node 和 pnpm。
 - 使用仓库内 `packageManager`；引入外部依赖后使用 `pnpm-lock.yaml`。
@@ -141,16 +144,22 @@ Python 侧：
 ├─ README.md
 ├─ package.json
 ├─ pnpm-workspace.yaml
+├─ apps/
+│  └─ web/
 ├─ config/
-│  └─ environments/
+│  ├─ environments/
+│  └─ templates/
 ├─ docs/
 │  └─ zh-CN/
 ├─ packages/
 │  ├─ contracts/
+│  ├─ demo/
+│  ├─ knowledge/
 │  └─ policy/
 └─ scripts/
    ├─ check.mjs
    ├─ doctor.mjs
+   ├─ run-knowledge-demo.mjs
    ├─ run-tests.mjs
    ├─ validate-env-all.mjs
    └─ validate-workspace.mjs
@@ -161,12 +170,16 @@ Python 侧：
 - 根目录只保留入口文档、workspace 配置和当前阶段正式资产。
 - `docs/zh-CN/` 承担 system of record，符合 AGENTS 工作规则。
 - `config/environments/` 独立存放环境样例，便于策略校验。
+- `config/templates/` 存放 Demo Mode 模板 manifest，便于 CLI 和 Web 共享。
+- `apps/web/` 存放当前静态 Web Workbench，读取共享 Demo engine 生成的数据，不直接访问数据库。
 - `packages/contracts/` 存放跨包共享词表和常量。
+- `packages/demo/` 存放 CLI 和 Web 共用的 Demo Mode 执行层，避免入口之间复制业务逻辑。
+- `packages/knowledge/` 存放本地 deterministic 知识导航、来源定位、AnswerCard 和 DocChallengeDraft 生成逻辑，供 CLI 和 Web 共享。
 - `packages/policy/` 存放可机械检查的治理规则。
 - `scripts/` 存放跨平台本地守卫，避免把复杂逻辑写进 shell-specific package scripts。
 - `.github/workflows/` 存放最小 CI，使 Windows/Linux 差异尽早暴露。
 
-当前不建议移动文件。项目仍处于文档基线与最小策略守卫阶段，过早创建大量空目录会降低可读性。
+当前不建议移动文件。项目仍处于文档基线、最小策略守卫和轻量 Demo Workbench 阶段；新增目录都必须有可运行入口、README 或测试。
 
 ## 未来目标结构
 
@@ -180,6 +193,7 @@ Python 侧：
 │  └─ agent-runtime/
 ├─ packages/
 │  ├─ contracts/
+│  ├─ demo/
 │  ├─ policy/
 │  ├─ evals/
 │  ├─ federation/
@@ -219,6 +233,8 @@ Python 侧：
 | `apps/control-plane` | NestJS 控制面、事实、权限、审批、审计 API | 不承载 LangGraph 执行 |
 | `apps/agent-runtime` | FastAPI + LangGraph 运行面 | 不直接写 HR 主数据 |
 | `packages/contracts` | 共享术语、枚举、schema、事件常量 | 变更需同步 API 文档和测试 |
+| `packages/demo` | CLI 与 Web 共用的 Demo Mode 执行层、mock 输出和报告卡生成 | 不访问真实外部连接器，不持有 secret，不复制到 Web 私有逻辑 |
+| `packages/knowledge` | 本地 deterministic 知识导航、来源定位、AnswerCard 和 DocChallengeDraft 生成 | 默认不访问外部连接器、embedding 服务或真实模型 |
 | `packages/policy` | 可机械检查的策略和治理规则 | 高风险规则优先沉淀于此 |
 | `packages/evals` | 数据集、评分器、评测 runner | 不包含未脱敏生产数据 |
 | `packages/federation` | FederationProtocol schema、兼容测试和 SDK | 不依赖某个实例内部 API |

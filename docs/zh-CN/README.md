@@ -41,7 +41,7 @@
 
 ## 运行手册
 
-- [runbooks/demo-mode.md](runbooks/demo-mode.md)：CLI-first Demo Mode 运行手册，首个模板为 `docs_review_and_improvement`。
+- [runbooks/demo-mode.md](runbooks/demo-mode.md)：Demo Mode 运行手册，覆盖 CLI、静态 Web Workbench、`knowledge_navigation_and_challenge`、AnswerCard 和 DocChallengeDraft。
 
 重点新增：
 
@@ -51,6 +51,7 @@
 - [adr/ADR-0007-governance-ai-brain.md](adr/ADR-0007-governance-ai-brain.md)：治理型 AI 中枢。
 - [adr/ADR-0008-federation-protocol-compatibility.md](adr/ADR-0008-federation-protocol-compatibility.md)：跨实例通信协议兼容性。
 - [execution-plans/active/phase-0-5-ai-hrms-repositioning.md](execution-plans/active/phase-0-5-ai-hrms-repositioning.md)：Phase 0.5 定位与自适应 Demo 基础计划。
+- [execution-plans/active/phase-0-6-web-workbench-mvp.md](execution-plans/active/phase-0-6-web-workbench-mvp.md)：Phase 0.6 Web Workbench MVP 执行计划。
 
 ## 文档维护规则
 

@@ -83,13 +83,14 @@ MVP 的 `TeachingStrategy` 固定为 document-first：先把文档写清楚，�
 
 在首版 CLI 闭环稳定后，MVP 的传播目标应升级为“能力证明型 Workbench”：帮助用户在 30 分钟内完成一次可展示、可复盘、可继续发展的 AI-assisted work proof。这个 proof 不要求用户先确定职业身份，可以从固定身份入口、目标入口或自由探索入口开始。
 
-首批 work proof 方向：
+传播型 Web MVP 的用户可见首批模板先收敛为 4 个：
 
-- 程序员或技术转型者：项目理解、bug triage、测试补齐、PR review。
-- 设计师或视觉创作者：作品集重组、视觉审查、商品图改进建议。
-- 写作者或内容创作者：文章改稿、选题验证、投稿包和内容产品化。
-- 不确定方向的探索者：技能盘点、7 天 `LearningPath`、第一份报告卡。
-- 小团队或社区组织者：任务拆解、贡献者 onboarding、客户反馈整理。
+- `repo_understanding_and_work_plan`：项目理解、风险识别、下一步工作计划和可选 `WorkShard` 建议。
+- `knowledge_navigation_and_challenge`：用户提问、来源定位、`AnswerCard` 和 `DocChallengeDraft`，用于建立可信问答和文档异议闭环。
+- `issue_pr_triage_and_review`：issue / PR 分类、风险、审查要点和后续 WorkItem。
+- `personal_work_proof`：从目标、材料和可用时间生成第一份能力证明、候选 `LearningPath` 和下一步小任务。
+
+`docs_review_and_improvement` 继续作为工程 smoke template、CLI Demo 和文档协作样例，不作为唯一传播主线。
 
 固定身份入口只是快捷方式；系统必须允许用户跨身份、改身份、不声明身份或从任务本身开始。
 
@@ -125,6 +126,15 @@ CLI-tested core, Web-first onboarding, reality layer later.
 
 当前软件层 MVP 的优先级高于现实层探索。先证明 Web onboarding、模板运行、报告卡分享、能力证明和贡献入口可以吸引真实用户；再根据用户行为决定是否扩展到手机采集、线下履约、服务市场或其他现实任务。
 
+Web MVP 第一屏决策：
+
+- 主标题聚焦“生成第一份 AI-assisted work proof”，不先讲完整平台架构。
+- 固定入口、目标入口和自由探索入口并列存在。
+- “看示例”必须能用 mock 数据无登录生成报告卡。
+- 默认模板优先推荐 `repo_understanding_and_work_plan`，因为首发用户先聚焦开发者和开源维护者。
+- 首屏只展示报告卡预览和最短路径，不展示复杂模块图。
+- Web UI 只能消费 CLI 已验证的数据契约、模板 manifest 和 `ExecutionReportCard`，不能复制业务逻辑。
+
 ## 开工前需求校准
 
 如果以下问题没有形成明确答案，MVP 可能技术上跑通，但对采用没有意义：
@@ -144,7 +154,7 @@ CLI-tested core, Web-first onboarding, reality layer later.
 
 - 首批用户优先面向个人开发者、开源维护者、设计师、写作者、创作者、AI 冲击下的转型人群、小团队和早期社区贡献者。
 - 用户可以选择固定身份，也可以不声明身份，直接从目标、材料或探索问题开始。
-- 首个模板优先选择文档摘要与改进建议。
+- 首个工程模板已选择文档摘要与改进建议；首个 Web 传播模板优先选择 `repo_understanding_and_work_plan`。
 - Demo 默认使用 mock model 跑通；用户自带模型 API key 只作为 live model 增强输出质量，不影响闭环完成。
 - 首版交付物是 CLI 执行记录、JSON 报告卡、Markdown 报告卡渲染物、首个模板说明和失败复盘样例。
 - 验收时间从依赖准备完成、执行 Demo 命令开始计算；后续再把安装和环境诊断纳入更严格指标。
@@ -243,9 +253,8 @@ MVP 讨论建议按以下顺序推进：
 
 接下来需要讨论：
 
-1. 传播型 Web Workbench：固定入口、目标入口和自由探索入口如何组织。
-2. 首批 work proof 模板：从 docs review 扩展到程序员、设计师、写作者、创作者和转型人群。
-3. 最小教程：README、Demo 教程、术语表和模板说明如何组织。
-4. 最小数据模型：`WorkItem`、`AgentActor`、`ToolContract`、`ApprovalGate`、`Observation`、`CapabilityProof` 和 `LearningPath` 的字段切片。
-5. 验收指标：如何证明 5 到 10 分钟跑通 CLI，30 分钟内产出第一份 work proof。
-6. MVP 后的第一项体验增强：优先评估模板市场、公开案例库或 `KeywordHelpOverlay`；RealityCapture 等现实层能力只在软件层传播数据成立后再评估。
+1. 最小教程：README、Demo 教程、术语表和模板说明如何组织。
+2. 最小数据模型：`WorkItem`、`AgentActor`、`ToolContract`、`ApprovalGate`、`Observation`、`CapabilityProof` 和 `LearningPath` 的字段切片。
+3. Web MVP 实现顺序：先静态 mock Web，还是先抽出共享 demo runner 数据层。
+4. 验收指标：如何证明 5 到 10 分钟跑通 CLI，30 分钟内产出第一份 work proof。
+5. MVP 后的第一项体验增强：优先评估模板市场、公开案例库或 `KeywordHelpOverlay`；RealityCapture 等现实层能力只在软件层传播数据成立后再评估。
