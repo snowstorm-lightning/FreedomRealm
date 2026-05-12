@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
@@ -11,12 +11,15 @@ import {
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
 const webDist = path.join(repoRoot, "dist", "web");
 const sampleOut = "dist/web/data";
+const operatingEntryPath = "config/project-operating-entry.json";
 
 const templateIds = [
   "repo_understanding_and_work_plan",
   "knowledge_navigation_and_challenge",
+  "external_agent_connector_safety_demo",
   "issue_pr_triage_and_review",
   "personal_work_proof",
+  "project_self_review_and_decay_prevention",
   "docs_review_and_improvement"
 ];
 
@@ -114,6 +117,7 @@ function toWorkbenchCard(execution, index) {
     executionTrace: demo.executionTrace,
     failureSample: reportCard.failure.sample,
     mockOutputNotice: demo.mockOutputNotice,
+    selfReview: reportCard.extensions["ai-hrms.selfReview"] ?? null,
     answerCard: knowledge?.answerCard ?? null,
     docChallengeDraft: knowledge?.docChallengeDraft ?? null,
     answerCardHref: output.answerCardRelativePath ? toWebHref(output.answerCardRelativePath) : null,
@@ -169,6 +173,17 @@ function buildHtml() {
           <p id="entryNote">Start from a task goal, select a governed template, and generate a reviewable work proof.</p>
         </div>
         <div class="entry-actions" id="entryModes"></div>
+      </section>
+
+      <section class="next-workbench" aria-label="Next Workbench">
+        <div class="section-heading">
+          <p class="eyebrow">Next Workbench</p>
+          <h2>Tasks, leases, conflict guards, and stopping rules</h2>
+        </div>
+        <div class="next-grid">
+          <article class="panel" id="operatingTasks"></article>
+          <article class="panel" id="operatingGuards"></article>
+        </div>
       </section>
 
       <section class="workbench" aria-label="Workbench">
@@ -355,6 +370,60 @@ h3 {
   border-color: var(--accent);
   background: var(--soft);
   color: var(--accent-strong);
+}
+.next-workbench {
+  padding: 20px 0;
+  border-bottom: 1px solid var(--line);
+}
+.next-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+  gap: 14px;
+  margin-top: 14px;
+}
+.task-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+.task-card {
+  border-top: 1px solid var(--line);
+  padding-top: 10px;
+}
+.task-card header {
+  display: flex;
+  gap: 10px;
+  align-items: start;
+  justify-content: space-between;
+}
+.priority-pill {
+  display: inline-flex;
+  min-height: 24px;
+  align-items: center;
+  border-radius: 999px;
+  background: var(--soft-2);
+  color: var(--warn);
+  padding: 3px 8px;
+  font-size: 12px;
+  font-weight: 760;
+  white-space: nowrap;
+}
+.task-card p,
+.guard-block p {
+  margin: 6px 0 0;
+  color: var(--muted);
+  line-height: 1.45;
+}
+.guard-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+.guard-block {
+  min-width: 0;
+  border-top: 1px solid var(--line);
+  padding-top: 10px;
 }
 .workbench {
   display: grid;
@@ -618,11 +687,11 @@ h3 {
 }
 @media (max-width: 840px) {
   .shell { padding: 24px 16px 32px; }
-  .hero, .entry-strip, .workbench, .right-rail, .knowledge-layout, .roadmap-list {
+  .hero, .entry-strip, .next-grid, .workbench, .right-rail, .knowledge-layout, .roadmap-list {
     grid-template-columns: 1fr;
   }
   h1 { font-size: 34px; }
-  .entry-actions, .meta-grid, .report-grid {
+  .entry-actions, .meta-grid, .report-grid, .guard-grid {
     grid-template-columns: 1fr;
   }
   .report-title-row {
@@ -672,6 +741,48 @@ function renderMeta(card) {
   }).join("") + '</dl>';
 }
 
+function renderOperatingEntry() {
+  const entry = state.operatingEntry;
+  const tasks = entry.currentTasks || [];
+  const p0Tasks = tasks.filter(function (task) { return task.priority === "P0"; });
+  const visibleTasks = (p0Tasks.length > 0 ? p0Tasks : tasks).slice(0, 4);
+  const startupCommand = entry.startupCommands[0] || "pnpm self-review";
+  document.getElementById("operatingTasks").innerHTML =
+    '<div class="section-heading">' +
+      '<p class="eyebrow">' + escapeHtml(entry.schemaVersion) + '</p>' +
+      '<h2>Current task queue</h2>' +
+      '<p>Default next command: <strong>' + escapeHtml(startupCommand) + '</strong></p>' +
+    '</div>' +
+    '<div class="task-list">' + visibleTasks.map(function (task) {
+      return '<article class="task-card">' +
+        '<header><strong>' + escapeHtml(task.title) + '</strong><span class="priority-pill">' +
+          escapeHtml(task.priority) + '</span></header>' +
+        '<p>Owner: ' + escapeHtml(task.ownerActorTypes.join(" + ")) + '</p>' +
+        '<p>Risk: ' + escapeHtml(task.riskLevel) + '; verify: ' +
+          escapeHtml(task.verificationCommands.join(" / ")) + '</p>' +
+        '<p>writeSet: ' + escapeHtml(task.suggestedWriteSet.join(", ")) + '</p>' +
+      '</article>';
+    }).join("") + '</div>';
+
+  const leaseFields = entry.leaseTemplate.requiredFields || [];
+  const stopRules = entry.continuationRules.allowStopWhen || [];
+  document.getElementById("operatingGuards").innerHTML =
+    '<div class="section-heading">' +
+      '<p class="eyebrow">Harness Guards</p>' +
+      '<h2>AgentWorkLease, writeSet, MergeGate, checkpoint</h2>' +
+    '</div>' +
+    '<div class="guard-grid">' +
+      '<section class="guard-block"><strong>AgentWorkLease fields</strong><p>' +
+        escapeHtml(leaseFields.join(", ")) + '</p></section>' +
+      '<section class="guard-block"><strong>writeSet policy</strong><p>' +
+        escapeHtml(entry.conflictRules.defaultWriteSetPolicy) + '; MergeGate checks contracts, docs, tests, dataClassification, and ApprovalGate.</p></section>' +
+      '<section class="guard-block"><strong>Stop conditions</strong><p>' +
+        escapeHtml(stopRules.slice(0, 3).join(" / ")) + '</p></section>' +
+      '<section class="guard-block"><strong>Harness principles</strong><p>' +
+        escapeHtml(entry.harnessPrinciples.slice(0, 3).join(" / ")) + '</p></section>' +
+    '</div>';
+}
+
 function renderReport(card) {
   const toolItems = card.toolContractRefs.map(function (tool) {
     return {
@@ -685,6 +796,7 @@ function renderReport(card) {
       detail: input.dataClassification + ", " + input.byteLength + " bytes"
     };
   });
+  const candidateWorkItems = card.selfReview?.candidateWorkItems || [];
   document.getElementById("reportSurface").innerHTML =
     '<header class="report-header">' +
       '<div class="report-title-row">' +
@@ -700,6 +812,14 @@ function renderReport(card) {
       '<section><h3>Recommendations</h3>' + renderList(card.recommendations, "title") + '</section>' +
       '<section><h3>Next Actions</h3>' + renderList(card.nextActions, "action") + '</section>' +
       '<section><h3>Tool Contracts</h3>' + renderList(toolItems, "toolName") + '</section>' +
+      (candidateWorkItems.length > 0
+        ? '<section class="wide"><h3>Candidate WorkItems</h3>' + renderList(candidateWorkItems.map(function (item) {
+            return {
+              title: item.title,
+              detail: item.priority + ", " + item.riskLevel + ", writeSet: " + item.suggestedWriteSet.join(", ")
+            };
+          }), "title") + '</section>'
+        : '') +
       '<section class="wide"><h3>Input Refs</h3>' + renderList(inputItems, "path") + '</section>' +
       '<section class="wide"><h3>Failure Path Sample</h3>' +
         renderList([{ title: card.failureSample.failureType, detail: card.failureSample.recovery }], "title") +
@@ -820,6 +940,7 @@ function renderRoadmap() {
 
 function renderAll() {
   const card = state.cards.find(function (candidate) { return candidate.templateId === selectedTemplateId; }) || state.cards[0];
+  renderOperatingEntry();
   renderTemplates();
   renderEntryModes();
   renderReport(card);
@@ -858,10 +979,13 @@ for (const query of knowledgeQueries) {
   knowledgeExecutions.push(execution);
 }
 
+const operatingEntry = JSON.parse(await readFile(path.join(repoRoot, operatingEntryPath), "utf8"));
+
 const state = {
   generatedAt: new Date().toISOString(),
   runtimeMode: "Demo Mode",
   dataSource: "packages/demo shared engine",
+  operatingEntry,
   entryModes,
   roadmap,
   cards: executions.map(toWorkbenchCard),

@@ -533,6 +533,7 @@
 - `inputRefs` 和 `outputRefs` 只能保存引用、摘要或脱敏快照，不能保存原始敏感数据。
 - `metrics`、`failure` 和 `extensions` 首版可以为空对象，但字段位置必须保留。
 - `extensions` 必须使用 namespaced key，不能覆盖标准字段语义。
+- 自我审查报告卡可使用 `extensions["ai-hrms.selfReview"].candidateWorkItems` 保存候选 `WorkItem`，但这些候选只能作为人工复核材料，不能自动创建 issue、PR、分派或生产事实。
 - 公开分享必须显式授权。
 - 报告卡不得包含用户私有数据、敏感字段、内部任务内容或原始模型上下文。
 
@@ -607,6 +608,82 @@
 - 工具授权变化
 - 预算耗尽或模型路由降级
 - HITL 中断与恢复
+
+### External Agent Connector API
+
+用途：把 OpenClaw、Hermes Agent 等外部 agent runtime 登记为受控 `ExternalConnector`，并在本地策略、审批和审计边界内发起 mock 或受控运行请求。首版只实现契约、策略校验和 deterministic mock，不调用真实外部 CLI、消息通道、MCP server、skills 或记忆库。
+
+关键操作：
+- `POST /api/v1/external-agent-connectors`
+- `GET /api/v1/external-agent-connectors/{connectorId}`
+- `POST /api/v1/external-agent-runs`
+- `POST /api/v1/external-agent-runs/{agentRunId}/results`
+
+`ExternalAgentConnectorProfile` 最小字段：
+- `connectorId`
+- `schemaVersion`
+- `provider`：`openclaw`、`hermes-agent` 或 `custom`
+- `mode`：`mock`、`local_cli` 或 `remote_gateway`
+- `supportedDirections`：`ai_hrms_to_external_agent`、`external_agent_to_ai_hrms`
+- `allowedEnvironments`
+- `dataClassificationAllowed`
+- `riskLevelAllowed`
+- `toolContractRefs`
+- `approvalRequiredByDefault`
+- `secretRefPolicy`
+- `auditTags`
+- `extensions`
+
+`ExternalAgentRunRequest` 最小字段：
+- `requestId`
+- `schemaVersion`
+- `connectorId`
+- `direction`
+- `env`
+- `actor`
+- `projectInstanceId`
+- `workItemId`
+- `agentRunId`
+- `riskLevel`
+- `dataClassification`
+- `taskGoal`
+- `inputRefs`
+- `requestedCapabilities`
+- `approvalRef`
+- `extensions`
+
+`ExternalAgentRunResult` 最小字段：
+- `resultId`
+- `schemaVersion`
+- `connectorId`
+- `direction`
+- `env`
+- `agentRunId`
+- `status`
+- `outputRefs`
+- `summary`
+- `findings`
+- `recommendations`
+- `auditRefs`
+- `dataClassification`
+- `redactionStatus`
+- `extensions`
+
+边界说明：
+- OpenClaw、Hermes Agent 和类似运行时不引入新的 actor 类型；它们是 `ExternalConnector` 的 provider profile。
+- 外部 agent 的入站结果默认不可信，只能作为候选输入进入本地 `WorkItem`、`Observation` 或 `ExecutionReportCard`。
+- 真实 CLI 或 gateway 调用默认关闭。启用前必须有 connector profile、`ToolContract`、策略评估、预算、数据分级、审批和审计。
+- `restricted` 与 `sensitive` 数据默认不得外发；确需外发时必须脱敏、摘要化或进入 `ApprovalGate`。
+- 高风险动作必须回到本地 `ApprovalGate`，外部 agent 不能替代本地 human owner、审批链、审计和回滚。
+- connector profile 只能保存 secret 引用或 secret path，不得保存明文 token、API key、密码或消息账号凭据。
+- `extensions` 必须使用 namespaced key，不能覆盖标准字段语义。
+
+审计点：
+- connector profile 创建、修改、禁用和删除
+- 外部 agent run 请求创建、策略拒绝、审批触发和预算阻塞
+- 外部 agent result 接收、校验、拒绝和人工复核
+- 真实 CLI/gateway 从 disabled 改为 enabled
+- 数据分级、风险等级、ToolContract 或 secretRefPolicy 变更
 
 ### Approval API
 
@@ -793,6 +870,7 @@ v1 固定使用以下事件前缀：
 - `federation.*`
 - `runtime.*`
 - `report.*`
+- `external_agent.*`
 
 推荐事件：
 
@@ -828,6 +906,10 @@ v1 固定使用以下事件前缀：
 | `runtime.model_capability_profile_changed` | 模型能力画像创建、更新或失效 |
 | `runtime.adaptive_decision_made` | 自适应运行做出降级、阻塞或人工接管决策 |
 | `report.execution_card_created` | 生成执行报告卡 |
+| `external_agent.connector_profile_changed` | 外部 agent connector profile 创建、更新、禁用或删除 |
+| `external_agent.run_requested` | 创建外部 agent 运行请求 |
+| `external_agent.run_rejected` | 外部 agent 运行请求被策略、审批或 schema 拒绝 |
+| `external_agent.result_received` | 收到外部 agent 结果候选 |
 
 ## 事件封套
 

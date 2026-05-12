@@ -10,6 +10,7 @@
 
 - 让用户 3 分钟内看到第一张 `ExecutionReportCard`。
 - 让用户 30 分钟内完成或理解一份 AI-assisted work proof。
+- 让维护者和 agent 每次打开仓库后能从项目运行入口看到当前任务清单、推荐下一步和分派边界。
 - 保持 CLI 与 Web 共用同一份 Demo engine、模板 manifest 和报告卡 schema。
 - 提供足够完整的半落地产品骨架，使用户能评价方向，而不是只评价单个 CLI 输出。
 - 为后续真实 Web app、模板扩展和知识导航打下可迁移的数据结构。
@@ -42,6 +43,7 @@ Web Workbench 第一屏提供三类入口：
 用户可见首批模板：
 
 - `repo_understanding_and_work_plan`：项目理解、风险、下一步计划、可选 `WorkShard` 建议。
+- `external_agent_connector_safety_demo`：OpenClaw / Hermes Agent 类外部 agent runtime 的受控 `ExternalConnector` profile、策略判断、mock request/result 和报告卡。
 - `issue_pr_triage_and_review`：issue / PR 分类、风险、审查要点、后续 WorkItem。
 - `personal_work_proof`：目标、材料和时间到 `LearningPath`、`CapabilityProof` 和小任务建议。
 - `knowledge_navigation_and_challenge`：用户问题到来源定位、`AnswerCard`、`DocChallengeDraft` 和报告卡。
@@ -54,6 +56,12 @@ Web Workbench 第一屏提供三类入口：
 - `dist/web/index.html`：本地可打开的半落地产品原型。
 - `dist/web/data/*.json` / `*.md`：从共享 Demo engine 生成的报告卡样例。
 - `packages/knowledge`：CLI 与 Web 共用的本地 deterministic 知识导航层，生成 `SearchHit`、`AnswerCard` 和 `DocChallengeDraft`。
+- `config/connectors/*.mock.json`：OpenClaw / Hermes Agent mock connector profile，用于展示外部 agent 安全接入形状。
+- `config/project-operating-entry.json`：`project-operating-entry.v1` 机器事实源，用于任务清单、分派、防冲突和停止条件。
+- `scripts/run-self-review.mjs`：项目自我审查入口，只生成报告卡和候选 WorkItem，不修改仓库文件。
+- `scripts/render-delivery-report-html.mjs`：从有效 JSON report cards 渲染整体 HTML 交付报告。
+- `scripts/validate-operating-entry.mjs`：校验项目运行入口 manifest、引用路径和 pnpm script 引用。
+- `docs/zh-CN/project-operating-entry.md`：仓库打开后的任务清单、分派、防冲突和停止条件入口。
 - 测试：Demo engine、CLI、报告卡契约和 workspace 校验。
 
 ## 半落地版本要求
@@ -67,17 +75,25 @@ Web Workbench 第一屏提供三类入口：
 - JSON canonical source 和 Markdown render 的导出入口。
 - Knowledge Navigation / AnswerCard / DocChallenge 的后续占位，但明确不自动改文档。
 - `Ask maintained docs` 的半落地样例：展示问题、回答、来源引用、Challenge 入口和对应 JSON 输出。
+- 外部 agent connector 安全样例：展示 OpenClaw / Hermes Agent mock profile、policy decision、mock request/result 和 ApprovalGate。
+- 自我审查命令入口：说明 `pnpm self-review` 用于发现项目腐烂和漂移，并在 `ai-hrms.selfReview` 扩展中生成候选 WorkItem，不产生写副作用。
+- HTML 总报告入口：说明 `pnpm report:html` 只汇总 JSON report cards，不替代 Markdown 文档。
+- 项目运行入口：展示当前 P0/P1/P2 任务、`WorkShard` 分派边界、`writeSet` 防冲突规则和持续推进停止条件。
 - 当前短期目标和一年目标的区别。
 
 ## 架构约束
 
 - Web 只消费 `packages/demo` 生成的数据，不复制业务逻辑。
+- Web Workbench 读取 `config/project-operating-entry.json` 展示任务清单和 harness 约束，不在前端复制第二份任务清单。
 - JSON `ExecutionReportCard` 是事实源；HTML 和 Markdown 都只是渲染物。
 - mock 输出必须稳定、结构完整、可测试，并明确标记为 mock。
 - live model 只作为未来增强路径，不能影响 MVP 闭环通过标准。
 - 本地知识导航默认使用 `local-mock-semantic`，真实 embedding / file search 只能作为增强路径，不改变 AnswerCard、DocChallengeDraft 和报告卡契约。
 - 高风险或有副作用动作必须进入 `ApprovalGate`，当前只生成建议。
 - 学习沉淀、评测样本和报告卡都必须保留数据分级、脱敏状态和分享许可。
+- OpenClaw / Hermes Agent 接入首版只能走 mock connector profile；真实 CLI、gateway、消息、skills、memory、MCP 和 secret 访问默认关闭。
+- 外部 agent 入站结果只能作为候选，不能直接修改文档、代码、issue、PR、生产事实或公开资产。
+- HTML 只用于整体交付或阶段汇总报告；单次报告卡继续默认 JSON + Markdown。
 
 ## 风险与缓解措施
 
@@ -86,6 +102,8 @@ Web Workbench 第一屏提供三类入口：
 | Web 与 CLI 逻辑分叉 | 把执行逻辑放在 `packages/demo`，Web build 只调用共享 engine |
 | 用户误解 mock 为真实模型分析 | 报告卡和 UI 明确显示 mock route |
 | 范围扩散到真实连接器 | 当前模板只读取本地文档或 pasted context |
+| 外部 agent 绕过本地治理 | 外部 agent 只作为 ExternalConnector profile，所有 medium/high 风险和真实执行都触发 ApprovalGate 或策略拒绝 |
+| HTML 报告替代事实源 | HTML 只从 JSON report cards 渲染，Markdown 仍是默认单次阅读物 |
 | 过早承诺现实层能力 | RealityCapture 只保留研究备忘录，不进入 MVP 主线 |
 | 报告卡泄漏私有数据 | 默认 `sharePermission=private`，公开分享后续另做审批和脱敏 |
 | AI 建议替代人类 owner | 所有模板输出均为候选建议，审批状态默认需要人工复核 |
@@ -98,6 +116,10 @@ Web Workbench 第一屏提供三类入口：
 pnpm demo
 pnpm demo -- --template repo_understanding_and_work_plan
 pnpm knowledge:demo -- --query "AI-HRMS 下一步应该做什么？"
+pnpm demo -- --template external_agent_connector_safety_demo
+pnpm self-review
+pnpm report:html
+pnpm validate:operating-entry
 pnpm web:demo
 pnpm check
 ```
@@ -112,6 +134,8 @@ pnpm check
 - 所有报告卡通过 `validateExecutionReportCard`。
 - `pnpm check` 通过。
 - 文档同步说明新增目录、命令和约束。
+- `project-operating-entry.md` 能作为下一轮任务选择和 agent 分派入口。
+- `config/project-operating-entry.json` 通过 `validateProjectOperatingEntry`，并被 Web Workbench 读取展示。
 
 ## 后续迭代
 

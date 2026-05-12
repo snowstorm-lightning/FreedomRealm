@@ -43,6 +43,29 @@ ProjectInstance 内权限还必须考虑实例成员角色、审批责任、资�
 - 是否允许自动执行
 - 审计标签
 
+## 外部 Agent 接入治理
+
+OpenClaw、Hermes Agent 和类似项目可以提高 AI-HRMS 的生态关注度，但它们必须作为受控 `ExternalConnector` 接入，不能成为绕过本地治理的旁路。
+
+首版规则：
+
+- 默认只允许 mock connector profile；真实 CLI、gateway、消息通道、skills、MCP server、browser、cron 和持久记忆访问默认关闭。
+- 每个外部 agent provider 必须有 `ExternalAgentConnectorProfile`，声明 `provider`、`mode`、支持方向、环境、数据分级、风险等级、ToolContract、secret 引用策略和审计标签。
+- 外部 agent 的输出默认是不可信候选，只能进入 `ExecutionReportCard`、`Observation`、`DocChallengeDraft` 或后续 `WorkItem` 草稿，不能直接修改生产事实。
+- `restricted` 和 `sensitive` 数据默认不得发送给外部 agent；如果需要，必须先脱敏、摘要化并通过 `ApprovalGate`。
+- 高风险动作、发布、外部通知、任务强制分派、权限变更、预算变更和数据共享必须回到本地 `ApprovalGate`。
+- connector profile 不得保存明文 token、API key、消息账号凭据或本地 agent 配置内容，只能保存 secret ref 或 secret path。
+- OpenClaw / Hermes Agent 的本地配置、消息账号、聊天记录、skills、memory、MCP 配置和执行轨迹不得被 Demo Mode 自动读取。
+- 外部 agent 接入不得改变 `ExternalConnector` actor 类型，不得新增未登记 actor 类型。
+
+安全事件包括：
+
+- 外部 agent 访问未授权数据、消息、记忆或工具。
+- 真实外部 agent CLI 在未显式配置和审批时被调用。
+- 外部 agent 入站结果被直接写入生产事实或公开资产。
+- connector profile 泄漏 secret 明文或跨环境复用凭据。
+- 外部 agent 绕过本地审批、审计、预算、数据分级或 human owner。
+
 ## 数据分级
 
 建议至少采用四级数据分级：

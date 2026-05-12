@@ -5,15 +5,19 @@ import {
   ANSWER_CARD_SCHEMA_VERSION,
   DOC_CHALLENGE_DRAFT_SCHEMA_VERSION,
   EXECUTION_REPORT_CARD_SCHEMA_VERSION,
+  EXTERNAL_AGENT_RUN_REQUEST_SCHEMA_VERSION,
+  EXTERNAL_AGENT_RUN_RESULT_SCHEMA_VERSION,
   renderExecutionReportCardMarkdown,
-  validateExecutionReportCard
+  validateExecutionReportCard,
+  validateExternalAgentRunRequest,
+  validateExternalAgentRunResult
 } from "../../contracts/src/index.mjs";
 import {
   collectDefaultKnowledgeInputs,
   createKnowledgeNavigationArtifacts,
   DEFAULT_KNOWLEDGE_QUERY
 } from "../../knowledge/src/index.mjs";
-import { evaluateToolExecution } from "../../policy/src/index.mjs";
+import { evaluateExternalAgentRun, evaluateToolExecution } from "../../policy/src/index.mjs";
 
 export const DEFAULT_DEMO_TEMPLATE_ID = "docs_review_and_improvement";
 
@@ -50,6 +54,21 @@ export const DEFAULT_DEMO_INPUTS = Object.freeze({
     "docs/zh-CN/roadmap.md",
     "docs/zh-CN/api-contracts.md",
     "docs/zh-CN/quality-gates.md"
+  ]),
+  external_agent_connector_safety_demo: Object.freeze([
+    "README.md",
+    "ARCHITECTURE.md",
+    "docs/zh-CN/api-contracts.md",
+    "docs/zh-CN/security-and-governance.md",
+    "docs/zh-CN/quality-gates.md"
+  ]),
+  project_self_review_and_decay_prevention: Object.freeze([
+    "README.md",
+    "ARCHITECTURE.md",
+    "docs/zh-CN/developer-experience.md",
+    "docs/zh-CN/quality-gates.md",
+    "docs/zh-CN/roadmap.md",
+    "docs/zh-CN/capability-development-and-mvp.md"
   ])
 });
 
@@ -139,6 +158,126 @@ function buildMockAnalysis(templateId, knowledgeArtifacts = null) {
           action: "decide_doc_challenge",
           status: "optional",
           reason: "Submit the draft only if the cited source should be challenged or improved."
+        }
+      ],
+      requiresHumanReview: true
+    };
+  }
+
+  if (templateId === "external_agent_connector_safety_demo") {
+    return {
+      summary:
+        "Mock analysis: OpenClaw and Hermes Agent style runtimes can increase ecosystem reach, but AI-HRMS must treat them as governed ExternalConnector profiles. The demo creates bounded mock requests, evaluates policy, and records candidate results without launching real external agents.",
+      findings: [
+        {
+          id: "finding-001",
+          title: "External agent runtimes are not trusted by default",
+          detail:
+            "Inbound messages, persistent memory, skills, MCP tools, and channel gateways are treated as untrusted surfaces until a connector profile, data boundary, and audit path are approved."
+        },
+        {
+          id: "finding-002",
+          title: "Real execution stays disabled in Demo Mode",
+          detail:
+            "The mock connector profiles do not read OpenClaw or Hermes Agent local configuration, do not call their CLIs, and do not access user messages, memory, or secrets."
+        },
+        {
+          id: "finding-003",
+          title: "ApprovalGate remains local",
+          detail:
+            "External agent output can become candidate evidence, but high-risk action, assignment, publication, and data sharing still return to the local AI-HRMS ApprovalGate."
+        }
+      ],
+      recommendations: [
+        {
+          id: "recommendation-001",
+          title: "Keep the first connector profiles mock-only",
+          detail:
+            "Use deterministic connector profiles to validate schema, policy, audit, and report-card rendering before enabling any local CLI bridge."
+        },
+        {
+          id: "recommendation-002",
+          title: "Require explicit profile review for each provider",
+          detail:
+            "OpenClaw and Hermes Agent should be registered as ExternalConnector profiles with allowed environments, risk levels, data classifications, and secret reference policy."
+        },
+        {
+          id: "recommendation-003",
+          title: "Capture external results as candidates",
+          detail:
+            "ExternalAgentRunResult should be reviewed as candidate input and should never be treated as a production fact without human ownership."
+        }
+      ],
+      nextActions: [
+        {
+          action: "review_connector_profiles",
+          status: "pending",
+          reason: "A human owner should verify provider assumptions and allowed data boundaries."
+        },
+        {
+          action: "keep_real_cli_disabled",
+          status: "required",
+          reason: "Real external agent calls need a separate local configuration, approval, and audit trail."
+        }
+      ],
+      requiresHumanReview: true
+    };
+  }
+
+  if (templateId === "project_self_review_and_decay_prevention") {
+    return {
+      summary:
+        "Mock analysis: project decay prevention should become a recurring self-review loop. The current repository already has quality gates and Demo Mode checks; the next step is to make drift, stale docs, missing tests, and scope creep visible as reviewable WorkItems.",
+      findings: [
+        {
+          id: "finding-001",
+          title: "Documentation and code can drift as connectors are added",
+          detail:
+            "External agent connector language touches API contracts, security, quality gates, templates, CLI commands, and Web display; these must change together."
+        },
+        {
+          id: "finding-002",
+          title: "Self-review should not auto-edit the repository",
+          detail:
+            "The self-review template produces findings and next actions only. It intentionally avoids changing docs, code, issues, PRs, or connector configuration."
+        },
+        {
+          id: "finding-003",
+          title: "Healthy failure samples should remain visible",
+          detail:
+            "Reports should preserve blocked and needs_review states so the project does not hide governance friction as it grows."
+        }
+      ],
+      recommendations: [
+        {
+          id: "recommendation-001",
+          title: "Run self-review before expanding real connectors",
+          detail:
+            "Use the self-review report to check whether new connector capabilities have matching docs, policy, tests, and rollback notes."
+        },
+        {
+          id: "recommendation-002",
+          title: "Track decay as candidate WorkItems",
+          detail:
+            "Represent stale docs, missing tests, unclear ownership, and broken runbooks as explicit follow-up WorkItems instead of letting them stay implicit."
+        },
+        {
+          id: "recommendation-003",
+          title: "Keep HTML for delivery summaries",
+          detail:
+            "Per-run report cards should remain JSON-first with Markdown rendering; HTML should summarize a delivery batch when visual presentation is worth the extra tokens."
+        }
+      ],
+      nextActions: [
+        {
+          action: "create_decay_prevention_backlog",
+          status: "recommended",
+          reason: "Convert self-review findings into human-reviewed WorkItems."
+        },
+        {
+          action: "schedule_recurring_self_review",
+          status: "optional",
+          reason: "A regular self-review loop keeps drift visible without adding autonomous write side effects."
         }
       ],
       requiresHumanReview: true
@@ -342,6 +481,72 @@ function buildMockAnalysis(templateId, knowledgeArtifacts = null) {
   };
 }
 
+function buildSelfReviewCandidateWorkItems({ analysis, inputRefs }) {
+  return [
+    {
+      candidateWorkItemId: "candidate-work-item-001",
+      title: "Synchronize connector governance docs and tests",
+      status: "candidate",
+      priority: "P1",
+      riskLevel: "medium",
+      ownerActorTypes: ["HumanActor", "AgentActor"],
+      sourceFindingIds: ["finding-001"],
+      sourceRecommendationIds: ["recommendation-001"],
+      goal:
+        "Keep external agent connector docs, policy checks, templates, CLI commands, and Web display aligned before real connector work expands.",
+      nonGoals: [
+        "Do not enable real external agent execution.",
+        "Do not store connector secrets or local agent configuration."
+      ],
+      suggestedReadSet: inputRefs.map((inputRef) => inputRef.path),
+      suggestedWriteSet: [
+        "docs/zh-CN/api-contracts.md",
+        "docs/zh-CN/security-and-governance.md",
+        "docs/zh-CN/quality-gates.md",
+        "packages/policy/test/environment-isolation.test.mjs"
+      ],
+      acceptanceCriteria: [
+        "Connector governance docs and policy tests describe the same ApprovalGate and data classification boundary.",
+        "No real connector execution is enabled by the change.",
+        "All affected docs keep ExternalConnector terminology."
+      ],
+      verificationCommands: ["pnpm check"],
+      approvalRequired: true,
+      auditReason: analysis.findings.find((finding) => finding.id === "finding-001")?.detail ?? ""
+    },
+    {
+      candidateWorkItemId: "candidate-work-item-002",
+      title: "Create a human-reviewed decay prevention backlog",
+      status: "candidate",
+      priority: "P1",
+      riskLevel: "medium",
+      ownerActorTypes: ["HumanActor"],
+      sourceFindingIds: ["finding-002", "finding-003"],
+      sourceRecommendationIds: ["recommendation-002"],
+      goal:
+        "Convert self-review findings into explicit WorkItem candidates without giving the self-review command write authority.",
+      nonGoals: [
+        "Do not auto-create issues, PRs, or production WorkItems.",
+        "Do not hide blocked or needs_review samples."
+      ],
+      suggestedReadSet: inputRefs.map((inputRef) => inputRef.path),
+      suggestedWriteSet: [
+        "config/project-operating-entry.json",
+        "docs/zh-CN/project-operating-entry.md",
+        "docs/zh-CN/quality-gates.md"
+      ],
+      acceptanceCriteria: [
+        "Candidate WorkItems include source finding ids, owner, risk, readSet, writeSet, and verification commands.",
+        "Self-review output remains JSON-first and requires human review.",
+        "The command still does not modify repository documents or code."
+      ],
+      verificationCommands: ["pnpm self-review", "pnpm check"],
+      approvalRequired: true,
+      auditReason: analysis.recommendations.find((recommendation) => recommendation.id === "recommendation-002")?.detail ?? ""
+    }
+  ];
+}
+
 function makeAuditRef(eventType, trace, extra = {}) {
   return {
     auditEventId: `audit-${randomUUID()}`,
@@ -397,6 +602,264 @@ function buildModelRoute({ requestedModel, template }) {
   };
 }
 
+async function createExternalAgentArtifacts({ repoRoot, template, trace, inputRefs }) {
+  const profilePaths = template.externalAgentConnectorProfilePaths ?? [];
+  if (!Array.isArray(profilePaths) || profilePaths.length === 0) {
+    return null;
+  }
+
+  const connectors = [];
+  for (const profilePath of profilePaths) {
+    const profile = await readJson(repoRoot, profilePath);
+    const request = {
+      requestId: `external-agent-request-${randomUUID()}`,
+      schemaVersion: EXTERNAL_AGENT_RUN_REQUEST_SCHEMA_VERSION,
+      connectorId: profile.connectorId,
+      direction: "ai_hrms_to_external_agent",
+      env: "dev",
+      actor: {
+        actorType: "AgentActor",
+        actorId: trace.agentActorId
+      },
+      projectInstanceId: trace.projectInstanceId,
+      workItemId: trace.workItemId,
+      agentRunId: trace.agentRunId,
+      riskLevel: template.riskLevel,
+      dataClassification: template.dataClassification,
+      taskGoal: template.taskGoal,
+      inputRefs: inputRefs.map((inputRef) => ({
+        refId: inputRef.refId,
+        kind: inputRef.kind,
+        path: inputRef.path,
+        digest: inputRef.digest,
+        dataClassification: inputRef.dataClassification
+      })),
+      requestedCapabilities: [
+        "summarize_governed_task",
+        "propose_candidate_next_steps"
+      ],
+      approvalRef: null,
+      extensions: {
+        "ai-hrms.external-agent": {
+          mock: true,
+          realExecution: false,
+          provider: profile.provider
+        }
+      }
+    };
+
+    const requestValidation = validateExternalAgentRunRequest(request);
+    if (!requestValidation.ok) {
+      const details = requestValidation.errors.map((error) => `${error.path}: ${error.code}`).join(", ");
+      throw new Error(`Generated invalid ExternalAgentRunRequest: ${details}`);
+    }
+
+    const policy = evaluateExternalAgentRun({
+      connectorProfile: profile,
+      request,
+      env: "dev",
+      hasApproval: false,
+      realExecutionEnabled: false,
+      autoExecute: false
+    });
+    if (policy.decision === "deny") {
+      throw new Error(`External agent policy denied ${profile.connectorId}: ${policy.reason}`);
+    }
+
+    const runResult = {
+      resultId: `external-agent-result-${randomUUID()}`,
+      schemaVersion: EXTERNAL_AGENT_RUN_RESULT_SCHEMA_VERSION,
+      connectorId: profile.connectorId,
+      direction: "external_agent_to_ai_hrms",
+      env: "dev",
+      agentRunId: trace.agentRunId,
+      status: "needs_review",
+      outputRefs: [],
+      summary:
+        `${profile.provider} mock connector returned a candidate summary. No real external agent process, channel, memory, or secret was accessed.`,
+      findings: [
+        {
+          id: "external-finding-001",
+          title: "Candidate output only",
+          detail:
+            "The result can inform a human review, but it cannot create assignments, publish content, or change repository files."
+        }
+      ],
+      recommendations: [
+        {
+          id: "external-recommendation-001",
+          title: "Keep local ApprovalGate in control",
+          detail:
+            "Review the connector profile, data classification, risk level, and policy result before enabling any real bridge."
+        }
+      ],
+      auditRefs: [
+        makeAuditRef("agent_run.external_agent_mock_result_created", trace, {
+          data: {
+            connectorId: profile.connectorId,
+            provider: profile.provider,
+            policyDecision: policy.decision
+          }
+        })
+      ],
+      dataClassification: template.dataClassification,
+      redactionStatus: template.redactionStatus,
+      extensions: {
+        "ai-hrms.external-agent": {
+          mock: true,
+          realExecution: false,
+          provider: profile.provider
+        }
+      }
+    };
+
+    const resultValidation = validateExternalAgentRunResult(runResult);
+    if (!resultValidation.ok) {
+      const details = resultValidation.errors.map((error) => `${error.path}: ${error.code}`).join(", ");
+      throw new Error(`Generated invalid ExternalAgentRunResult: ${details}`);
+    }
+
+    connectors.push({
+      profilePath,
+      profile,
+      request,
+      policy,
+      runResult
+    });
+  }
+
+  return {
+    connectors,
+    policyDecisions: connectors.map((connector) => connector.policy.decision),
+    requiresApproval: connectors.some((connector) => connector.policy.decision === "require_approval")
+  };
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+function renderHtmlList(items) {
+  if (!Array.isArray(items) || items.length === 0) {
+    return "<li>None</li>";
+  }
+
+  return items
+    .map((item) => {
+      if (typeof item === "string") {
+        return `<li>${escapeHtml(item)}</li>`;
+      }
+      const title = item.title ?? item.id ?? item.action ?? item.path ?? "Item";
+      const detail = item.detail ?? item.description ?? item.reason ?? item.status ?? "";
+      return `<li><strong>${escapeHtml(title)}</strong>${detail ? `: ${escapeHtml(detail)}` : ""}</li>`;
+    })
+    .join("");
+}
+
+export function renderDeliveryReportHtml({
+  reportCards,
+  title = "AI-HRMS Delivery Report",
+  generatedAt = new Date().toISOString()
+}) {
+  if (!Array.isArray(reportCards)) {
+    throw new Error("reportCards must be an array.");
+  }
+
+  const cards = reportCards.map((card) => {
+    const validation = validateExecutionReportCard(card);
+    if (!validation.ok) {
+      const details = validation.errors.map((error) => `${error.path}: ${error.code}`).join(", ");
+      throw new Error(`Cannot render invalid ExecutionReportCard: ${details}`);
+    }
+    return card;
+  });
+
+  const cardsHtml = cards
+    .map(
+      (card) => `<article class="card">
+        <header>
+          <p class="eyebrow">${escapeHtml(card.templateId)}@${escapeHtml(card.templateVersion)}</p>
+          <h2>${escapeHtml(card.taskGoal)}</h2>
+          <dl>
+            <div><dt>Status</dt><dd>${escapeHtml(card.status)}</dd></div>
+            <div><dt>Risk</dt><dd>${escapeHtml(card.riskLevel)}</dd></div>
+            <div><dt>Approval</dt><dd>${escapeHtml(card.approvalStatus)}</dd></div>
+            <div><dt>Share</dt><dd>${escapeHtml(card.sharePermission)}</dd></div>
+          </dl>
+        </header>
+        <p>${escapeHtml(card.summary)}</p>
+        <section>
+          <h3>Findings</h3>
+          <ul>${renderHtmlList(card.findings)}</ul>
+        </section>
+        <section>
+          <h3>Next Actions</h3>
+          <ul>${renderHtmlList(card.nextActions)}</ul>
+        </section>
+      </article>`
+    )
+    .join("\n");
+
+  return `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>${escapeHtml(title)}</title>
+  <style>
+    :root { color-scheme: light; font-family: Inter, Segoe UI, Arial, sans-serif; color: #17201b; background: #f7f8f5; }
+    body { margin: 0; }
+    main { max-width: 1120px; margin: 0 auto; padding: 40px 20px 56px; }
+    header.hero { border-bottom: 1px solid #cfd7cd; margin-bottom: 28px; padding-bottom: 22px; }
+    h1 { font-size: 34px; line-height: 1.12; margin: 0 0 12px; }
+    h2 { font-size: 20px; line-height: 1.28; margin: 0 0 16px; }
+    h3 { font-size: 14px; margin: 20px 0 8px; }
+    p { line-height: 1.62; }
+    .summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 24px 0; }
+    .metric, .card { background: #ffffff; border: 1px solid #dbe2d8; border-radius: 8px; box-shadow: 0 1px 2px rgba(23, 32, 27, 0.05); }
+    .metric { padding: 16px; }
+    .metric strong { display: block; font-size: 24px; }
+    .grid { display: grid; grid-template-columns: 1fr; gap: 18px; }
+    .card { padding: 22px; }
+    .eyebrow, dt { color: #536158; font-size: 12px; text-transform: uppercase; letter-spacing: 0; }
+    dl { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 0; }
+    dt, dd { margin: 0; }
+    dd { font-weight: 700; }
+    ul { margin: 0; padding-left: 20px; }
+    li { margin: 7px 0; }
+    @media (max-width: 720px) {
+      .summary, dl { grid-template-columns: 1fr 1fr; }
+      h1 { font-size: 28px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header class="hero">
+      <p class="eyebrow">Generated ${escapeHtml(generatedAt)}</p>
+      <h1>${escapeHtml(title)}</h1>
+      <p>This HTML is a delivery-level render. The canonical source remains JSON ExecutionReportCard; Markdown remains the default per-run reading format.</p>
+    </header>
+    <section class="summary" aria-label="Report summary">
+      <div class="metric"><span>Report cards</span><strong>${cards.length}</strong></div>
+      <div class="metric"><span>Needs review</span><strong>${cards.filter((card) => card.status === "needs_review").length}</strong></div>
+      <div class="metric"><span>Approval required</span><strong>${cards.filter((card) => card.approvalStatus === "requires_human_review").length}</strong></div>
+      <div class="metric"><span>Private</span><strong>${cards.filter((card) => card.sharePermission === "private").length}</strong></div>
+    </section>
+    <section class="grid" aria-label="Report cards">
+      ${cardsHtml || '<article class="card"><h2>No report cards found</h2><p>Run Demo Mode or self-review first.</p></article>'}
+    </section>
+  </main>
+</body>
+</html>
+`;
+}
+
 export async function createDemoExecution({
   repoRoot,
   templateId = DEFAULT_DEMO_TEMPLATE_ID,
@@ -427,6 +890,12 @@ export async function createDemoExecution({
   };
 
   const inputRefs = await collectInputRefs(repoRoot, inputs);
+  const externalAgentArtifacts = await createExternalAgentArtifacts({
+    repoRoot,
+    template,
+    trace,
+    inputRefs
+  });
   const toolEvaluations = template.toolContracts.map((toolContract) => ({
     toolName: toolContract.toolName,
     result: evaluateToolExecution({
@@ -437,7 +906,9 @@ export async function createDemoExecution({
   }));
   ensureToolContractsAllowed(toolEvaluations);
 
-  const approvalRequired = toolEvaluations.some((evaluation) => evaluation.result.decision === "require_approval");
+  const approvalRequired =
+    toolEvaluations.some((evaluation) => evaluation.result.decision === "require_approval") ||
+    externalAgentArtifacts?.requiresApproval === true;
   const modelRoute = buildModelRoute({ requestedModel: model, template });
   const knowledgeArtifacts =
     templateId === "knowledge_navigation_and_challenge"
@@ -449,6 +920,10 @@ export async function createDemoExecution({
         })
       : null;
   const analysis = buildMockAnalysis(templateId, knowledgeArtifacts);
+  const selfReviewCandidateWorkItems =
+    templateId === "project_self_review_and_decay_prevention"
+      ? buildSelfReviewCandidateWorkItems({ analysis, inputRefs })
+      : [];
 
   const workItem = {
     workItemId: trace.workItemId,
@@ -471,7 +946,12 @@ export async function createDemoExecution({
     role: template.agentRole ?? "DemoDocsReviewer",
     goal: template.agentGoal ?? "Generate structured suggestions without modifying files.",
     modelRoute,
-    forbiddenActions: ["modify_repository_documents", "call_external_connectors", "use_real_hr_data"]
+    forbiddenActions: [
+      "modify_repository_documents",
+      "call_real_external_agent_runtime",
+      "read_external_agent_memory_or_messages",
+      "use_real_hr_data"
+    ]
   };
 
   const approvalGate = {
@@ -494,7 +974,9 @@ export async function createDemoExecution({
     modelRoute,
     notes: [
       "No real model key was required.",
-      "No external connector was called.",
+      externalAgentArtifacts
+        ? "External agent connector profiles were evaluated through deterministic mock requests only."
+        : "No external connector was called.",
       "No source document was modified."
     ]
   };
@@ -551,6 +1033,16 @@ export async function createDemoExecution({
     makeAuditRef("task.created", trace, { actorType: "HumanActor", actorId: trace.humanOwnerId }),
     makeAuditRef("task.assigned", trace),
     makeAuditRef("agent_run.started", trace),
+    ...(externalAgentArtifacts
+      ? [
+          makeAuditRef("policy.external_agent_connector_evaluated", trace, {
+            data: {
+              connectorIds: externalAgentArtifacts.connectors.map((connector) => connector.profile.connectorId),
+              decisions: externalAgentArtifacts.policyDecisions
+            }
+          })
+        ]
+      : []),
     makeAuditRef("approval.requested", trace, { data: { approvalId: approvalGate.approvalId } }),
     makeAuditRef("report.execution_card_created", trace)
   ];
@@ -631,7 +1123,10 @@ export async function createDemoExecution({
       requiresHumanReview: analysis.requiresHumanReview,
       candidateLearningArtifactCount: 1,
       candidateEvalSampleCount: 1,
+      candidateWorkItemCount: selfReviewCandidateWorkItems.length,
       modelRouteActual: modelRoute.actual,
+      externalAgentConnectorCount: externalAgentArtifacts?.connectors.length ?? 0,
+      externalAgentRequiresApproval: externalAgentArtifacts?.requiresApproval ?? false,
       mock: modelRoute.mock
     },
     failure: {
@@ -663,6 +1158,30 @@ export async function createDemoExecution({
         mockOutputNotice:
           "This report card was generated from deterministic mock output for Demo Mode and is not a live model analysis."
       },
+      ...(externalAgentArtifacts
+        ? {
+            "ai-hrms.externalAgent": {
+              mockOnly: true,
+              realExecution: false,
+              connectorCount: externalAgentArtifacts.connectors.length,
+              connectors: externalAgentArtifacts.connectors.map((connector) => ({
+                profilePath: connector.profilePath,
+                connectorId: connector.profile.connectorId,
+                provider: connector.profile.provider,
+                mode: connector.profile.mode,
+                allowedEnvironments: connector.profile.allowedEnvironments,
+                dataClassificationAllowed: connector.profile.dataClassificationAllowed,
+                riskLevelAllowed: connector.profile.riskLevelAllowed,
+                policyDecision: connector.policy.decision,
+                policyReason: connector.policy.reason,
+                request: connector.request,
+                runResult: connector.runResult
+              })),
+              mockOutputNotice:
+                "External agent connector safety used deterministic mock requests and did not launch OpenClaw, Hermes Agent, messaging channels, MCP servers, or local CLIs."
+            }
+          }
+        : {}),
       ...(knowledgeArtifacts
         ? {
             "ai-hrms.knowledge": {
@@ -674,6 +1193,17 @@ export async function createDemoExecution({
               sourceHits: knowledgeArtifacts.hits,
               mockOutputNotice:
                 "Knowledge navigation used local deterministic mock semantic search and did not call embeddings, live models, or external connectors."
+            }
+          }
+        : {}),
+      ...(selfReviewCandidateWorkItems.length > 0
+        ? {
+            "ai-hrms.selfReview": {
+              noWriteSideEffects: true,
+              reviewRequired: true,
+              candidateWorkItems: selfReviewCandidateWorkItems,
+              mockOutputNotice:
+                "Self-review candidate WorkItems are review material only. They do not create issues, PRs, assignments, or repository changes."
             }
           }
         : {})
@@ -690,13 +1220,20 @@ export async function createDemoExecution({
     template,
     reportCard,
     markdown: renderExecutionReportCardMarkdown(reportCard),
-    artifacts: knowledgeArtifacts
-      ? {
-          answerCard: knowledgeArtifacts.answerCard,
-          docChallengeDraft: knowledgeArtifacts.docChallengeDraft,
-          knowledge: knowledgeArtifacts
-        }
-      : {},
+    artifacts: {
+      ...(knowledgeArtifacts
+        ? {
+            answerCard: knowledgeArtifacts.answerCard,
+            docChallengeDraft: knowledgeArtifacts.docChallengeDraft,
+            knowledge: knowledgeArtifacts
+          }
+        : {}),
+      ...(externalAgentArtifacts
+        ? {
+            externalAgent: externalAgentArtifacts
+          }
+        : {})
+    },
     output: {
       absoluteOutputDir,
       jsonPath,

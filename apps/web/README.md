@@ -17,12 +17,14 @@ pnpm web:demo
 
 The generated page is written to `dist/web/index.html`.
 
-The current build renders five built-in templates:
+The current build renders seven built-in templates:
 
 - `repo_understanding_and_work_plan`
 - `knowledge_navigation_and_challenge`
+- `external_agent_connector_safety_demo`
 - `issue_pr_triage_and_review`
 - `personal_work_proof`
+- `project_self_review_and_decay_prevention`
 - `docs_review_and_improvement`
 
 Each template produces a canonical JSON `ExecutionReportCard` and a Markdown render under `dist/web/data/`.
@@ -32,3 +34,7 @@ The build also renders three built-in `Ask maintained docs` examples. Each examp
 - `AnswerCard` JSON
 - `DocChallengeDraft` JSON
 - `ExecutionReportCard` JSON / Markdown
+
+`external_agent_connector_safety_demo` displays OpenClaw / Hermes Agent style runtimes as mock `ExternalConnector` profiles. It does not launch real external CLIs, read messaging accounts, load skills, access memory, call MCP servers, or read secrets.
+
+`project_self_review_and_decay_prevention` displays self-review findings and candidate WorkItems in `ai-hrms.selfReview`. It does not create issues, PRs, assignments, or repository changes.

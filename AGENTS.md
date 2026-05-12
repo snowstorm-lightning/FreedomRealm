@@ -21,11 +21,13 @@
 1. [README.md](README.md)
 2. [ARCHITECTURE.md](ARCHITECTURE.md)
 3. [docs/zh-CN/README.md](docs/zh-CN/README.md)
-4. 根据任务进入对应专题文档。
+4. [docs/zh-CN/project-operating-entry.md](docs/zh-CN/project-operating-entry.md)
+5. 根据任务进入对应专题文档。
 
 ## Knowledge Map
 
 - 项目愿景与原则：[docs/zh-CN/vision-and-principles.md](docs/zh-CN/vision-and-principles.md)
+- 项目运行入口与任务清单：[docs/zh-CN/project-operating-entry.md](docs/zh-CN/project-operating-entry.md)
 - 业务蓝图：[docs/zh-CN/business-blueprint.md](docs/zh-CN/business-blueprint.md)
 - 总体架构：[docs/zh-CN/architecture-blueprint.md](docs/zh-CN/architecture-blueprint.md)
 - 人机协作流：[docs/zh-CN/collaboration-workflows.md](docs/zh-CN/collaboration-workflows.md)

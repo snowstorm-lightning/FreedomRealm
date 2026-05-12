@@ -69,13 +69,37 @@ pnpm demo
 
 默认输出写入 `dist/demo-mode/`：JSON 是 `ExecutionReportCard` 的 canonical source，Markdown 是从 JSON 渲染出的默认阅读版本。更多参数见 [docs/zh-CN/runbooks/demo-mode.md](docs/zh-CN/runbooks/demo-mode.md)。
 
+外部 agent 安全接入演示：
+
+```text
+pnpm demo -- --template external_agent_connector_safety_demo
+```
+
+该模板把 OpenClaw / Hermes Agent 类运行时建模为受控 `ExternalConnector` mock profile，只生成 `ExternalAgentRunRequest`、`ExternalAgentRunResult` 和策略判断，不启动真实外部 CLI，不读取消息账号、skills、memory、MCP 配置或 secret。
+
+项目自我审查与腐烂预防：
+
+```text
+pnpm self-review
+```
+
+该命令生成 `project_self_review_and_decay_prevention` 报告卡，只输出发现、风险和候选后续 WorkItem，不自动修改文档或代码。
+
+整体交付 HTML 报告：
+
+```text
+pnpm report:html
+```
+
+该命令从有效 JSON `ExecutionReportCard` 汇总生成 `dist/reports/delivery-report.html`。HTML 只用于整体交付展示；单次报告卡仍默认 JSON + Markdown，长期维护文档仍以 Markdown 为主。
+
 静态 Web Workbench 可通过同一 Demo engine 生成：
 
 ```text
 pnpm web:demo
 ```
 
-默认输出写入 `dist/web/index.html`，展示 `repo_understanding_and_work_plan`、`knowledge_navigation_and_challenge`、`issue_pr_triage_and_review`、`personal_work_proof` 和 `docs_review_and_improvement`，并包含 3 个内置知识问答样例。
+默认输出写入 `dist/web/index.html`，展示 `repo_understanding_and_work_plan`、`knowledge_navigation_and_challenge`、`external_agent_connector_safety_demo`、`issue_pr_triage_and_review`、`personal_work_proof`、`project_self_review_and_decay_prevention` 和 `docs_review_and_improvement`，并包含 3 个内置知识问答样例和 `Next Workbench` 任务入口。
 
 知识导航与异议闭环可单独运行：
 
@@ -146,6 +170,7 @@ AI-HRMS 的反商业捕获策略是组合式的，而不是承诺许可证可以
 - [AGENTS.md](AGENTS.md)：Agent 协作规则、知识索引和约束入口。
 - [ARCHITECTURE.md](ARCHITECTURE.md)：总体架构摘要与关键边界。
 - [docs/zh-CN/README.md](docs/zh-CN/README.md)：中文解释文档库总索引。
+- [docs/zh-CN/project-operating-entry.md](docs/zh-CN/project-operating-entry.md)：每次打开仓库后的任务清单、分派、防冲突和停止条件入口。
 - [docs/zh-CN/open-source-strategy.md](docs/zh-CN/open-source-strategy.md)：开源战略与反商业捕获。
 - [docs/zh-CN/adoption-and-growth.md](docs/zh-CN/adoption-and-growth.md)：传播、Demo、报告卡和模板增长机制。
 - [docs/zh-CN/governance-ai-brain.md](docs/zh-CN/governance-ai-brain.md)：治理型 AI 中枢、智能分派和模型能力治理。

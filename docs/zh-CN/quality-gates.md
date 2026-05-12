@@ -26,6 +26,7 @@
 - 人工中断点
 - 评测指标
 - 回滚路径
+- 允许停止的条件和必须继续推进的条件
 
 当一个 `WorkItem` 拆成多个 `WorkShard` 或由多个 `AgentActor` / `HumanActor` 并行推进时，还必须定义：
 
@@ -44,6 +45,27 @@
 - 失败恢复方式。
 - 人工覆盖和撤回路径。
 - 是否会影响分派、权限、模型路由、学习候选或公开分享。
+
+当用户要求 agent 持续推进到指定时间点或 checkpoint 时，还必须定义：
+
+- 当前 `WorkItem` 的最小可验证闭环。
+- 到达 checkpoint 前允许继续推进的同范围下一步。
+- 触发停止的质量条件、审批条件、权限条件和数据分级条件。
+- 继续推进前是否需要扩大 `writeSet`；若需要，必须回到人工确认。
+- 到 checkpoint 时应交付的 `ChangePacket`、`ExecutionReportCard` 或状态摘要。
+
+## Project Operating Entry Gate
+
+涉及项目运行入口、任务清单、agent 分派或停止条件的能力必须回答：
+
+- 是否同步更新 `docs/zh-CN/project-operating-entry.md` 和 `config/project-operating-entry.json`。
+- `config/project-operating-entry.json` 是否使用 `project-operating-entry.v1` 并通过 `validateProjectOperatingEntry`。
+- 是否至少保留一个 P0 任务，并为每个任务声明 owner、产出、验收、验证命令、风险等级和建议 `writeSet`。
+- startup / verification 命令是否只引用根 `package.json` 中存在的 `pnpm` scripts。
+- `conflictRules.defaultWriteSetPolicy` 是否保持 `non-overlapping`。
+- `continuationRules.allowStopWhen` 是否包含 `ApprovalGate` 和 `dataClassification` 触发条件。
+- Web Workbench 是否读取同一 manifest，而不是复制一份任务清单。
+- `pnpm validate:operating-entry` 和 `pnpm check` 是否通过。
 
 ## 架构可落地门禁
 
@@ -217,6 +239,33 @@
 - 是否禁止自动修改文档、自动创建 PR、自动评论 issue 或自动发布公开结论。
 - 是否让 `ExecutionReportCard.outputRefs` 引用 AnswerCard 和 DocChallengeDraft。
 - 是否在公开分享前执行显式授权、脱敏检查和分享许可确认。
+
+## External Agent Connector Gate
+
+涉及 OpenClaw、Hermes Agent 或其他外部 agent runtime 的能力必须回答：
+
+- 是否把外部 runtime 登记为 `ExternalConnector` profile，而不是新增未登记 actor 类型。
+- 是否声明 `ExternalAgentConnectorProfile` 的 schemaVersion、provider、mode、方向、环境、数据分级、风险等级、ToolContract、secretRefPolicy 和 auditTags。
+- 是否默认 mock-only，真实 CLI、gateway、消息通道、skills、MCP server、browser、cron 和 memory 访问是否显式关闭。
+- 是否禁止 connector profile 保存明文 token、API key、密码、消息账号凭据或本地 agent 配置。
+- 是否让每个 `ExternalAgentRunRequest` 绑定 env、actor、ProjectInstance、WorkItem、AgentRun、风险等级、数据分级和输入引用。
+- 是否让每个 `ExternalAgentRunResult` 只作为候选输入，不能直接修改生产事实、创建 PR、评论 issue、发送外部通知或公开发布。
+- 是否在 medium/high 风险、restricted/sensitive 数据、真实执行或生产环境中触发 `ApprovalGate` 或策略拒绝。
+- 是否记录策略判断、预算影响、审计标签、失败原因和人工复核点。
+- 是否验证外部 agent 入站结果的 schema、数据分级、脱敏状态和 namespaced extensions。
+- 是否提供 mock connector tests，覆盖 OpenClaw / Hermes Agent profile、策略拒绝、审批触发和报告卡记录。
+
+## Self Review Gate
+
+涉及项目自我审查、腐烂预防、治理复盘或自动发现改进点的能力必须回答：
+
+- 是否只生成发现、风险、候选 WorkItem 和报告卡，不自动修改文档、代码、issue、PR 或配置。
+- 候选 WorkItem 是否写入 `extensions["ai-hrms.selfReview"].candidateWorkItems`，并包含来源、owner、风险、`readSet`、`writeSet`、验收标准和验证命令。
+- 是否引用维护文档、模板、契约、测试或 runbook 作为来源，不把模型输出当作正式事实。
+- 是否检查文档与实现漂移、术语不一致、范围膨胀、缺失测试、缺失审批、缺失审计和过期 runbook。
+- 是否把失败样本和 `needs_review` 状态保留下来，而不是隐藏治理摩擦。
+- 是否默认输出 JSON-first `ExecutionReportCard` 和 Markdown render。
+- 是否在整体交付需要可视化时才生成 HTML 汇总报告，且 HTML 只能从有效 JSON report cards 渲染。
 
 ## Anti-Capture Gate
 

@@ -5,10 +5,20 @@
 ## OpenAI 与 Agent 能力
 
 - Harness engineering: <https://openai.com/index/harness-engineering/>
+- AGENTS.md: <https://agents.md/>
 - OpenAI Models: <https://developers.openai.com/api/docs/models>
 - Responses API: <https://platform.openai.com/docs/guides/responses-vs-chat-completions>
 - Agent evals: <https://platform.openai.com/docs/guides/agent-evals>
 - OpenAI Agents SDK: <https://openai.github.io/openai-agents-python/>
+
+## Agent 协作与项目规则
+
+- GitHub Copilot cloud agent project improvement workflow: <https://docs.github.com/en/copilot/tutorials/cloud-agent/improve-a-project>
+- GitHub Copilot repository instructions: <https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-repository-instructions>
+- Claude Code subagents: <https://docs.anthropic.com/en/docs/claude-code/sub-agents>
+- Claude Code hooks and Stop control: <https://docs.anthropic.com/en/docs/claude-code/hooks>
+- Cursor project rules: <https://docs.cursor.com/en/context/rules>
+- Google developer documentation style guide: <https://developers.google.com/style/>
 
 ## Web 与前端
 

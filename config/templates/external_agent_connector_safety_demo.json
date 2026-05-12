@@ -1,0 +1,68 @@
+{
+  "templateId": "external_agent_connector_safety_demo",
+  "templateVersion": "0.1.0",
+  "displayName": "External Agent Connector Safety Demo",
+  "runtimeMode": "Demo Mode",
+  "taskGoal": "Demonstrate how AI-HRMS can govern OpenClaw and Hermes Agent style runtimes as ExternalConnector profiles without launching real external processes.",
+  "workItemTitle": "Demo external agent connector safety",
+  "agentActorId": "agent-demo-open-agent-bridge",
+  "agentRole": "DemoOpenAgentBridge",
+  "agentGoal": "Create mock external agent requests and capture candidate results without reading external agent configs, secrets, messages, or memory.",
+  "approvalAction": "human_review_before_external_agent_execution",
+  "dataClassification": "internal",
+  "redactionStatus": "redacted",
+  "sharePermission": "private",
+  "riskLevel": "medium",
+  "skillRefs": [
+    "skill://external-agent.connector-profile.review.v1",
+    "skill://approval-gate.plan.v1",
+    "skill://execution-report-card.render.v1"
+  ],
+  "externalAgentConnectorProfilePaths": [
+    "config/connectors/openclaw.mock.json",
+    "config/connectors/hermes-agent.mock.json"
+  ],
+  "toolContracts": [
+    {
+      "toolName": "external_agent.mock_request",
+      "description": "Create a bounded mock request for an external agent runtime profile without launching the real runtime.",
+      "inputSchemaRef": "schema://ai-hrms.external-agent.run-request.v1",
+      "outputSchemaRef": "schema://ai-hrms.external-agent.run-result.v1",
+      "requiredPermissions": [
+        "external-agent:request",
+        "reports:create"
+      ],
+      "riskLevel": "medium",
+      "allowedActorTypes": [
+        "AgentActor"
+      ],
+      "allowedEnvironments": [
+        "dev",
+        "ci"
+      ],
+      "autoExecute": false,
+      "budgetLimit": {
+        "currency": "token",
+        "amount": 2000
+      },
+      "auditTags": [
+        "external-agent",
+        "ApprovalGate",
+        "mock",
+        "demo"
+      ]
+    }
+  ],
+  "mockModel": {
+    "modelRouteId": "mock.external-agent-connector-safety.v1",
+    "modelCapabilityProfileRef": "model-capability-profile://mock.external-agent-connector-safety.v1",
+    "structuredOutputSupport": true,
+    "toolCallingSupport": false
+  },
+  "failureSample": {
+    "failureType": "external_agent_policy_violation",
+    "simulated": true,
+    "statusIfTriggered": "blocked",
+    "recovery": "Keep the external agent run blocked, record the policy reason, ask the human owner to narrow data, approve explicitly, or use the mock path."
+  }
+}

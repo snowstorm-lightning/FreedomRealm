@@ -35,7 +35,7 @@ function validateNamespacedExtensions(errors, extensions) {
     return;
   }
 
-  const namespacedKeyPattern = /^[a-z0-9][a-z0-9-]*(?:\.[a-z0-9][a-z0-9-]*)+$/u;
+  const namespacedKeyPattern = /^[A-Za-z0-9][A-Za-z0-9-]*(?:\.[A-Za-z0-9][A-Za-z0-9-]*)+$/u;
   for (const key of Object.keys(extensions)) {
     if (!namespacedKeyPattern.test(key)) {
       errors.push(
@@ -170,6 +170,7 @@ export function renderExecutionReportCardMarkdown(card) {
   const failureSample = card.failure?.sample;
   const learningArtifact = demo.learningArtifact;
   const evalSample = demo.evalSample;
+  const selfReview = card.extensions["ai-hrms.selfReview"];
 
   return `# ExecutionReportCard
 
@@ -213,6 +214,10 @@ ${failureSample ? `- Type: ${failureSample.failureType}
 
 ${learningArtifact ? `- LearningArtifact: ${learningArtifact.learningArtifactId} (${learningArtifact.status})
 - Eval sample: ${evalSample?.evalSampleId ?? "none"} (${evalSample?.status ?? "none"})` : "- None"}
+
+## Candidate WorkItems
+
+${selfReview?.candidateWorkItems ? renderList(selfReview.candidateWorkItems, "None") : "- None"}
 
 ## Output Refs
 

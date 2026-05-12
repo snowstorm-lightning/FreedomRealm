@@ -1,0 +1,47 @@
+{
+  "connectorId": "external-agent.openclaw.mock",
+  "schemaVersion": "external-agent-connector-profile.v1",
+  "provider": "openclaw",
+  "mode": "mock",
+  "supportedDirections": [
+    "ai_hrms_to_external_agent",
+    "external_agent_to_ai_hrms"
+  ],
+  "allowedEnvironments": [
+    "dev",
+    "ci"
+  ],
+  "dataClassificationAllowed": [
+    "public",
+    "internal"
+  ],
+  "riskLevelAllowed": [
+    "low",
+    "medium"
+  ],
+  "toolContractRefs": [
+    "tool-contract://external-agent.openclaw.mock.request.v1",
+    "tool-contract://external-agent.openclaw.mock.result.v1"
+  ],
+  "approvalRequiredByDefault": false,
+  "secretRefPolicy": {
+    "allowsPlaintext": false,
+    "requiredRefTypes": [
+      "env",
+      "secretPath"
+    ],
+    "secretRefs": []
+  },
+  "auditTags": [
+    "external-agent",
+    "openclaw",
+    "mock"
+  ],
+  "extensions": {
+    "ai-hrms.external-agent": {
+      "upstream": "OpenClaw local-first multi-channel gateway and assistant",
+      "realExecutionDefault": "disabled",
+      "mockOnly": true
+    }
+  }
+}

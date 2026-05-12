@@ -1,0 +1,47 @@
+{
+  "connectorId": "external-agent.hermes-agent.mock",
+  "schemaVersion": "external-agent-connector-profile.v1",
+  "provider": "hermes-agent",
+  "mode": "mock",
+  "supportedDirections": [
+    "ai_hrms_to_external_agent",
+    "external_agent_to_ai_hrms"
+  ],
+  "allowedEnvironments": [
+    "dev",
+    "ci"
+  ],
+  "dataClassificationAllowed": [
+    "public",
+    "internal"
+  ],
+  "riskLevelAllowed": [
+    "low",
+    "medium"
+  ],
+  "toolContractRefs": [
+    "tool-contract://external-agent.hermes-agent.mock.request.v1",
+    "tool-contract://external-agent.hermes-agent.mock.result.v1"
+  ],
+  "approvalRequiredByDefault": false,
+  "secretRefPolicy": {
+    "allowsPlaintext": false,
+    "requiredRefTypes": [
+      "env",
+      "secretPath"
+    ],
+    "secretRefs": []
+  },
+  "auditTags": [
+    "external-agent",
+    "hermes-agent",
+    "mock"
+  ],
+  "extensions": {
+    "ai-hrms.external-agent": {
+      "upstream": "Hermes Agent persistent-memory skills runtime",
+      "realExecutionDefault": "disabled",
+      "mockOnly": true
+    }
+  }
+}

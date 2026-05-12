@@ -26,6 +26,8 @@
 
 ## 推荐开发入口
 
+每次打开仓库先看 [project-operating-entry.md](project-operating-entry.md)。该文件给出当前推荐任务清单、`WorkShard` / `AgentWorkLease` 分派规则、`writeSet` 防冲突要求和停止条件。开发命令仍以本节为准。
+
 ### 最小验证路径
 
 用于文档、契约和策略包验证，不启动数据库、Temporal、Keycloak 或模型网关。
@@ -42,6 +44,9 @@ pnpm doctor
 pnpm test
 pnpm demo
 pnpm knowledge:demo -- --query "AI-HRMS 下一步应该做什么？"
+pnpm self-review
+pnpm report:html
+pnpm validate:operating-entry
 pnpm web:demo
 pnpm validate:workspace
 pnpm validate:env:all
@@ -147,6 +152,8 @@ Python 侧：
 ├─ apps/
 │  └─ web/
 ├─ config/
+│  ├─ project-operating-entry.json
+│  ├─ connectors/
 │  ├─ environments/
 │  └─ templates/
 ├─ docs/
@@ -159,7 +166,9 @@ Python 侧：
 └─ scripts/
    ├─ check.mjs
    ├─ doctor.mjs
+   ├─ render-delivery-report-html.mjs
    ├─ run-knowledge-demo.mjs
+   ├─ run-self-review.mjs
    ├─ run-tests.mjs
    ├─ validate-env-all.mjs
    └─ validate-workspace.mjs
@@ -170,6 +179,8 @@ Python 侧：
 - 根目录只保留入口文档、workspace 配置和当前阶段正式资产。
 - `docs/zh-CN/` 承担 system of record，符合 AGENTS 工作规则。
 - `config/environments/` 独立存放环境样例，便于策略校验。
+- `config/project-operating-entry.json` 是项目运行入口的机器事实源，供校验脚本和 Web Workbench 读取。
+- `config/connectors/` 存放 OpenClaw、Hermes Agent 等外部 agent runtime 的 mock connector profile；真实 connector 配置不得保存 secret 明文。
 - `config/templates/` 存放 Demo Mode 模板 manifest，便于 CLI 和 Web 共享。
 - `apps/web/` 存放当前静态 Web Workbench，读取共享 Demo engine 生成的数据，不直接访问数据库。
 - `packages/contracts/` 存放跨包共享词表和常量。
@@ -177,9 +188,19 @@ Python 侧：
 - `packages/knowledge/` 存放本地 deterministic 知识导航、来源定位、AnswerCard 和 DocChallengeDraft 生成逻辑，供 CLI 和 Web 共享。
 - `packages/policy/` 存放可机械检查的治理规则。
 - `scripts/` 存放跨平台本地守卫，避免把复杂逻辑写进 shell-specific package scripts。
+- `scripts/run-self-review.mjs` 用于运行项目自我审查模板，只生成报告卡，不修改仓库文件。
+- `scripts/render-delivery-report-html.mjs` 用于从有效 JSON report cards 生成整体 HTML 交付报告，不替代 Markdown 文档。
 - `.github/workflows/` 存放最小 CI，使 Windows/Linux 差异尽早暴露。
 
 当前不建议移动文件。项目仍处于文档基线、最小策略守卫和轻量 Demo Workbench 阶段；新增目录都必须有可运行入口、README 或测试。
+
+外部 agent 接入、自我审查和 HTML 总报告当前不需要新增 workspace package：
+
+- connector profile 是配置资产，放在 `config/connectors/`。
+- 共享契约继续放在 `packages/contracts/`。
+- 策略校验继续放在 `packages/policy/`。
+- mock 执行和报告渲染继续放在 `packages/demo/`。
+- CLI 入口放在 `scripts/`，由根 `package.json` 暴露为 `pnpm self-review` 和 `pnpm report:html`。
 
 ## 未来目标结构
 
@@ -239,6 +260,7 @@ Python 侧：
 | `packages/evals` | 数据集、评分器、评测 runner | 不包含未脱敏生产数据 |
 | `packages/federation` | FederationProtocol schema、兼容测试和 SDK | 不依赖某个实例内部 API |
 | `packages/devtools` | doctor、脚本辅助、开发校验工具 | 必须 OS-neutral |
+| `config/connectors` | 外部 agent runtime 的 mock 或受控 connector profile | 不存 secret 明文，真实执行默认关闭 |
 | `config/environments` | 环境样例和资源命名 | 不存 secret 明文 |
 | `scripts` | 仓库级跨平台检查入口 | 只放当前阶段需要执行的守卫脚本 |
 | `infra/compose` | 本地复杂服务编排 | 只用于 dev/local，不替代生产部署文档 |

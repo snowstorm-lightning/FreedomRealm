@@ -62,8 +62,11 @@
 - 第一批用户可见 AI-assisted work proof 模板草案：`repo_understanding_and_work_plan`、`issue_pr_triage_and_review`、`personal_work_proof`。
 - 知识导航与异议闭环模板：`knowledge_navigation_and_challenge`，生成带来源引用的 `AnswerCard`、`DocChallengeDraft` 和报告卡。
 - `docs_review_and_improvement` 保留为工程 smoke template、CLI Demo 和文档协作样例。
+- 外部 agent 安全接入演示：`external_agent_connector_safety_demo`，展示 OpenClaw / Hermes Agent mock connector profile、策略判断、候选结果和报告卡，不调用真实外部进程。
+- 项目自我审查模板：`project_self_review_and_decay_prevention`，通过 `pnpm self-review` 生成自审报告卡，帮助发现项目腐烂、范围膨胀和文档/实现漂移。
 - 默认 mock model 和可选 live model 路径；MVP 通过标准不得依赖真实模型 key。
 - ExecutionReportCard JSON schema 草案、Markdown 渲染规则和脱敏规则。
+- HTML 总报告渲染：`pnpm report:html` 只从有效 JSON report cards 生成整体交付报告；单次报告卡继续默认 Markdown。
 - 模板贡献指南和失败案例贡献指南。
 - SharedEvalSummary 的聚合指标和失败分类格式。
 - 案例库信息架构和公开分享许可规则。
@@ -80,6 +83,7 @@
 - 敏感原文可直接作为训练资源保留。
 - Demo Mode 依赖 KeywordHelpOverlay、复杂自适应教学、真实外部连接器或完整企业栈才能跑通。
 - Demo Mode 必须依赖真实模型 key 才能跑通，或 mock model 输出不可测试。
+- 外部 agent 接入必须依赖真实 OpenClaw / Hermes Agent CLI、消息账号、skills、memory、MCP 配置或本地 secret 才能跑通。
 - Web UI 需要重新实现独立业务逻辑，或不能读取 CLI 产生的同一份执行数据。
 - Onboarding 把用户锁定为单一身份，无法从目标或自由探索开始。
 - 首屏需要用户先注册、先配置模型 key、先连接外部工具或先理解完整平台架构。

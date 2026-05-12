@@ -16,10 +16,13 @@
     "demo": "node scripts/run-demo-mode.mjs",
     "doctor": "node scripts/doctor.mjs",
     "knowledge:demo": "node scripts/run-knowledge-demo.mjs",
+    "report:html": "node scripts/render-delivery-report-html.mjs",
+    "self-review": "node scripts/run-self-review.mjs",
     "test": "node scripts/run-tests.mjs",
     "web:demo": "node apps/web/bin/build-demo.mjs",
     "validate:env": "node packages/policy/bin/validate-environment.mjs",
     "validate:env:all": "node scripts/validate-env-all.mjs",
+    "validate:operating-entry": "node scripts/validate-operating-entry.mjs",
     "validate:workspace": "node scripts/validate-workspace.mjs"
   },
   "engines": {

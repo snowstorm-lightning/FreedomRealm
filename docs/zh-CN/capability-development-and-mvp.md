@@ -79,18 +79,29 @@ MVP 的 `TeachingStrategy` 固定为 document-first：先把文档写清楚，�
 4. 能看到 `WorkItem`、`AgentActor`、`ToolContract`、`ApprovalGate`、`Observation` 和 `ExecutionReportCard` 的完整关系。
 5. 能把一次执行结果转化为可分享、可复用、可贡献的资产。
 
+MVP 标准需要从“能跑通最小闭环”抬高到“能被真实用户评价和继续推进”。因此当前 MVP 不再只验收 CLI 是否生成报告卡，还必须证明：
+
+- 用户打开仓库后能从 [project-operating-entry.md](project-operating-entry.md) 找到当前任务清单、优先级和下一步命令。
+- `config/project-operating-entry.json` 作为机器可校验入口事实源，能被 `pnpm validate:operating-entry` 和 Web Workbench 消费。
+- Web Workbench 第一屏能表达“我有目标 / 我想探索 / 我想看示例”，并展示推荐下一步、报告卡预览和当前执行计划入口。
+- `repo_understanding_and_work_plan` 不只生成摘要，还要能产出可转成 `WorkItem` 的 nextActions、风险、来源引用和可选 `WorkShard` 建议。
+- 多 agent 协作至少有文档级 `AgentWorkLease`、`writeSet`、`ChangePacket` 和 `MergeGate` 规则，避免多个 agent 同时修改同一范围。
+- agent 可以在用户指定 checkpoint 前持续推进同范围的可验证小任务，但停止条件必须服从质量、验证、审批、权限和数据分级。
+- 每个用户可见模板都要说明输入、输出、风险、审批点、失败路径和报告卡价值，不能只作为 mock 展示。
+- `pnpm self-review` 的输出应能形成候选 `WorkItem`，但不得自动修改仓库。
+
 建议首个 MVP 模板优先选择“文档摘要与改进建议”，原因是它可以直接使用仓库文档，不依赖外部连接器，不需要真实 HR 敏感数据，也能展示报告卡、失败复盘和模板复用。GitHub issue 分流、政策问答和社区 onboarding 可以作为下一批模板。
 
 在首版 CLI 闭环稳定后，MVP 的传播目标应升级为“能力证明型 Workbench”：帮助用户在 30 分钟内完成一次可展示、可复盘、可继续发展的 AI-assisted work proof。这个 proof 不要求用户先确定职业身份，可以从固定身份入口、目标入口或自由探索入口开始。
 
-传播型 Web MVP 的用户可见首批模板先收敛为 4 个：
+传播型 Web MVP 的主线用户模板先收敛为 4 个：
 
 - `repo_understanding_and_work_plan`：项目理解、风险识别、下一步工作计划和可选 `WorkShard` 建议。
 - `knowledge_navigation_and_challenge`：用户提问、来源定位、`AnswerCard` 和 `DocChallengeDraft`，用于建立可信问答和文档异议闭环。
 - `issue_pr_triage_and_review`：issue / PR 分类、风险、审查要点和后续 WorkItem。
 - `personal_work_proof`：从目标、材料和可用时间生成第一份能力证明、候选 `LearningPath` 和下一步小任务。
 
-`docs_review_and_improvement` 继续作为工程 smoke template、CLI Demo 和文档协作样例，不作为唯一传播主线。
+`docs_review_and_improvement` 继续作为工程 smoke template、CLI Demo 和文档协作样例，不作为唯一传播主线。`external_agent_connector_safety_demo` 和 `project_self_review_and_decay_prevention` 可在 Web Workbench 中作为治理/项目健康支撑模板展示，用于说明受控连接器、自我审查和候选 WorkItem，不作为传播型主线模板。
 
 固定身份入口只是快捷方式；系统必须允许用户跨身份、改身份、不声明身份或从任务本身开始。
 
@@ -203,6 +214,36 @@ MVP 默认模型路径采用 `mock`，可选增强路径采用 `live`。
 - 输出必须经过与 mock 模式相同的结构校验、数据分级、脱敏和审批判断。
 
 无论使用 `mock` 还是 `live`，CLI 都必须生成同一 schema 的 JSON `ExecutionReportCard`。MVP 的通过标准不能依赖 live model。
+
+## 外部 Agent 接入首版决策
+
+OpenClaw、Hermes Agent 等外部 agent runtime 对项目关注度有价值，因为它们代表了用户已经在尝试的本地优先、多通道、skills、MCP、持久记忆和自我改进型 agent 生态。但这类能力不能成为 MVP 跑通前置条件，也不能绕过 AI-HRMS 的治理边界。
+
+首版只做受控双向接口与 deterministic mock：
+
+- AI-HRMS 可以生成 `ExternalAgentRunRequest`，请求外部 agent runtime 做候选分析。
+- 外部 agent 可以提交 `ExternalAgentRunResult`，作为候选输入进入本地 review。
+- OpenClaw 和 Hermes Agent 只登记为 `ExternalConnector` provider profile，不新增 actor 类型。
+- Demo Mode 不调用真实外部 agent CLI，不读取本地配置、消息账号、memory、skills 或 MCP 配置。
+- 所有 medium/high 风险、真实执行、restricted/sensitive 数据和生产环境都必须进入 `ApprovalGate` 或被策略拒绝。
+- 外部 agent 输出只能成为报告卡、观察或后续 WorkItem 草稿的候选，不得自动修改文档、代码、PR、issue 或生产事实。
+
+当前模板 `external_agent_connector_safety_demo` 用于展示这套边界。它是生态吸引力增强项，不替代 `repo_understanding_and_work_plan`、`knowledge_navigation_and_challenge`、`issue_pr_triage_and_review` 和 `personal_work_proof` 的传播型主线。
+
+## 自我审查与项目腐烂预防
+
+AI-HRMS 需要持续防止项目腐烂，包括文档与实现漂移、术语扩散、范围膨胀、缺失测试、runbook 过期、治理规则只停留在文档中、失败样本被隐藏等问题。
+
+首版用 `project_self_review_and_decay_prevention` 模板和 `pnpm self-review` 建立自我审查闭环：
+
+- 只读取维护文档和本地 manifest。
+- 只生成发现、风险、候选后续 WorkItem 和 `ExecutionReportCard`。
+- 候选后续 WorkItem 写入 `extensions["ai-hrms.selfReview"].candidateWorkItems`，只作为人工复核材料。
+- 不自动修改文档、代码、issue、PR 或配置。
+- 输出默认仍是 JSON canonical source 和 Markdown render。
+- 自审发现必须由 human owner 决定是否转为正式 WorkItem。
+
+HTML 只用于整体交付或阶段汇总报告。单次报告卡继续以 JSON + Markdown 为默认形态，避免把所有长期文档都转成高 token 成本的 HTML。
 
 ## MVP 非目标
 

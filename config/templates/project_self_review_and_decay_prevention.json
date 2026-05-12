@@ -1,0 +1,89 @@
+{
+  "templateId": "project_self_review_and_decay_prevention",
+  "templateVersion": "0.1.0",
+  "displayName": "Project Self Review And Decay Prevention",
+  "runtimeMode": "Demo Mode",
+  "taskGoal": "Review maintained repository documents and demo contracts for signs of project decay, scope drift, stale governance, or implementation/documentation divergence.",
+  "workItemTitle": "Demo project self review and decay prevention",
+  "agentActorId": "agent-demo-self-reviewer",
+  "agentRole": "DemoSelfReviewer",
+  "agentGoal": "Generate review findings and follow-up WorkItem suggestions without modifying documents or code.",
+  "approvalAction": "human_review_before_repository_changes",
+  "dataClassification": "internal",
+  "redactionStatus": "redacted",
+  "sharePermission": "private",
+  "riskLevel": "medium",
+  "skillRefs": [
+    "skill://project.self-review.v1",
+    "skill://decay-prevention.checklist.v1",
+    "skill://execution-report-card.render.v1"
+  ],
+  "toolContracts": [
+    {
+      "toolName": "project.self_review_read",
+      "description": "Read selected maintained documents and local manifests to produce a self-review report.",
+      "inputSchemaRef": "schema://ai-hrms.demo.project.self_review_read.input.v1",
+      "outputSchemaRef": "schema://ai-hrms.demo.project.self_review_read.output.v1",
+      "requiredPermissions": [
+        "repo:read"
+      ],
+      "riskLevel": "low",
+      "allowedActorTypes": [
+        "AgentActor"
+      ],
+      "allowedEnvironments": [
+        "dev",
+        "ci"
+      ],
+      "autoExecute": true,
+      "budgetLimit": {
+        "currency": "token",
+        "amount": 1800
+      },
+      "auditTags": [
+        "self-review",
+        "read",
+        "demo"
+      ]
+    },
+    {
+      "toolName": "project.propose_decay_prevention_work_items",
+      "description": "Generate candidate follow-up WorkItems for drift, stale docs, missing tests, or weak governance boundaries.",
+      "inputSchemaRef": "schema://ai-hrms.demo.project.propose_decay_prevention_work_items.input.v1",
+      "outputSchemaRef": "schema://ai-hrms.demo.project.propose_decay_prevention_work_items.output.v1",
+      "requiredPermissions": [
+        "reports:create"
+      ],
+      "riskLevel": "medium",
+      "allowedActorTypes": [
+        "AgentActor"
+      ],
+      "allowedEnvironments": [
+        "dev",
+        "ci"
+      ],
+      "autoExecute": false,
+      "budgetLimit": {
+        "currency": "token",
+        "amount": 2600
+      },
+      "auditTags": [
+        "self-review",
+        "ApprovalGate",
+        "demo"
+      ]
+    }
+  ],
+  "mockModel": {
+    "modelRouteId": "mock.project-self-review.v1",
+    "modelCapabilityProfileRef": "model-capability-profile://mock.project-self-review.v1",
+    "structuredOutputSupport": true,
+    "toolCallingSupport": false
+  },
+  "failureSample": {
+    "failureType": "self_review_scope_too_broad",
+    "simulated": true,
+    "statusIfTriggered": "blocked",
+    "recovery": "Ask the human owner to narrow the review surface, split by subsystem, and rerun without modifying repository files."
+  }
+}

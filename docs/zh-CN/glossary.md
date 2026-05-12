@@ -44,6 +44,22 @@ WorkShard 完成后提交的结构化交付包，至少包含变更摘要、文�
 
 对工具的结构化契约，定义权限、schema、风险等级和审计标签。
 
+## ExternalConnector
+
+受控外部系统或外部 agent runtime 连接器。OpenClaw、Hermes Agent 等接入 AI-HRMS 时都属于 ExternalConnector provider profile，不新增独立 actor 类型，也不能绕过本地审批、审计、预算和数据分级。
+
+## ExternalAgentConnectorProfile
+
+外部 agent runtime 的登记画像，声明 connectorId、provider、mode、支持方向、允许环境、数据分级、风险等级、ToolContract、secretRefPolicy、审计标签和扩展字段。首版 OpenClaw / Hermes Agent profile 默认 mock-only。
+
+## ExternalAgentRunRequest
+
+AI-HRMS 发给外部 agent runtime 的受控运行请求。请求必须绑定 env、actor、ProjectInstance、WorkItem、AgentRun、风险等级、数据分级、输入引用和审批引用。
+
+## ExternalAgentRunResult
+
+外部 agent runtime 回传给 AI-HRMS 的运行结果候选。它只能作为候选输入进入报告卡、Observation 或后续 WorkItem 草稿，不能直接修改生产事实、文档、代码、issue、PR 或公开资产。
+
 ## Observation
 
 运行中产生的结构化观察记录，包括日志、指标、trace、反馈和输出。

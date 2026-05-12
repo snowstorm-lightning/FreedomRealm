@@ -1,0 +1,255 @@
+{
+  "schemaVersion": "project-operating-entry.v1",
+  "sourceDocPath": "docs/zh-CN/project-operating-entry.md",
+  "recommendedReadOrder": [
+    "AGENTS.md",
+    "README.md",
+    "ARCHITECTURE.md",
+    "docs/zh-CN/README.md",
+    "docs/zh-CN/project-operating-entry.md"
+  ],
+  "startupCommands": [
+    "pnpm knowledge:demo -- --query \"AI-HRMS 下一步应该做什么？\"",
+    "pnpm self-review"
+  ],
+  "currentTasks": [
+    {
+      "taskId": "p0-next-workbench-entry",
+      "priority": "P0",
+      "title": "Web Workbench 第一屏继续收敛为下一步工作台",
+      "ownerActorTypes": [
+        "HumanActor",
+        "AgentActor"
+      ],
+      "outputs": [
+        "三类入口",
+        "推荐下一步",
+        "报告卡预览",
+        "当前计划入口"
+      ],
+      "acceptanceCriteria": [
+        "Web Workbench 展示 project-operating-entry.v1 的当前任务清单",
+        "Web Workbench 展示 AgentWorkLease、writeSet、MergeGate 和停止条件",
+        "输出仍来自静态 mock 数据和本地 manifest"
+      ],
+      "verificationCommands": [
+        "pnpm web:demo",
+        "pnpm check"
+      ],
+      "riskLevel": "medium",
+      "suggestedWriteSet": [
+        "apps/web/bin/build-demo.mjs",
+        "packages/demo/test/web-workbench-build.test.mjs"
+      ],
+      "sourceRefs": [
+        "docs/zh-CN/project-operating-entry.md",
+        "docs/zh-CN/execution-plans/active/phase-0-6-web-workbench-mvp.md"
+      ]
+    },
+    {
+      "taskId": "p0-operating-entry-manifest",
+      "priority": "P0",
+      "title": "把项目运行入口提升为可校验 manifest",
+      "ownerActorTypes": [
+        "AgentActor"
+      ],
+      "outputs": [
+        "project-operating-entry.v1 manifest",
+        "contracts validator",
+        "validate:operating-entry 命令"
+      ],
+      "acceptanceCriteria": [
+        "manifest 通过 validateProjectOperatingEntry",
+        "startup 和 verification 命令只引用根 package.json 中存在的 pnpm scripts",
+        "read-order 和 sourceDocPath 指向仓库内存在文件"
+      ],
+      "verificationCommands": [
+        "pnpm validate:operating-entry",
+        "pnpm check"
+      ],
+      "riskLevel": "low",
+      "suggestedWriteSet": [
+        "config/project-operating-entry.json",
+        "packages/contracts/src/project-operating-entry.mjs",
+        "scripts/validate-operating-entry.mjs",
+        "package.json"
+      ],
+      "sourceRefs": [
+        "docs/zh-CN/project-operating-entry.md",
+        "docs/zh-CN/quality-gates.md"
+      ]
+    },
+    {
+      "taskId": "p0-multi-agent-conflict-guard",
+      "priority": "P0",
+      "title": "建立多 agent 防冲突最小规则",
+      "ownerActorTypes": [
+        "HumanActor",
+        "AgentActor"
+      ],
+      "outputs": [
+        "AgentWorkLease 模板",
+        "writeSet 冲突规则",
+        "MergeGate 检查清单"
+      ],
+      "acceptanceCriteria": [
+        "每个 WorkShard 都能声明 readSet、writeSet、验证命令和回滚说明",
+        "并行 writeSet 默认 non-overlapping",
+        "高风险动作不能因拆分而绕过 ApprovalGate"
+      ],
+      "verificationCommands": [
+        "pnpm validate:operating-entry",
+        "pnpm check"
+      ],
+      "riskLevel": "medium",
+      "suggestedWriteSet": [
+        "docs/zh-CN/harness-engineering.md",
+        "docs/zh-CN/quality-gates.md",
+        "docs/zh-CN/project-operating-entry.md"
+      ],
+      "sourceRefs": [
+        "docs/zh-CN/harness-engineering.md",
+        "docs/zh-CN/quality-gates.md"
+      ]
+    },
+    {
+      "taskId": "p1-self-review-to-workitems",
+      "priority": "P1",
+      "title": "把自我审查结果转成正式 WorkItem 候选",
+      "ownerActorTypes": [
+        "AgentActor"
+      ],
+      "outputs": [
+        "自审报告卡到候选任务的映射规则",
+        "候选 WorkItem 列表",
+        "ai-hrms.selfReview 扩展"
+      ],
+      "acceptanceCriteria": [
+        "self-review 不自动修改仓库",
+        "候选任务保留来源、owner、风险、readSet、writeSet、验收标准和验证命令",
+        "候选任务只作为人工复核材料，不自动创建 issue、PR 或正式 WorkItem"
+      ],
+      "verificationCommands": [
+        "pnpm self-review",
+        "pnpm check"
+      ],
+      "riskLevel": "medium",
+      "suggestedWriteSet": [
+        "packages/demo/src/index.mjs",
+        "packages/demo/test/demo-engine.test.mjs"
+      ],
+      "sourceRefs": [
+        "config/templates/project_self_review_and_decay_prevention.json"
+      ]
+    },
+    {
+      "taskId": "p2-live-connectors",
+      "priority": "P2",
+      "title": "真实连接器和 live model 增强",
+      "ownerActorTypes": [
+        "HumanActor"
+      ],
+      "outputs": [
+        "受控增强路径",
+        "审批和审计设计"
+      ],
+      "acceptanceCriteria": [
+        "不改变 MVP 通过标准",
+        "不绕过 ApprovalGate",
+        "不保存 secret 明文"
+      ],
+      "verificationCommands": [
+        "pnpm check"
+      ],
+      "riskLevel": "high",
+      "suggestedWriteSet": [
+        "docs/zh-CN/security-and-governance.md",
+        "docs/zh-CN/api-contracts.md"
+      ],
+      "sourceRefs": [
+        "docs/zh-CN/security-and-governance.md",
+        "docs/zh-CN/api-contracts.md"
+      ]
+    }
+  ],
+  "assignmentRules": {
+    "splitWhen": [
+      "涉及 3 个以上边界上下文",
+      "同时需要产品、接口、实现、测试和文档",
+      "预计超过 30 到 60 分钟且需要 checkpoint",
+      "需要并行探索不同方案",
+      "影响 ToolContract、ApprovalGate、ExecutionReportCard、dataClassification 或预算策略"
+    ],
+    "defaultRules": [
+      "一个任务只能有一个最终 owner",
+      "单 agent 适合处理 writeSet 单一且可一次验证的任务",
+      "子 agent 可以探索、实现或评审，但不能独立并入主线事实",
+      "高风险动作必须回到 ApprovalGate"
+    ]
+  },
+  "leaseTemplate": {
+    "requiredFields": [
+      "goal",
+      "nonGoals",
+      "readSet",
+      "writeSet",
+      "allowedToolContracts",
+      "forbiddenActions",
+      "checkpoint",
+      "verificationCommands",
+      "deliverables",
+      "rollbackPlan"
+    ]
+  },
+  "conflictRules": {
+    "defaultWriteSetPolicy": "non-overlapping",
+    "rules": [
+      "并行 WorkShard 的 writeSet 默认不得重叠",
+      "必须重叠时需要指定统一 owner",
+      "后启动的 shard 必须等待、缩小范围或转为只读探索",
+      "ChangePacket 必须列出文件、接口影响、测试结果、风险、人工复核点和回滚方式",
+      "MergeGate 必须检查契约、文档一致性、测试、dataClassification 和审批要求"
+    ]
+  },
+  "continuationRules": {
+    "allowStopWhen": [
+      "当前 WorkItem 已完成且通过约定验证",
+      "触发 ApprovalGate 或需要人工 owner 决策",
+      "触发 dataClassification 限制、权限限制或未授权 writeSet 扩大",
+      "继续推进会显著降低质量，例如无法验证、上下文混乱、依赖缺失或风险无法判断",
+      "到达 checkpoint 且已交付 ChangePacket 或 ExecutionReportCard"
+    ],
+    "mustContinueWhen": [
+      "只是完成子步骤但同范围还有明确下一步",
+      "测试或检查失败且存在合理修复路径",
+      "文档、代码、执行计划或质量门禁之间出现明显不一致",
+      "还没有说明当前结果、剩余风险和下一步"
+    ],
+    "checkpointDeliverables": [
+      "ChangePacket",
+      "ExecutionReportCard",
+      "验证命令和结果",
+      "剩余风险",
+      "下一步建议"
+    ]
+  },
+  "harnessPrinciples": [
+    "仓库知识是 system of record",
+    "AGENTS.md 是入口地图，不是巨型手册",
+    "复杂计划是一等资产",
+    "约束能机械检查就不只写成口头规则",
+    "agent 可读性和人类可审计性同等重要",
+    "持续推进服从质量、审批、审计、预算和数据分级"
+  ],
+  "extensions": {
+    "ai-hrms.harness": {
+      "externalPractices": [
+        "OpenAI harness engineering",
+        "AGENTS.md",
+        "GitHub Copilot cloud agent project workflow",
+        "Claude Code subagents and Stop hooks"
+      ],
+      "mockOnly": true
+    }
+  }
+}

@@ -172,7 +172,7 @@ AI-HRMS Workbench: turn AI-assisted work into a reviewable proof.
 - 一张 JSON-first 的 `ExecutionReportCard`。
 - 可选的 `CapabilityProof`、`LearningPath` 或下一步 `GrowthWorkItem`。
 
-首批模板应覆盖多种自由路径，而不是只覆盖单一职业身份。为了避免范围扩散，传播型 Web MVP 先只做 4 个用户可见模板；`docs_review_and_improvement` 保留为工程 smoke template 和文档基线模板。
+首批模板应覆盖多种自由路径，而不是只覆盖单一职业身份。为了避免范围扩散，传播型主线仍先收敛为 4 个用户可见模板；Web Workbench 可以同时展示治理与工程支撑模板，用于说明安全接入、自我审查和报告卡基线。
 
 用户可见首批 4 个模板：
 
@@ -184,6 +184,8 @@ AI-HRMS Workbench: turn AI-assisted work into a reviewable proof.
 模板 0：
 
 - `docs_review_and_improvement`：继续作为 CLI Demo、文档协作和报告卡 schema 的稳定样例。它可以在 Web 中作为“看示例”入口，但不是传播型 MVP 的唯一主线。
+- `external_agent_connector_safety_demo`：作为治理展示模板，说明外部 agent runtime 只能作为受控 `ExternalConnector` mock profile。
+- `project_self_review_and_decay_prevention`：作为项目健康模板，展示自我审查如何生成候选 WorkItem，但不自动创建 issue、PR、分派或仓库修改。
 
 ## 文档教学入口
 
@@ -220,6 +222,30 @@ MVP 文档教学入口必须覆盖：
 - 扩展：`metrics`、`failure`、`extensions`。
 
 首版可以让 `metrics`、`failure` 和 `extensions` 为空，但不能省略这些扩展位置。后续新增成本、延迟、节省时间估算、多模型对比、完整 trace 或跨实例共享记录时，应追加兼容字段，而不是改变已有字段语义。
+
+HTML 展示策略：
+
+- 单次 `ExecutionReportCard` 默认继续导出 JSON 和 Markdown。
+- HTML 只作为整体交付报告、阶段汇总报告或公开案例页的渲染物。
+- HTML 必须从有效 JSON report cards 渲染，不能成为新的事实源。
+- 长期维护文档仍以 Markdown 为主，避免把大部分知识库转成高 token 成本的 HTML。
+
+## 外部 Agent 生态接入
+
+为了让项目更容易被正在使用 agent 生态的开发者理解，AI-HRMS 可以展示对 OpenClaw、Hermes Agent 等外部 agent runtime 的受控接入接口。但传播话术必须强调：这不是把 AI-HRMS 变成泛泛 agent launcher，而是把外部 agent 的能力纳入 WorkItem、ToolContract、ApprovalGate、审计、预算、数据分级和报告卡。
+
+首版传播资产：
+
+- `external_agent_connector_safety_demo`：展示 OpenClaw / Hermes Agent mock connector profile、策略判断、候选结果和报告卡。
+- `config/connectors/openclaw.mock.json` 与 `config/connectors/hermes-agent.mock.json`：展示 provider profile 的最小安全形状。
+- `ExecutionReportCard.extensions["ai-hrms.externalAgent"]`：记录 connector、policy decision、mock request 和 mock result。
+
+限制：
+
+- 不启动真实 OpenClaw / Hermes Agent CLI。
+- 不读取消息账号、聊天记录、skills、memory、MCP 配置或本地 secret。
+- 不把外部 agent 输出作为生产事实。
+- 不让外部 agent 绕过本地 human owner 和 `ApprovalGate`。
 
 ## 模板传播机制
 

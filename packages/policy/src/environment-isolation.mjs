@@ -5,6 +5,8 @@ import {
   PROMOTION_ORDER,
   REQUIRED_TELEMETRY_LABELS,
   REQUIRED_TOOL_CONTRACT_FIELDS,
+  validateExternalAgentConnectorProfile,
+  validateExternalAgentRunRequest,
   isEnvironment,
   isHighRisk,
   isRiskLevel
@@ -330,5 +332,193 @@ export function evaluateToolExecution({ toolContract, env, actorType, hasApprova
     reason: "policy_allowed",
     errors: [],
     auditTags: toolContract.auditTags
+  };
+}
+
+export function evaluateExternalAgentRun({
+  connectorProfile,
+  request,
+  env,
+  hasApproval = false,
+  realExecutionEnabled = false,
+  autoExecute = false
+}) {
+  const profileValidation = validateExternalAgentConnectorProfile(connectorProfile);
+  if (!profileValidation.ok) {
+    return {
+      decision: "deny",
+      riskLevel: request?.riskLevel,
+      reason: "invalid_connector_profile",
+      errors: profileValidation.errors,
+      auditTags: connectorProfile?.auditTags ?? []
+    };
+  }
+
+  const requestValidation = validateExternalAgentRunRequest(request);
+  if (!requestValidation.ok) {
+    return {
+      decision: "deny",
+      riskLevel: request?.riskLevel,
+      reason: "invalid_external_agent_run_request",
+      errors: requestValidation.errors,
+      auditTags: connectorProfile.auditTags
+    };
+  }
+
+  if (request.connectorId !== connectorProfile.connectorId) {
+    return {
+      decision: "deny",
+      riskLevel: request.riskLevel,
+      reason: "connector_not_registered_for_request",
+      errors: [
+        issue(
+          "policy_violation",
+          "External agent request connectorId must match a registered connector profile.",
+          "connectorId"
+        )
+      ],
+      auditTags: connectorProfile.auditTags
+    };
+  }
+
+  if (request.env !== env) {
+    return {
+      decision: "deny",
+      riskLevel: request.riskLevel,
+      reason: "environment_mismatch",
+      errors: [issue("policy_violation", "Request env must match runtime env.", "env")],
+      auditTags: connectorProfile.auditTags
+    };
+  }
+
+  if (!connectorProfile.allowedEnvironments.includes(env)) {
+    return {
+      decision: "deny",
+      riskLevel: request.riskLevel,
+      reason: "environment_not_allowed",
+      errors: [issue("policy_violation", `Connector is not allowed in ${env}.`, "env")],
+      auditTags: connectorProfile.auditTags
+    };
+  }
+
+  if (!connectorProfile.supportedDirections.includes(request.direction)) {
+    return {
+      decision: "deny",
+      riskLevel: request.riskLevel,
+      reason: "direction_not_allowed",
+      errors: [
+        issue(
+          "policy_violation",
+          `Connector does not support direction ${request.direction}.`,
+          "direction"
+        )
+      ],
+      auditTags: connectorProfile.auditTags
+    };
+  }
+
+  if (!connectorProfile.dataClassificationAllowed.includes(request.dataClassification)) {
+    return {
+      decision: "deny",
+      riskLevel: request.riskLevel,
+      reason: "data_classification_not_allowed",
+      errors: [
+        issue(
+          "policy_violation",
+          `Connector is not allowed to handle ${request.dataClassification} data.`,
+          "dataClassification"
+        )
+      ],
+      auditTags: connectorProfile.auditTags
+    };
+  }
+
+  if (!connectorProfile.riskLevelAllowed.includes(request.riskLevel)) {
+    return {
+      decision: "deny",
+      riskLevel: request.riskLevel,
+      reason: "risk_level_not_allowed",
+      errors: [
+        issue(
+          "policy_violation",
+          `Connector is not allowed to handle ${request.riskLevel} risk runs.`,
+          "riskLevel"
+        )
+      ],
+      auditTags: connectorProfile.auditTags
+    };
+  }
+
+  if (connectorProfile.mode !== "mock" && realExecutionEnabled !== true) {
+    return {
+      decision: "deny",
+      riskLevel: request.riskLevel,
+      reason: "real_external_agent_execution_disabled",
+      errors: [
+        issue(
+          "policy_violation",
+          "Real external agent execution is disabled by default and requires explicit local configuration.",
+          "mode"
+        )
+      ],
+      auditTags: connectorProfile.auditTags
+    };
+  }
+
+  if (env === "prod" && HIGH_RISK_LEVELS.includes(request.riskLevel) && autoExecute === true) {
+    return {
+      decision: "deny",
+      riskLevel: request.riskLevel,
+      reason: "prod_high_risk_external_agent_auto_execute_forbidden",
+      errors: [
+        issue(
+          "policy_violation",
+          "High-risk production external agent runs must not auto-execute.",
+          "autoExecute"
+        )
+      ],
+      auditTags: connectorProfile.auditTags
+    };
+  }
+
+  const sensitiveOutbound =
+    request.direction === "ai_hrms_to_external_agent" &&
+    ["restricted", "sensitive"].includes(request.dataClassification);
+  if (sensitiveOutbound && !hasApproval) {
+    return {
+      decision: "require_approval",
+      riskLevel: request.riskLevel,
+      reason: "data_classification_approval_required",
+      errors: [],
+      auditTags: [...new Set([...connectorProfile.auditTags, "ApprovalGate"])]
+    };
+  }
+
+  if (request.riskLevel !== "low" && !hasApproval) {
+    return {
+      decision: "require_approval",
+      riskLevel: request.riskLevel,
+      reason: "approval_required",
+      errors: [],
+      auditTags: [...new Set([...connectorProfile.auditTags, "ApprovalGate"])]
+    };
+  }
+
+  if (connectorProfile.approvalRequiredByDefault === true && !hasApproval) {
+    return {
+      decision: "require_approval",
+      riskLevel: request.riskLevel,
+      reason: "connector_requires_approval_by_default",
+      errors: [],
+      auditTags: [...new Set([...connectorProfile.auditTags, "ApprovalGate"])]
+    };
+  }
+
+  return {
+    decision: "allow",
+    riskLevel: request.riskLevel,
+    reason: "policy_allowed",
+    errors: [],
+    auditTags: connectorProfile.auditTags
   };
 }

@@ -4,6 +4,7 @@
 
 ## 核心文档
 
+- [project-operating-entry.md](project-operating-entry.md)：每次打开仓库后的运行入口、当前推荐任务清单、多 agent 分派、防冲突和停止条件。
 - [vision-and-principles.md](vision-and-principles.md)：项目愿景、AI 时代 HRMS 定义、边界与核心原则。
 - [business-blueprint.md](business-blueprint.md)：业务蓝图、边界上下文、ProjectInstance 和核心概念。
 - [architecture-blueprint.md](architecture-blueprint.md)：系统拓扑、分层、运行档位、跨实例与自适应运行边界。

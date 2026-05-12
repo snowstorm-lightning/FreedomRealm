@@ -23,7 +23,7 @@ test("web demo builds a multi-template static workbench from shared demo data", 
 
   const generatedJsonPaths = [...result.stdout.matchAll(/\[web\] (?:Sample|Knowledge sample) report card: (.+\.json)/gu)]
     .map((match) => match[1].trim());
-  assert.equal(generatedJsonPaths.length, 8, result.stdout);
+  assert.equal(generatedJsonPaths.length, 10, result.stdout);
 
   const cards = await Promise.all(
     generatedJsonPaths.map(async (jsonPath) => JSON.parse(await readFile(path.join(repoRoot, jsonPath), "utf8")))
@@ -31,8 +31,10 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   const templateIds = new Set(cards.map((card) => card.templateId));
   assert.equal(templateIds.has("repo_understanding_and_work_plan"), true);
   assert.equal(templateIds.has("knowledge_navigation_and_challenge"), true);
+  assert.equal(templateIds.has("external_agent_connector_safety_demo"), true);
   assert.equal(templateIds.has("issue_pr_triage_and_review"), true);
   assert.equal(templateIds.has("personal_work_proof"), true);
+  assert.equal(templateIds.has("project_self_review_and_decay_prevention"), true);
   assert.equal(templateIds.has("docs_review_and_improvement"), true);
 
   for (const card of cards) {
@@ -57,10 +59,21 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   const html = await readFile(path.join(repoRoot, "dist/web/index.html"), "utf8");
   const app = await readFile(path.join(repoRoot, "dist/web/app.js"), "utf8");
   assert.match(html, /AI-HRMS Workbench/u);
+  assert.match(html, /Next Workbench/u);
   assert.match(html, /Knowledge Loop/u);
   assert.match(html, /Ask Maintained Docs/u);
+  assert.match(app, /project-operating-entry\.v1/u);
+  assert.match(app, /AgentWorkLease/u);
+  assert.match(app, /writeSet/u);
+  assert.match(app, /MergeGate/u);
+  assert.match(app, /checkpoint/u);
+  assert.match(app, /ApprovalGate/u);
+  assert.match(app, /Candidate WorkItems/u);
+  assert.match(app, /candidate-work-item-001/u);
   assert.match(app, /repo_understanding_and_work_plan/u);
   assert.match(app, /knowledge_navigation_and_challenge/u);
+  assert.match(app, /external_agent_connector_safety_demo/u);
   assert.match(app, /personal_work_proof/u);
+  assert.match(app, /project_self_review_and_decay_prevention/u);
   assert.match(app, /Challenge this point/u);
 });
