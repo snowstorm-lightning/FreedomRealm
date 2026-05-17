@@ -36,7 +36,7 @@
 ```text
 pnpm install
 pnpm check
-pnpm doctor
+pnpm run doctor
 ```
 
 需要拆分定位时，可分别执行：
@@ -119,7 +119,7 @@ Python 侧：
 
 ## Doctor 检查
 
-当前提供 `pnpm doctor`，用于本地诊断但不自动修改用户环境。当前检查至少覆盖：
+当前提供 `pnpm run doctor`，用于本地诊断但不自动修改用户环境。使用 `pnpm run doctor` 是为了避免误触发 pnpm 自带的 `doctor` 子命令。当前检查至少覆盖：
 
 - Node 版本是否满足要求。
 - pnpm 版本是否匹配 `packageManager`。

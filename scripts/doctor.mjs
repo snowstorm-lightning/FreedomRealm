@@ -42,6 +42,10 @@ function parseNodeEngineRange(range) {
   };
 }
 
+function parsePnpmVersionFromUserAgent(userAgent) {
+  return userAgent?.match(/(?:^|\s)pnpm\/([^\s]+)/u)?.[1] ?? null;
+}
+
 function printStatus(kind, message) {
   console.log(`[doctor] ${kind} ${message}`);
 }
@@ -68,7 +72,16 @@ const pnpmResult = spawnSync(commandName("pnpm"), ["--version"], {
 });
 
 if (pnpmResult.error) {
-  printStatus("warn", `pnpm is not available in PATH. Enable corepack or install ${packageManager}.`);
+  const userAgentPnpmVersion = parsePnpmVersionFromUserAgent(process.env.npm_config_user_agent);
+  if (userAgentPnpmVersion) {
+    if (expectedPnpmVersion && userAgentPnpmVersion !== expectedPnpmVersion) {
+      printStatus("warn", `pnpm ${userAgentPnpmVersion}; packageManager declares ${packageManager}.`);
+    } else {
+      printStatus("ok", `pnpm ${userAgentPnpmVersion} from npm_config_user_agent`);
+    }
+  } else {
+    printStatus("warn", `pnpm is not available in PATH. Enable corepack or install ${packageManager}.`);
+  }
 } else if (pnpmResult.status !== 0) {
   printStatus("warn", `pnpm --version failed: ${pnpmResult.stderr?.trim() ?? "unknown error"}`);
 } else {

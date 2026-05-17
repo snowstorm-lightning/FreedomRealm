@@ -35,7 +35,7 @@
 - 共享契约常量：环境、风险等级、actor 类型、telemetry 必填标签和 ToolContract 必填字段。
 - 环境配置校验：资源命名、secret 引用、跨环境只读访问、生产数据下沉控制和单步晋级。
 - ToolContract 校验与执行策略：生产高风险工具禁止自动执行，高风险动作返回 `require_approval`。
-- 仓库级跨平台检查：`pnpm check`、`pnpm doctor`、`pnpm validate:workspace` 和 `pnpm validate:env:all`。
+- 仓库级跨平台检查：`pnpm check`、`pnpm run doctor`、`pnpm validate:workspace` 和 `pnpm validate:env:all`。
 - 最小 CI：Linux/Windows matrix、Node 24 LTS、pnpm 10、仓库检查和空白检查。
 - Node 内置测试覆盖关键隔离规则。
 
@@ -71,7 +71,7 @@
 - `pnpm validate:env:all` 批量验证全部环境样例。
 - `pnpm validate:workspace` 验证根目录组织、workspace 清单和跨平台脚本。
 - `pnpm check` 串联 workspace、环境样例和测试。
-- `pnpm doctor` 执行本地诊断。
+- `pnpm run doctor` 执行本地诊断。
 
 ## 验收标准
 
