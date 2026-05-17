@@ -234,6 +234,11 @@ function buildHtml() {
         <div class="entry-copy">
           <h2>Choose how to start</h2>
           <p id="entryNote">Start from a task goal, select a governed template, and generate a reviewable work proof.</p>
+          <div class="entry-recommendation" aria-label="Current entry recommendation">
+            <span>Recommended Next Action</span>
+            <strong id="entryInlineActionTitle">Draft a bounded WorkItem</strong>
+            <code id="entryInlineCommand">pnpm demo -- --template repo_understanding_and_work_plan</code>
+          </div>
         </div>
         <div class="entry-actions" id="entryModes"></div>
       </section>
@@ -535,6 +540,35 @@ h3 {
   margin: 8px 0 0;
   color: var(--muted);
   line-height: 1.5;
+}
+.entry-recommendation {
+  display: grid;
+  gap: 6px;
+  margin-top: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  padding: 12px;
+}
+.entry-recommendation span {
+  color: var(--accent-strong);
+  font-size: 12px;
+  font-weight: 760;
+  text-transform: uppercase;
+}
+.entry-recommendation strong {
+  font-size: 15px;
+  line-height: 1.25;
+}
+.entry-recommendation code {
+  display: block;
+  overflow-wrap: anywhere;
+  border-radius: 6px;
+  background: #f1f5f2;
+  color: var(--ink);
+  padding: 8px;
+  line-height: 1.35;
+  font-size: 12px;
 }
 .entry-actions {
   display: grid;
@@ -1558,6 +1592,8 @@ function renderEntryModes() {
   document.getElementById("entryActionTitle").textContent = selected.action;
   document.getElementById("entryActionDetail").textContent = selected.summary;
   document.getElementById("entryCommand").textContent = selected.command;
+  document.getElementById("entryInlineActionTitle").textContent = selected.action;
+  document.getElementById("entryInlineCommand").textContent = selected.command;
 }
 
 function renderRoadmap() {

@@ -167,6 +167,7 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   assert.match(html, /No live side effects/u);
   assert.match(html, /No model key, connector, HR data, external write, or hidden training resource/u);
   assert.match(html, /Recommended Next Action/u);
+  assert.match(html, /Current entry recommendation/u);
   assert.match(html, /Next Workbench/u);
   assert.match(html, /Knowledge Loop/u);
   assert.match(html, /Ask Maintained Docs/u);
