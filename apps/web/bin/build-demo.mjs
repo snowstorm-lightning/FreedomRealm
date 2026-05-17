@@ -1,4 +1,4 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
@@ -12,6 +12,7 @@ const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../
 const webDist = path.join(repoRoot, "dist", "web");
 const sampleOut = "dist/web/data";
 const operatingEntryPath = "config/project-operating-entry.json";
+const activePlansPath = "docs/zh-CN/execution-plans/active";
 
 const templateIds = [
   "repo_understanding_and_work_plan",
@@ -179,6 +180,67 @@ function toKnowledgeExample(execution, index) {
   };
 }
 
+function extractSection(markdown, heading) {
+  const lines = markdown.split(/\r?\n/u);
+  const startIndex = lines.findIndex((line) => line.trim() === `## ${heading}`);
+  if (startIndex < 0) {
+    return [];
+  }
+  const section = [];
+  for (let index = startIndex + 1; index < lines.length; index += 1) {
+    if (lines[index].startsWith("## ")) {
+      break;
+    }
+    section.push(lines[index]);
+  }
+  return section;
+}
+
+function extractBullets(markdown, heading, limit = 3) {
+  return extractSection(markdown, heading)
+    .map((line) => line.trim())
+    .filter((line) => line.startsWith("- "))
+    .map((line) => line.slice(2).trim())
+    .slice(0, limit);
+}
+
+function extractStatus(markdown) {
+  const statusLines = extractSection(markdown, "状态")
+    .map((line) => line.trim())
+    .filter(Boolean);
+  return statusLines[0] || "Active";
+}
+
+async function readActivePlans() {
+  const planDir = path.join(repoRoot, activePlansPath);
+  const filenames = (await readdir(planDir))
+    .filter((filename) => filename.endsWith(".md"))
+    .sort();
+  return Promise.all(filenames.map(async (filename, index) => {
+    const repoRelativePath = path.join(activePlansPath, filename).split(path.sep).join("/");
+    const markdown = await readFile(path.join(repoRoot, repoRelativePath), "utf8");
+    const title = markdown.match(/^#\s+(.+)$/mu)?.[1] || filename.replace(/\.md$/u, "");
+    const humanDecisionBullets = extractBullets(markdown, "Human Owner 决策点", 5);
+    return {
+      index,
+      filename,
+      path: repoRelativePath,
+      title,
+      status: extractStatus(markdown),
+      goals: extractBullets(markdown, "目标", 3),
+      nonGoals: extractBullets(markdown, "非目标", 3),
+      acceptance: extractBullets(markdown, "验收标准", 3),
+      humanDecisionCount: humanDecisionBullets.length,
+      humanDecisionPreview: humanDecisionBullets.slice(0, 2),
+      planOnly:
+        markdown.includes("不是本轮自动实现授权") ||
+        markdown.includes("不在本计划创建") ||
+        markdown.includes("不实现"),
+      href: "../" + repoRelativePath
+    };
+  }));
+}
+
 function buildHtml() {
   return `<!doctype html>
 <html lang="zh-CN">
@@ -265,6 +327,7 @@ function buildHtml() {
           <article class="panel" id="operatingGuards"></article>
           <article class="panel backlog-panel" id="decayBacklog"></article>
         </div>
+        <div class="active-plan-strip" id="activePlans"></div>
       </section>
 
       <section class="workbench" aria-label="工作台 / Workbench">
@@ -809,6 +872,54 @@ h3 {
 .backlog-meta span {
   overflow-wrap: anywhere;
 }
+.active-plan-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+.plan-card {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  padding: 14px;
+}
+.plan-card header {
+  display: flex;
+  gap: 8px;
+  align-items: start;
+  justify-content: space-between;
+}
+.plan-card strong {
+  overflow-wrap: anywhere;
+}
+.plan-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.4;
+}
+.plan-card ul {
+  display: grid;
+  gap: 5px;
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+  line-height: 1.35;
+}
+.plan-card a {
+  color: var(--accent-strong);
+  font-weight: 760;
+  text-decoration: none;
+}
+.plan-warning {
+  border-left: 3px solid var(--amber);
+  padding-left: 9px;
+  color: var(--warn);
+  font-size: 13px;
+}
 .guard-block ul {
   display: grid;
   gap: 6px;
@@ -1250,6 +1361,9 @@ h3 {
   .workbench {
     grid-template-columns: 260px minmax(0, 1fr);
   }
+  .active-plan-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
   .right-rail {
     grid-column: 1 / -1;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1257,7 +1371,7 @@ h3 {
 }
 @media (max-width: 840px) {
   .shell { padding: 24px 16px 32px; }
-  .command-board, .entry-strip, .decision-strip, .next-grid, .workbench, .right-rail, .knowledge-layout, .roadmap-list {
+  .command-board, .entry-strip, .decision-strip, .next-grid, .active-plan-strip, .workbench, .right-rail, .knowledge-layout, .roadmap-list {
     grid-template-columns: 1fr;
   }
   h1 { font-size: 30px; }
@@ -1404,6 +1518,36 @@ function renderDecayPreventionBacklog(entry) {
     '</section>' +
     '<div class="backlog-list">' + items + '</div>' +
     '<p class="backlog-note">高风险 live connector 仍需要 ApprovalGate；该面板只读取本地 manifest。 / High-risk live connector work still requires ApprovalGate; this panel only reads the local manifest.</p>';
+}
+
+function renderActivePlans() {
+  const plans = state.activePlans || [];
+  if (plans.length === 0) {
+    document.getElementById("activePlans").innerHTML = "";
+    return;
+  }
+
+  document.getElementById("activePlans").innerHTML = plans.map(function (plan) {
+    const goalItems = (plan.goals || []).slice(0, 2).map(function (goal) {
+      return '<li>' + escapeHtml(goal) + '</li>';
+    }).join("");
+    const decisionPreview = plan.humanDecisionPreview.length > 0
+      ? plan.humanDecisionPreview.join(" / ")
+      : "无阻塞决策 / no blocking decision";
+    return '<article class="plan-card">' +
+      '<header><strong>' + escapeHtml(plan.title) + '</strong><span class="status-pill compact">' +
+        escapeHtml(plan.status) + '</span></header>' +
+      '<p>计划入口 / Plan entry: <a href="' + escapeHtml(plan.href) + '">' +
+        escapeHtml(plan.filename) + '</a></p>' +
+      '<p>决策点 / Human decisions: ' + escapeHtml(String(plan.humanDecisionCount)) + '</p>' +
+      (goalItems ? '<ul>' + goalItems + '</ul>' : '') +
+      '<p class="plan-warning">只读计划入口，不是自动实现授权。 / Read-only plan entry, not automatic implementation authorization.</p>' +
+      (plan.planOnly
+        ? '<p class="plan-warning">该计划包含非目标或待决策边界。 / This plan includes non-goals or decision boundaries.</p>'
+        : '') +
+      '<p>预览 / Preview: ' + escapeHtml(decisionPreview) + '</p>' +
+    '</article>';
+  }).join("");
 }
 
 function renderOperatingEntry() {
@@ -1810,6 +1954,7 @@ function renderAll() {
   const card = state.cards.find(function (candidate) { return candidate.templateId === selectedTemplateId; }) || state.cards[0];
   renderProofStats();
   renderOperatingEntry();
+  renderActivePlans();
   renderTemplates();
   renderEntryModes();
   renderReport(card);
@@ -1849,12 +1994,14 @@ for (const query of knowledgeQueries) {
 }
 
 const operatingEntry = JSON.parse(await readFile(path.join(repoRoot, operatingEntryPath), "utf8"));
+const activePlans = await readActivePlans();
 
 const state = {
   generatedAt: new Date().toISOString(),
   runtimeMode: "Demo Mode",
   dataSource: "packages/demo shared engine",
   operatingEntry,
+  activePlans,
   entryModes,
   roadmap,
   proofStats,

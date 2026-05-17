@@ -78,6 +78,20 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   const state = JSON.parse(stateMatch[1]);
   assert.deepEqual(state.operatingEntry, operatingEntry);
   assert.equal(validateProjectOperatingEntry(state.operatingEntry).ok, true);
+  assert.equal(state.activePlans.length >= 4, true);
+  const activePlanFiles = new Set(state.activePlans.map((plan) => plan.filename));
+  assert.equal(activePlanFiles.has("phase-0-5-ai-hrms-repositioning.md"), true);
+  assert.equal(activePlanFiles.has("phase-0-doc-foundation.md"), true);
+  assert.equal(activePlanFiles.has("phase-1-environment-isolation-guard.md"), true);
+  assert.equal(activePlanFiles.has("phase-1-go-control-plane-skeleton.md"), true);
+  const goControlPlanePlan = state.activePlans.find(
+    (plan) => plan.filename === "phase-1-go-control-plane-skeleton.md"
+  );
+  assert.equal(goControlPlanePlan?.status, "Active");
+  assert.equal(goControlPlanePlan?.planOnly, true);
+  assert.equal(goControlPlanePlan?.humanDecisionCount, 5);
+  assert.match(goControlPlanePlan?.title || "", /Go Core Control Plane Skeleton/u);
+  assert.match(goControlPlanePlan?.href || "", /phase-1-go-control-plane-skeleton\.md/u);
   const decayBacklog = state.operatingEntry.extensions["ai-hrms.decayPreventionBacklog"];
   assert.ok(decayBacklog);
   assert.equal(decayBacklog.promotionPolicy, "human_owner_review_required");
@@ -205,6 +219,16 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   assert.match(html, /当前入口建议 \/ Current entry recommendation/u);
   assert.match(html, /Next Workbench/u);
   assert.match(html, /下一步工作台 \/ Next Workbench/u);
+  assert.match(app, /Plan entry/u);
+  assert.match(app, /计划入口 \/ Plan entry/u);
+  assert.match(app, /Human decisions/u);
+  assert.match(app, /决策点 \/ Human decisions/u);
+  assert.match(app, /Read-only plan entry, not automatic implementation authorization/u);
+  assert.match(app, /只读计划入口，不是自动实现授权/u);
+  assert.match(app, /This plan includes non-goals or decision boundaries/u);
+  assert.match(app, /该计划包含非目标或待决策边界/u);
+  assert.match(app, /phase-1-go-control-plane-skeleton\.md/u);
+  assert.match(app, /Go Core Control Plane Skeleton/u);
   assert.match(html, /Knowledge Loop/u);
   assert.match(html, /知识循环 \/ Knowledge Loop/u);
   assert.match(html, /Ask Maintained Docs/u);
