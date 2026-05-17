@@ -45,6 +45,29 @@ P0 是当前打开仓库后默认优先级。除非用户明确改变方向，ag
 - `candidate-work-item-001` 已映射到 `p1-connector-governance-sync`，状态为 `implemented-in-repo`，实现引用为 `f6c3cb7`。
 - `candidate-work-item-002` 已映射到 `p1-decay-prevention-backlog`，状态为 `active`，继续要求 human owner 复核。
 
+### 当前 Human Owner 决策点
+
+以下条目是候选决策，不是自动分派。拒绝、延后、缩小范围或转交都不能成为负面贡献信号。
+
+Go Core Control Plane skeleton 在进入实现前仍需要 human owner 确认：
+
+- Go module import path。
+- HTTP 框架：标准库优先、chi、Echo 或其他。
+- Rust policy / contract / protocol kernel 集成方式：CLI、FFI、sidecar、WASM 或 generated bindings。
+- 首期 endpoint 范围：只暴露 health / metadata，还是加入 mock v1 contract endpoints。
+- 本地存储：文件、SQLite，或暂不持久化。
+
+真实 connector / live model 增强仍停留在 P2，不自动推进。进入设计或实现前至少需要确认：
+
+- 生产 external agent run 默认策略是直接 policy denial，还是进入 `ApprovalGate`。
+- `ExternalAgentRunRequest` 是否需要显式增加 redaction / sanitization 字段，用于 restricted / sensitive 出站数据。
+- 是否允许任何真实外部连接器、secret、账号、消息记录、MCP 配置、skills、memory 或生产数据进入本轮 readSet / writeSet；默认答案仍是否。
+
+Active execution plans 的状态清理也需要 human owner 复核：
+
+- 缺少 `## 状态` 的 active plan 当前只能在 Web Workbench 中显示为推断 active。
+- 是否补状态、归档旧 Phase 0 / Phase 0.5 计划，或保留为 active，需要单独确认；agent 不自动移动 active/completed 文件。
+
 ## 分派规则
 
 单 agent 适合处理范围明确、`writeSet` 单一、可以在一次验证内完成的任务。
