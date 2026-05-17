@@ -8,6 +8,7 @@ const steps = [
   ["validate:workspace", ["scripts/validate-workspace.mjs"]],
   ["validate:env:all", ["scripts/validate-env-all.mjs"]],
   ["validate:operating-entry", ["scripts/validate-operating-entry.mjs"]],
+  ["validate:templates", ["scripts/validate-templates.mjs"]],
   ["test", ["scripts/run-tests.mjs"]]
 ];
 

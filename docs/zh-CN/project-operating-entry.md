@@ -2,7 +2,7 @@
 
 本文件是人类 owner、主 agent 和协作 agent 每次打开仓库后的默认工作入口。它不替代 README、ARCHITECTURE 或专题文档，而是回答一个更具体的问题：现在下一步做什么，如何分派，如何避免冲突，什么时候允许停止。
 
-人类阅读以本 Markdown 为入口；机器校验和 Web Workbench 展示以 [../../config/project-operating-entry.json](../../config/project-operating-entry.json) 为事实源。该 manifest 使用 `project-operating-entry.v1`，必须通过 `pnpm validate:operating-entry`，并由 `pnpm check` 自动执行。
+人类阅读以本 Markdown 为入口；机器校验和 Web Workbench 展示以 [../../config/project-operating-entry.json](../../config/project-operating-entry.json) 为事实源。该 manifest 使用 `project-operating-entry.v1`，必须通过 `pnpm validate:operating-entry`，并由 `pnpm check` 自动执行。模板 manifest、失败样本和 `evaluationSamples` 的专项根命令是 `pnpm validate:templates`。
 
 ## 使用顺序
 
@@ -31,7 +31,7 @@ P0 是当前打开仓库后默认优先级。除非用户明确改变方向，ag
 | P0 | 建立多 agent 防冲突最小规则 | HumanActor + AgentActor | `AgentWorkLease` 模板、`writeSet` 冲突规则、`MergeGate` 检查清单 | 质量门禁和执行计划同步 |
 | P0 | 抬高 MVP 验收标准 | HumanActor | MVP 从“能跑通”升级为“可评价、可分派、可复盘、可继续推进” | capability、quality gates、phase 0.6 计划同步 |
 | P1 | 把自我审查结果转成正式 `WorkItem` 候选 | AgentActor | 自审报告卡到候选任务的映射规则 | 不自动修改仓库，只生成候选 |
-| P1 | 为首批用户可见模板补评测样本 | AgentActor | eval sample、失败样本、报告卡案例 | `pnpm check` 通过，样本可引用 |
+| P1 | 为首批用户可见模板补评测样本 | AgentActor | template manifest、失败样本、`evaluationSamples`、报告卡案例 | `pnpm validate:templates` 通过，样本可引用且不依赖真实连接器 |
 | P2 | 真实连接器和 live model 增强 | HumanActor 审批后 | 受控增强路径 | 不改变 MVP 通过标准，不绕过 `ApprovalGate` |
 
 ## 分派规则

@@ -143,6 +143,38 @@
       ]
     },
     {
+      "taskId": "p1-template-evaluation-samples",
+      "priority": "P1",
+      "title": "为首批用户可见模板补评测样本",
+      "ownerActorTypes": [
+        "AgentActor"
+      ],
+      "outputs": [
+        "template manifest",
+        "失败样本",
+        "evaluationSamples",
+        "报告卡案例"
+      ],
+      "acceptanceCriteria": [
+        "pnpm validate:templates 校验 template manifest、failure samples 和 evaluationSamples",
+        "样本可被报告卡和 Demo Mode 引用",
+        "样本不依赖 live model、真实连接器、secret 或生产数据",
+        "失败样本保留期望阻断点、人工复核状态和可复现输入引用"
+      ],
+      "verificationCommands": [
+        "pnpm validate:templates"
+      ],
+      "riskLevel": "medium",
+      "suggestedWriteSet": [
+        "config/templates",
+        "docs/zh-CN/quality-gates.md"
+      ],
+      "sourceRefs": [
+        "docs/zh-CN/project-operating-entry.md",
+        "docs/zh-CN/quality-gates.md"
+      ]
+    },
+    {
       "taskId": "p2-live-connectors",
       "priority": "P2",
       "title": "真实连接器和 live model 增强",

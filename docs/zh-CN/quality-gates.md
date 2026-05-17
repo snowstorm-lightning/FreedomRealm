@@ -147,6 +147,18 @@
 - 是否能形成 ExecutionReportCard、Failure case 或 Review note。
 - 如果能力回答用户问题，是否能展示维护文档来源、限制说明和人工异议入口。
 
+## Template Validation Gate
+
+涉及模板 manifest、失败样本或 `evaluationSamples` 的能力必须回答：
+
+- 是否通过根命令 `pnpm validate:templates` 校验 template manifest、failure samples 和 `evaluationSamples`。
+- template manifest 是否声明用途、数据分级、运行档位、工具契约、mock model route、失败样本和评测样本；若模板进入生产或 Commons 路径，是否另行补齐 owner、输入边界、输出边界、示例来源和回滚方式。
+- failure samples 是否保留失败原因、期望阻断点、人工复核状态和可复现输入引用，而不是隐藏治理摩擦。
+- `evaluationSamples` 是否只使用 mock、脱敏或明确授权的数据，并继承原始数据的数据分级、用途限定和保留期约束。
+- 样本是否避免保存 secret、生产数据、真实连接器凭证或未经授权的敏感原文。
+- 模板验证是否不把 live model、真实连接器或高风险外部动作标记为 MVP 必需能力。
+- 验证失败时是否阻断模板进入 Demo Mode、公开分享、Community Commons 或跨实例共享路径。
+
 ## MVP Survival Gate
 
 任何进入 MVP 的能力必须回答：
