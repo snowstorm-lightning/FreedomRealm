@@ -42,6 +42,17 @@ test("web demo builds a multi-template static workbench from shared demo data", 
     const validation = validateExecutionReportCard(card);
     assert.equal(validation.ok, true, JSON.stringify(validation.errors, null, 2));
     assert.equal(card.extensions["ai-hrms.demo"].modelRoute.mock, true);
+    const canonicalReportRefs = card.outputRefs.filter(
+      (outputRef) => outputRef.kind === "ExecutionReportCard" && outputRef.canonical === true
+    );
+    assert.equal(canonicalReportRefs.length, 1);
+    assert.equal(canonicalReportRefs[0].schemaVersion, card.schemaVersion);
+    assert.equal(card.extensions["ai-hrms.demo"].evalSample.status, "candidate");
+    assert.equal(card.extensions["ai-hrms.demo"].evalSample.sourceTemplateId, card.templateId);
+    assert.equal(card.extensions["ai-hrms.demo"].templateEvaluationSamples.source, "template.evaluationSamples");
+    assert.equal(card.extensions["ai-hrms.demo"].templateEvaluationSamples.status, "candidate");
+    assert.equal(card.extensions["ai-hrms.demo"].templateEvaluationSamples.reviewRequired, true);
+    assert.equal(Array.isArray(card.extensions["ai-hrms.demo"].templateEvaluationSamples.samples), true);
   }
 
   const knowledgeCards = cards.filter((card) => card.templateId === "knowledge_navigation_and_challenge");
@@ -117,6 +128,12 @@ test("web demo builds a multi-template static workbench from shared demo data", 
     assert.match(card.jsonHref, /^\.\/data\/.+\.json$/u);
     assert.match(card.markdownHref, /^\.\/data\/.+\.md$/u);
     assert.equal(card.modelRoute.mock, true);
+    assert.equal(card.evalSample.status, "candidate");
+    assert.equal(card.evalSample.sourceTemplateId, card.templateId);
+    assert.equal(card.templateEvaluationSamples.source, "template.evaluationSamples");
+    assert.equal(card.templateEvaluationSamples.reviewRequired, true);
+    assert.equal(card.templateEvaluationSamples.samples.length >= 1, true);
+    assert.ok(card.templateEvaluationSamples.samples[0].sampleId);
     assert.ok(card.dataClassification);
     assert.ok(card.redactionStatus);
     assert.ok(card.sharePermission);
@@ -155,6 +172,8 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   assert.match(app, /Inspect a sample proof/u);
   assert.match(app, /Candidate WorkItems/u);
   assert.match(app, /Candidate WorkShards/u);
+  assert.match(app, /Eval Sample Candidate/u);
+  assert.match(app, /Template Evaluation Samples/u);
   assert.match(app, /candidate-work-item-001/u);
   assert.match(app, /repo-work-item-001/u);
   assert.match(app, /repo-shard-product/u);

@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { randomUUID } from "node:crypto";
+import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createDemoExecution, renderDeliveryReportHtml, runDemoMode } from "../src/index.mjs";
@@ -31,6 +32,125 @@ test("creates repo understanding report cards through the shared demo engine", a
   assert.equal(execution.reportCard.metrics.candidateWorkItemCount, 2);
   assert.equal(execution.reportCard.metrics.suggestedWorkShardCount, 3);
   assert.match(execution.markdown, /ExecutionReportCard/u);
+});
+
+test("surfaces template evaluation samples in demo report-card extensions", async () => {
+  const tempRepoRoot = path.join(repoRoot, "dist", "test-template-evaluation-samples", randomUUID());
+  const templateId = "template_eval_samples_demo";
+  await mkdir(path.join(tempRepoRoot, "config", "templates"), { recursive: true });
+  await writeFile(path.join(tempRepoRoot, "README.md"), "# Temp Demo\n\nLocal input only.\n", "utf8");
+  await writeFile(
+    path.join(tempRepoRoot, "config", "templates", `${templateId}.json`),
+    `${JSON.stringify(
+      {
+        templateId,
+        templateVersion: "0.1.0",
+        displayName: "Template Eval Samples Demo",
+        runtimeMode: "Demo Mode",
+        taskGoal: "Surface template-authored evaluation samples in the generated report card.",
+        dataClassification: "internal",
+        redactionStatus: "redacted",
+        sharePermission: "private",
+        riskLevel: "medium",
+        skillRefs: ["skill://execution-report-card.render.v1"],
+        toolContracts: [
+          {
+            toolName: "template_eval.read_local_files",
+            description: "Read local files for a template evaluation samples demo.",
+            inputSchemaRef: "schema://ai-hrms.demo.template-eval.read.input.v1",
+            outputSchemaRef: "schema://ai-hrms.demo.template-eval.read.output.v1",
+            requiredPermissions: ["repo:read"],
+            riskLevel: "low",
+            allowedActorTypes: ["AgentActor"],
+            allowedEnvironments: ["dev", "ci"],
+            autoExecute: true,
+            budgetLimit: {
+              currency: "token",
+              amount: 100
+            },
+            auditTags: ["demo", "eval-sample"]
+          }
+        ],
+        mockModel: {
+          modelRouteId: "mock.template-eval-samples.v1",
+          modelCapabilityProfileRef: "model-capability-profile://mock.template-eval-samples.v1",
+          structuredOutputSupport: true,
+          toolCallingSupport: false
+        },
+        failureSample: {
+          failureType: "template_eval_sample_missing",
+          simulated: true,
+          statusIfTriggered: "blocked",
+          recovery: "Keep the generated report card valid and ask the template owner to review sample coverage."
+        },
+        evaluationSamples: [
+          {
+            sampleId: "template-eval-sample-001",
+            purpose: "Verify surfaced template samples.",
+            inputSummary: "Temporary local README input for a deterministic Demo Mode report card.",
+            expectedOutputs: ["ExecutionReportCard JSON"],
+            expectedGovernance: [
+              "Keep samples as candidate review material",
+              "Require human review before training, sharing, or production use"
+            ],
+            failureModeCovered: "template_eval_sample_missing",
+            reportCardValue:
+              "Confirms template-authored evaluation samples remain visible in the canonical report-card JSON."
+          }
+        ]
+      },
+      null,
+      2
+    )}\n`,
+    "utf8"
+  );
+
+  const execution = await createDemoExecution({
+    repoRoot: tempRepoRoot,
+    templateId,
+    model: "mock",
+    inputs: ["README.md"],
+    outputDir: "dist/report-cards"
+  });
+
+  const validation = validateExecutionReportCard(execution.reportCard);
+  assert.equal(validation.ok, true, JSON.stringify(validation.errors, null, 2));
+  const templateEvaluationSamples = execution.reportCard.extensions["ai-hrms.demo"].templateEvaluationSamples;
+  assert.equal(templateEvaluationSamples.source, "template.evaluationSamples");
+  assert.equal(templateEvaluationSamples.status, "candidate");
+  assert.equal(templateEvaluationSamples.reviewRequired, true);
+  assert.equal(templateEvaluationSamples.jsonFirst, true);
+  assert.equal(templateEvaluationSamples.samples.length, 1);
+  assert.equal(templateEvaluationSamples.samples[0].sampleId, "template-eval-sample-001");
+  assert.equal(execution.reportCard.metrics.candidateEvalSampleCount, 2);
+});
+
+test("first visible templates declare evaluation samples with failure coverage", async () => {
+  const templateDir = path.join(repoRoot, "config", "templates");
+  const templateFiles = (await readdir(templateDir)).filter((file) => file.endsWith(".json"));
+  assert.equal(templateFiles.length, 7);
+
+  for (const templateFile of templateFiles) {
+    const template = JSON.parse(await readFile(path.join(templateDir, templateFile), "utf8"));
+    assert.equal(Array.isArray(template.evaluationSamples), true, templateFile);
+    assert.equal(template.evaluationSamples.length >= 1, true, templateFile);
+    for (const sample of template.evaluationSamples) {
+      for (const field of [
+        "sampleId",
+        "purpose",
+        "inputSummary",
+        "expectedOutputs",
+        "expectedGovernance",
+        "failureModeCovered",
+        "reportCardValue"
+      ]) {
+        assert.equal(field in sample, true, `${templateFile} missing ${field}`);
+      }
+      assert.equal(Array.isArray(sample.expectedOutputs), true, `${templateFile} expectedOutputs`);
+      assert.equal(Array.isArray(sample.expectedGovernance), true, `${templateFile} expectedGovernance`);
+      assert.equal(sample.failureModeCovered, template.failureSample.failureType, templateFile);
+    }
+  }
 });
 
 test("creates external agent connector safety report cards without real external execution", async () => {

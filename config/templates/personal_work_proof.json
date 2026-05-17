@@ -87,5 +87,25 @@
     "simulated": true,
     "statusIfTriggered": "blocked",
     "recovery": "Ask the user to narrow the goal to one small proof, keep the output private, and avoid producing scores or rankings."
-  }
+  },
+  "evaluationSamples": [
+    {
+      "sampleId": "eval.personal_work_proof.demo.v1",
+      "purpose": "Verify that a user goal, materials, and available time can become a small private work proof candidate.",
+      "inputSummary": "User-provided goal, materials, constraints, and available time are read from local demo input.",
+      "expectedOutputs": [
+        "Candidate LearningPath",
+        "CapabilityProof draft",
+        "Next GrowthWorkItem suggestion",
+        "ExecutionReportCard JSON"
+      ],
+      "expectedGovernance": [
+        "Do not create rankings, scores, forced assignments, or public capability claims",
+        "Require human_review_before_capability_claim_or_public_share",
+        "Keep output private by default"
+      ],
+      "failureModeCovered": "goal_too_broad",
+      "reportCardValue": "Helps a user produce reviewable AI-assisted work proof while protecting member rights and avoiding automated capability judgments."
+    }
+  ]
 }

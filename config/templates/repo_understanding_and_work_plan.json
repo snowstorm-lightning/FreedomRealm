@@ -87,5 +87,26 @@
     "simulated": true,
     "statusIfTriggered": "blocked",
     "recovery": "Ask the human owner to narrow inputs, split the request into WorkShards, and rerun the template without modifying source files."
-  }
+  },
+  "evaluationSamples": [
+    {
+      "sampleId": "eval.repo_understanding_and_work_plan.demo.v1",
+      "purpose": "Verify that repository context can produce project understanding, risks, next actions, and optional WorkShard suggestions.",
+      "inputSummary": "Selected repository documents are read as a bounded local snapshot in Demo Mode.",
+      "expectedOutputs": [
+        "Project understanding summary",
+        "Risk list",
+        "Next WorkItem candidates",
+        "Optional WorkShard suggestions",
+        "ExecutionReportCard JSON"
+      ],
+      "expectedGovernance": [
+        "Do not modify files or create assignments",
+        "Require human_review_before_work_assignment",
+        "Split oversized context into WorkShards before rerun"
+      ],
+      "failureModeCovered": "repo_context_too_large",
+      "reportCardValue": "Provides the Web MVP's primary work-planning proof by turning repository context into governed next actions and shard suggestions."
+    }
+  ]
 }

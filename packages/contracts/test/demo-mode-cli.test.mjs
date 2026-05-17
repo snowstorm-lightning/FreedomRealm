@@ -55,8 +55,11 @@ test("Demo Mode CLI generates a valid report card with reusable asset candidates
   assert.equal(demo.observation.status, "recorded");
   assert.equal(demo.learningArtifact.status, "candidate");
   assert.equal(demo.evalSample.status, "candidate");
+  assert.equal(demo.templateEvaluationSamples.status, "candidate");
+  assert.equal(demo.templateEvaluationSamples.reviewRequired, true);
+  assert.equal(demo.templateEvaluationSamples.samples.length, 1);
   assert.equal(card.metrics.candidateLearningArtifactCount, 1);
-  assert.equal(card.metrics.candidateEvalSampleCount, 1);
+  assert.equal(card.metrics.candidateEvalSampleCount, 2);
   assert.ok(card.outputRefs.some((outputRef) => outputRef.canonical === true && outputRef.path === jsonPath));
 });
 

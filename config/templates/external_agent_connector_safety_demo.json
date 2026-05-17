@@ -64,5 +64,25 @@
     "simulated": true,
     "statusIfTriggered": "blocked",
     "recovery": "Keep the external agent run blocked, record the policy reason, ask the human owner to narrow data, approve explicitly, or use the mock path."
-  }
+  },
+  "evaluationSamples": [
+    {
+      "sampleId": "eval.external_agent_connector_safety_demo.demo.v1",
+      "purpose": "Verify that ExternalConnector profiles remain bounded to mock requests and cannot launch real external agent runtimes.",
+      "inputSummary": "Mock OpenClaw and Hermes Agent connector profiles are reviewed as internal, redacted Demo Mode inputs.",
+      "expectedOutputs": [
+        "Bounded ExternalAgentRunRequest candidate",
+        "Mock ExternalAgentRunResult candidate",
+        "Policy reason for blocked real execution",
+        "ExecutionReportCard JSON"
+      ],
+      "expectedGovernance": [
+        "Do not read external agent configs, secrets, messages, memory, skills, or MCP settings",
+        "Require human_review_before_external_agent_execution",
+        "Keep real external processes blocked in Demo Mode"
+      ],
+      "failureModeCovered": "external_agent_policy_violation",
+      "reportCardValue": "Demonstrates how external agent ecosystem interest can be captured without bypassing local approval, audit, data classification, or connector policy."
+    }
+  ]
 }

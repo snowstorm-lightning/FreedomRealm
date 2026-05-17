@@ -80,5 +80,26 @@
     "simulated": true,
     "statusIfTriggered": "blocked",
     "recovery": "Fall back to the mock model route, keep the same report-card schema, and require human review before any document change."
-  }
+  },
+  "evaluationSamples": [
+    {
+      "sampleId": "eval.docs_review_and_improvement.demo.v1",
+      "purpose": "Verify that local documentation review can produce a governed ExecutionReportCard without editing source documents.",
+      "inputSummary": "Selected AI-HRMS repository documents are read as internal, redacted Demo Mode inputs.",
+      "expectedOutputs": [
+        "Mock summary of selected documents",
+        "Two to four findings",
+        "Two to four recommendations",
+        "Failure review",
+        "ExecutionReportCard JSON"
+      ],
+      "expectedGovernance": [
+        "Use mock.docs-review.v1 through the mock model route",
+        "Keep sharePermission private and dataClassification internal",
+        "Require human review before any document change"
+      ],
+      "failureModeCovered": "live_model_unavailable",
+      "reportCardValue": "Shows a reusable documentation collaboration proof with findings, recommendations, failure handling, and audit-ready report-card output."
+    }
+  ]
 }

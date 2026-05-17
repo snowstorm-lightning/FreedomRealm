@@ -88,5 +88,26 @@
     "simulated": true,
     "statusIfTriggered": "blocked",
     "recovery": "Ask the human owner for the issue body, PR summary, or diff excerpt before making a review recommendation."
-  }
+  },
+  "evaluationSamples": [
+    {
+      "sampleId": "eval.issue_pr_triage_and_review.demo.v1",
+      "purpose": "Verify that pasted issue or PR context can be triaged into reviewable suggestions without repository side effects.",
+      "inputSummary": "A pasted issue body, PR summary, or diff excerpt is read from local demo input.",
+      "expectedOutputs": [
+        "Issue or PR classification",
+        "Risk summary",
+        "Review focus areas",
+        "Recommended next WorkItems",
+        "ExecutionReportCard JSON"
+      ],
+      "expectedGovernance": [
+        "Do not post comments, change labels, or merge code",
+        "Require human_review_before_external_comment_or_merge",
+        "Keep recommendations private until reviewed"
+      ],
+      "failureModeCovered": "missing_diff_or_issue_context",
+      "reportCardValue": "Turns review context into governed triage evidence while preserving human control over comments, labels, merges, and follow-up work."
+    }
+  ]
 }

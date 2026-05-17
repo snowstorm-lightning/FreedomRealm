@@ -1152,6 +1152,14 @@ export async function createDemoExecution({
       "Candidate learning artifact derived from a deterministic Demo Mode run. It cannot become training or public material without human review, approval, audit, and retention controls."
   };
 
+  const templateEvaluationSamples = {
+    source: "template.evaluationSamples",
+    status: "candidate",
+    reviewRequired: true,
+    jsonFirst: true,
+    samples: Array.isArray(template.evaluationSamples) ? template.evaluationSamples : []
+  };
+
   const evalSample = {
     evalSampleId: `eval-sample-${randomUUID()}`,
     sampleType: "demo_mode_minimal_loop",
@@ -1279,7 +1287,7 @@ export async function createDemoExecution({
       recommendationCount: analysis.recommendations.length,
       requiresHumanReview: analysis.requiresHumanReview,
       candidateLearningArtifactCount: 1,
-      candidateEvalSampleCount: 1,
+      candidateEvalSampleCount: 1 + templateEvaluationSamples.samples.length,
       candidateWorkItemCount,
       suggestedWorkShardCount: repoWorkPlan?.suggestedWorkShards.length ?? 0,
       modelRouteActual: modelRoute.actual,
@@ -1302,6 +1310,7 @@ export async function createDemoExecution({
         observation,
         learningArtifact,
         evalSample,
+        templateEvaluationSamples,
         toolContractEvaluations: toolEvaluations,
         executionTrace: [
           "WorkItem.created",

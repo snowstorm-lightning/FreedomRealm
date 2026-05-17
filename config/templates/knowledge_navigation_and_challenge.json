@@ -143,5 +143,25 @@
     "simulated": true,
     "statusIfTriggered": "blocked",
     "recovery": "Ask the human owner to narrow the question, add maintained source documents, or submit a DocChallengeDraft for review without modifying source files."
-  }
+  },
+  "evaluationSamples": [
+    {
+      "sampleId": "eval.knowledge_navigation_and_challenge.demo.v1",
+      "purpose": "Verify that a user question can be answered from maintained repository sources and challenged without editing documents.",
+      "inputSummary": "A local question is matched against selected repository Markdown SourceChunks through deterministic mock search.",
+      "expectedOutputs": [
+        "Sourced AnswerCard",
+        "Source references and limitations",
+        "Optional DocChallengeDraft",
+        "ExecutionReportCard JSON"
+      ],
+      "expectedGovernance": [
+        "Use maintained local documents as sources",
+        "Do not create production facts or edit source documents",
+        "Require human_review_before_document_change"
+      ],
+      "failureModeCovered": "source_confidence_too_low",
+      "reportCardValue": "Shows trustworthy knowledge navigation with source traceability, explicit uncertainty handling, and a human-reviewed challenge path."
+    }
+  ]
 }

@@ -146,6 +146,8 @@ function toWorkbenchCard(execution, index) {
     agentActor: demo.agentActor,
     approvalGate: demo.approvalGate,
     observation: demo.observation,
+    evalSample: demo.evalSample,
+    templateEvaluationSamples: demo.templateEvaluationSamples,
     executionTrace: demo.executionTrace,
     failureSample: reportCard.failure.sample,
     mockOutputNotice: demo.mockOutputNotice,
@@ -1187,6 +1189,20 @@ function renderReport(card) {
   const workPlanCandidateItems = card.workPlan?.candidateWorkItems || [];
   const allCandidateWorkItems = [...candidateWorkItems, ...workPlanCandidateItems];
   const suggestedWorkShards = card.workPlan?.suggestedWorkShards || [];
+  const templateEvaluationSamples = card.templateEvaluationSamples?.samples || [];
+  const evalSampleItem = card.evalSample
+    ? [
+        {
+          title: card.evalSample.sampleType,
+          detail:
+            card.evalSample.status +
+            ", approvalRequired=" +
+            String(card.evalSample.approvalRequired) +
+            ", sourceTemplate=" +
+            card.evalSample.sourceTemplateId
+        }
+      ]
+    : [];
   const firstNextAction = card.nextActions[0];
   document.getElementById("reportSurface").innerHTML =
     '<header class="report-header">' +
@@ -1230,6 +1246,17 @@ function renderReport(card) {
           }), "title") + '</section>'
         : '') +
       '<section class="wide"><h3>Input Refs</h3>' + renderList(inputItems, "path") + '</section>' +
+      (evalSampleItem.length > 0
+        ? '<section><h3>Eval Sample Candidate</h3>' + renderList(evalSampleItem, "title") + '</section>'
+        : '') +
+      (templateEvaluationSamples.length > 0
+        ? '<section class="wide"><h3>Template Evaluation Samples</h3>' + renderList(templateEvaluationSamples.map(function (sample) {
+            return {
+              title: sample.sampleId,
+              detail: sample.purpose + " Failure mode: " + sample.failureModeCovered
+            };
+          }), "title") + '</section>'
+        : '') +
       '<section class="wide"><h3>Failure Path Sample</h3>' +
         renderList([{ title: card.failureSample.failureType, detail: card.failureSample.recovery }], "title") +
       '</section>' +

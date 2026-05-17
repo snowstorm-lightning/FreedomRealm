@@ -85,5 +85,25 @@
     "simulated": true,
     "statusIfTriggered": "blocked",
     "recovery": "Ask the human owner to narrow the review surface, split by subsystem, and rerun without modifying repository files."
-  }
+  },
+  "evaluationSamples": [
+    {
+      "sampleId": "eval.project_self_review_and_decay_prevention.demo.v1",
+      "purpose": "Verify that maintained docs and manifests can be checked for project decay without modifying repository files.",
+      "inputSummary": "Selected maintained documents and local manifests are read as internal, redacted Demo Mode inputs.",
+      "expectedOutputs": [
+        "Decay and drift findings",
+        "Governance boundary observations",
+        "Candidate follow-up WorkItems",
+        "ExecutionReportCard JSON"
+      ],
+      "expectedGovernance": [
+        "Do not automatically modify documents, code, issues, PRs, or configuration",
+        "Require human_review_before_repository_changes",
+        "Write candidate WorkItems only as review material"
+      ],
+      "failureModeCovered": "self_review_scope_too_broad",
+      "reportCardValue": "Creates a governed project health review that can surface decay risks and candidate work without turning self-review into automatic repository changes."
+    }
+  ]
 }
