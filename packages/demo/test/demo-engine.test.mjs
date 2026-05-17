@@ -72,9 +72,20 @@ test("self-review generates a report card without modifying tracked docs", async
   const selfReview = execution.reportCard.extensions["ai-hrms.selfReview"];
   assert.equal(selfReview.noWriteSideEffects, true);
   assert.equal(selfReview.reviewRequired, true);
+  assert.equal(selfReview.promotionPolicy, "human_owner_review_required");
+  assert.equal(selfReview.mappingRules.length, 3);
+  assert.equal(selfReview.mappingRules.some((rule) => rule.ruleId === "self-review-preserve-review-boundary"), true);
+  assert.equal(selfReview.requiredCandidateFields.includes("suggestedReadSet"), true);
+  assert.equal(selfReview.requiredCandidateFields.includes("verificationCommands"), true);
   assert.equal(selfReview.candidateWorkItems.length, 2);
   assert.equal(selfReview.candidateWorkItems.every((item) => item.status === "candidate"), true);
   assert.equal(selfReview.candidateWorkItems.every((item) => Array.isArray(item.suggestedWriteSet)), true);
+  assert.equal(
+    selfReview.candidateWorkItems.every((item) =>
+      selfReview.requiredCandidateFields.every((field) => field in item)
+    ),
+    true
+  );
   assert.equal(execution.reportCard.metrics.candidateWorkItemCount, 2);
   assert.match(execution.markdown, /Candidate WorkItems/u);
 });

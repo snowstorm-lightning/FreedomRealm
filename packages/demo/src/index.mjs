@@ -547,6 +547,48 @@ function buildSelfReviewCandidateWorkItems({ analysis, inputRefs }) {
   ];
 }
 
+const selfReviewMappingRules = Object.freeze([
+  {
+    ruleId: "self-review-map-finding-to-workitem",
+    source: "finding.id",
+    target: "candidateWorkItems[].sourceFindingIds",
+    requirement:
+      "Every candidate WorkItem must reference at least one self-review finding so it remains traceable to report-card evidence."
+  },
+  {
+    ruleId: "self-review-map-recommendation-to-workitem",
+    source: "recommendation.id",
+    target: "candidateWorkItems[].sourceRecommendationIds",
+    requirement:
+      "Recommendations can justify next steps, but they remain review material until a human owner promotes the candidate."
+  },
+  {
+    ruleId: "self-review-preserve-review-boundary",
+    source: "candidateWorkItems[]",
+    target: "promotionPolicy",
+    requirement:
+      "Self-review output must not create issues, PRs, assignments, repository edits, public assets, or production WorkItems."
+  }
+]);
+
+const candidateWorkItemRequiredFields = Object.freeze([
+  "candidateWorkItemId",
+  "title",
+  "status",
+  "priority",
+  "riskLevel",
+  "ownerActorTypes",
+  "sourceFindingIds",
+  "sourceRecommendationIds",
+  "goal",
+  "nonGoals",
+  "suggestedReadSet",
+  "suggestedWriteSet",
+  "acceptanceCriteria",
+  "verificationCommands",
+  "approvalRequired"
+]);
+
 function buildRepoWorkPlanArtifacts({ analysis, inputRefs }) {
   const suggestedReadSet = inputRefs.map((inputRef) => inputRef.path);
   return {
@@ -1322,6 +1364,9 @@ export async function createDemoExecution({
             "ai-hrms.selfReview": {
               noWriteSideEffects: true,
               reviewRequired: true,
+              promotionPolicy: "human_owner_review_required",
+              mappingRules: selfReviewMappingRules,
+              requiredCandidateFields: candidateWorkItemRequiredFields,
               candidateWorkItems: selfReviewCandidateWorkItems,
               mockOutputNotice:
                 "Self-review candidate WorkItems are review material only. They do not create issues, PRs, assignments, or repository changes."
