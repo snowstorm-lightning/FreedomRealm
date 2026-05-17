@@ -263,6 +263,7 @@ function buildHtml() {
         <div class="next-grid">
           <article class="panel" id="operatingTasks"></article>
           <article class="panel" id="operatingGuards"></article>
+          <article class="panel backlog-panel" id="decayBacklog"></article>
         </div>
       </section>
 
@@ -651,7 +652,7 @@ h3 {
 }
 .next-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+  grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.85fr) minmax(280px, 0.75fr);
   gap: 14px;
   margin-top: 14px;
 }
@@ -750,6 +751,63 @@ h3 {
   display: block;
   color: var(--ink);
   font-size: 12px;
+}
+.backlog-panel {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+}
+.backlog-summary {
+  display: grid;
+  gap: 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fbfcfa;
+  padding: 12px;
+}
+.backlog-summary strong {
+  font-size: 16px;
+}
+.backlog-summary p,
+.backlog-item p,
+.backlog-note {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.45;
+}
+.backlog-list {
+  display: grid;
+  gap: 10px;
+}
+.backlog-item {
+  border-top: 1px solid var(--line);
+  padding-top: 10px;
+}
+.backlog-item header {
+  display: flex;
+  gap: 10px;
+  align-items: start;
+  justify-content: space-between;
+}
+.backlog-item strong {
+  overflow-wrap: anywhere;
+}
+.status-pill.compact {
+  min-height: 24px;
+  padding: 3px 8px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.backlog-meta {
+  display: grid;
+  gap: 5px;
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.35;
+}
+.backlog-meta span {
+  overflow-wrap: anywhere;
 }
 .guard-block ul {
   display: grid;
@@ -1302,6 +1360,52 @@ function renderTaskOrigin(origin) {
   '</div>';
 }
 
+function compactJoin(items, fallback) {
+  return Array.isArray(items) && items.length > 0 ? items.join(", ") : fallback;
+}
+
+function renderDecayPreventionBacklog(entry) {
+  const backlog = entry.extensions?.["ai-hrms.decayPreventionBacklog"];
+  if (!backlog || !Array.isArray(backlog.items)) {
+    return '<div class="section-heading">' +
+      '<p class="eyebrow">衰减预防 / Decay prevention</p>' +
+      '<h2>暂无已复核 backlog / No reviewed backlog</h2>' +
+    '</div>';
+  }
+
+  const items = backlog.items.slice(0, 3).map(function (item) {
+    const implementationRefs = compactJoin(item.implementationRefs, "none");
+    return '<article class="backlog-item">' +
+      '<header><strong>' + escapeHtml(item.candidateWorkItemId + " -> " + item.formalTaskId) +
+        '</strong><span class="status-pill compact">' + escapeHtml(item.status) + '</span></header>' +
+      '<p>优先级 / Priority: ' + escapeHtml(item.priority) + '; 风险 / Risk: ' +
+        escapeHtml(item.riskLevel) + '</p>' +
+      '<div class="backlog-meta">' +
+        '<span>owner: ' + escapeHtml(compactJoin(item.ownerActorTypes, "HumanActor")) + '</span>' +
+        '<span>sourceFindingIds: ' + escapeHtml(compactJoin(item.sourceFindingIds, "none")) + '</span>' +
+        '<span>sourceRecommendationIds: ' + escapeHtml(compactJoin(item.sourceRecommendationIds, "none")) + '</span>' +
+        '<span>verify: ' + escapeHtml(compactJoin(item.verificationCommands, "pnpm check")) + '</span>' +
+        '<span>writeSet: ' + escapeHtml(compactJoin(item.writeSet, "read-only")) + '</span>' +
+        '<span>implementationRefs: ' + escapeHtml(implementationRefs) + '</span>' +
+      '</div>' +
+    '</article>';
+  }).join("");
+
+  return '<div class="section-heading">' +
+      '<p class="eyebrow">衰减预防 / Decay prevention</p>' +
+      '<h2>人工复核 backlog / Human-reviewed backlog</h2>' +
+    '</div>' +
+    '<section class="backlog-summary" aria-label="衰减预防 backlog 摘要 / Decay prevention backlog summary">' +
+      '<strong>只追踪候选项，不自动执行 / Tracking only, no automatic execution</strong>' +
+      '<p>promotionPolicy=' + escapeHtml(backlog.promotionPolicy) +
+        '; humanApprovalRef=' + escapeHtml(backlog.humanApprovalRef) +
+        '; autoCreateExternalIssues=' + escapeHtml(String(backlog.autoCreateExternalIssues)) + '</p>' +
+      '<p>自我审查输出仍需 human owner 复核；不会自动修改仓库、创建外部 issue/PR、发布 Commons、训练模型或给成员创造义务。 / Self-review output still needs human owner review. It does not automatically modify the repo, create external issues or PRs, publish Commons assets, train models, or create member obligations.</p>' +
+    '</section>' +
+    '<div class="backlog-list">' + items + '</div>' +
+    '<p class="backlog-note">高风险 live connector 仍需要 ApprovalGate；该面板只读取本地 manifest。 / High-risk live connector work still requires ApprovalGate; this panel only reads the local manifest.</p>';
+}
+
 function renderOperatingEntry() {
   const entry = state.operatingEntry;
   const tasks = entry.currentTasks || [];
@@ -1388,6 +1492,8 @@ function renderOperatingEntry() {
       '<section class="guard-block"><strong>执行原则 / Harness principles</strong><p>' +
         escapeHtml(entry.harnessPrinciples.slice(0, 3).join(" / ")) + '</p></section>' +
     '</div>';
+
+  document.getElementById("decayBacklog").innerHTML = renderDecayPreventionBacklog(entry);
 }
 
 function renderProofStats() {

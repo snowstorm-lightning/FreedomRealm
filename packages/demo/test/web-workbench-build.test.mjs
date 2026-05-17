@@ -78,6 +78,20 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   const state = JSON.parse(stateMatch[1]);
   assert.deepEqual(state.operatingEntry, operatingEntry);
   assert.equal(validateProjectOperatingEntry(state.operatingEntry).ok, true);
+  const decayBacklog = state.operatingEntry.extensions["ai-hrms.decayPreventionBacklog"];
+  assert.ok(decayBacklog);
+  assert.equal(decayBacklog.promotionPolicy, "human_owner_review_required");
+  assert.equal(decayBacklog.humanApprovalRef, "user-approved-continuation-20260517");
+  assert.equal(decayBacklog.autoCreateExternalIssues, false);
+  const backlogCandidateIds = new Set(decayBacklog.items.map((item) => item.candidateWorkItemId));
+  assert.equal(backlogCandidateIds.has("candidate-work-item-001"), true);
+  assert.equal(backlogCandidateIds.has("candidate-work-item-002"), true);
+  const activeDecayBacklogItem = decayBacklog.items.find((item) => item.candidateWorkItemId === "candidate-work-item-002");
+  assert.equal(activeDecayBacklogItem?.formalTaskId, "p1-decay-prevention-backlog");
+  assert.equal(activeDecayBacklogItem?.status, "active");
+  assert.deepEqual(activeDecayBacklogItem?.sourceFindingIds, ["finding-002", "finding-003"]);
+  assert.deepEqual(activeDecayBacklogItem?.sourceRecommendationIds, ["recommendation-002"]);
+  assert.deepEqual(activeDecayBacklogItem?.verificationCommands, ["pnpm self-review", "pnpm check"]);
   const currentWorkbenchTask = state.operatingEntry.currentTasks.find(
     (task) => task.taskId === "p0-next-workbench-entry"
   );
@@ -212,6 +226,26 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   assert.match(app, /candidateWorkItemId=/u);
   assert.match(app, /sourceFindingIds=/u);
   assert.match(app, /humanApprovalRef=/u);
+  assert.match(app, /Decay prevention backlog/u);
+  assert.match(app, /衰减预防 backlog 摘要 \/ Decay prevention backlog summary/u);
+  assert.match(app, /人工复核 backlog \/ Human-reviewed backlog/u);
+  assert.match(app, /Tracking only, no automatic execution/u);
+  assert.match(app, /只追踪候选项，不自动执行/u);
+  assert.match(app, /human_owner_review_required/u);
+  assert.match(app, /autoCreateExternalIssues/u);
+  assert.match(app, /does not automatically modify the repo/u);
+  assert.match(app, /不会自动修改仓库/u);
+  assert.match(app, /create external issues or PRs/u);
+  assert.match(app, /创建外部 issue\/PR/u);
+  assert.match(app, /create member obligations/u);
+  assert.match(app, /给成员创造义务/u);
+  assert.match(app, /High-risk live connector work still requires ApprovalGate/u);
+  assert.match(app, /高风险 live connector 仍需要 ApprovalGate/u);
+  assert.match(app, /candidate-work-item-002/u);
+  assert.match(app, /p1-decay-prevention-backlog/u);
+  assert.match(app, /finding-002/u);
+  assert.match(app, /finding-003/u);
+  assert.match(app, /recommendation-002/u);
   assert.match(app, /AgentWorkLease/u);
   assert.match(app, /AgentWorkLease preview/u);
   assert.match(app, /当前 shard 的 AgentWorkLease 预览 \/ AgentWorkLease preview/u);
