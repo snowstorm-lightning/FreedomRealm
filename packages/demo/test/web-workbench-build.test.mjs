@@ -91,6 +91,8 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   assert.equal(goControlPlanePlan?.statusSource, "inferred");
   assert.equal(goControlPlanePlan?.planOnly, true);
   assert.equal(goControlPlanePlan?.humanDecisionCount, 5);
+  assert.equal(goControlPlanePlan?.humanDecisionPreview.length, 5);
+  assert.equal(goControlPlanePlan?.humanDecisionPreview.some((item) => /本地存储/u.test(item)), true);
   assert.match(goControlPlanePlan?.title || "", /Go Core Control Plane Skeleton/u);
   assert.match(goControlPlanePlan?.href || "", /phase-1-go-control-plane-skeleton\.md/u);
   const repositioningPlan = state.activePlans.find(

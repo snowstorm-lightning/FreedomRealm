@@ -291,7 +291,7 @@ async function readActivePlans() {
       nonGoals: extractBullets(markdown, "非目标", 3),
       acceptance: extractBullets(markdown, "验收标准", 3),
       humanDecisionCount: humanDecisionBullets.length,
-      humanDecisionPreview: humanDecisionBullets.slice(0, 2),
+      humanDecisionPreview: humanDecisionBullets.slice(0, 5),
       planOnly:
         markdown.includes("不是本轮自动实现授权") ||
         markdown.includes("不在本计划创建") ||
