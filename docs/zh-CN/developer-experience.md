@@ -125,6 +125,7 @@ Python 侧：
 - pnpm 版本是否匹配 `packageManager`。
 - 依赖与 lockfile 策略是否一致。
 - workspace 清单、根目录组织和根脚本是否符合跨平台约束。
+- `apps/` 下的应用是否声明 `package.json`、`pyproject.toml` 或 `go.mod`；Go 应用还必须包含 `cmd/<app>/main.go`，避免只创建空服务目录。
 - 环境样例配置是否通过校验。
 - 是否存在明显 OS-specific scripts。
 

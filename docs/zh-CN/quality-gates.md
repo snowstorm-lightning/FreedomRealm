@@ -127,6 +127,7 @@
 
 - 是否属于 [developer-experience.md](developer-experience.md) 定义的目标结构。
 - 是否已有可运行入口、测试、README 或长期维护责任。
+- `apps/` 下的 Node、Python、Go 应用是否分别声明 `package.json`、`pyproject.toml` 或 `go.mod`；Go 应用是否包含 `cmd/<app>/main.go`。
 - 是否避免为尚未实现的服务创建空目录。
 - 是否没有把服务代码放入 `docs/`，也没有把应用私有代码放入 `packages/`。
 - 是否没有把 infra 配置散落在 app 目录中。
