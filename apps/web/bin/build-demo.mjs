@@ -317,6 +317,8 @@ function buildHtml() {
         </div>
       </section>
 
+      <section class="owner-decisions" id="ownerDecisionQueue" aria-label="需要 owner 决策 / Owner decision queue"></section>
+
       <section class="next-workbench" aria-label="下一步工作台 / Next Workbench">
         <div class="section-heading">
           <p class="eyebrow">下一步工作台 / Next Workbench</p>
@@ -675,6 +677,56 @@ h3 {
   align-items: stretch;
   padding: 16px 0 20px;
   border-bottom: 1px solid var(--line);
+}
+.owner-decisions {
+  display: grid;
+  grid-template-columns: 280px repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  align-items: stretch;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--line);
+}
+.decision-queue-intro,
+.decision-queue-item {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  padding: 14px;
+}
+.decision-queue-intro {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+}
+.decision-queue-intro p,
+.decision-queue-item p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.45;
+}
+.decision-queue-item {
+  display: grid;
+  gap: 8px;
+}
+.decision-queue-item header {
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+  align-items: start;
+}
+.decision-queue-item strong {
+  overflow-wrap: anywhere;
+}
+.decision-queue-item code {
+  display: block;
+  overflow-wrap: anywhere;
+  border-radius: 6px;
+  background: #f1f5f2;
+  color: var(--ink);
+  padding: 8px;
+  line-height: 1.35;
+  font-size: 12px;
 }
 .decision-strip > div,
 .command-tile {
@@ -1361,6 +1413,9 @@ h3 {
   .workbench {
     grid-template-columns: 260px minmax(0, 1fr);
   }
+  .owner-decisions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
   .active-plan-strip {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1371,7 +1426,7 @@ h3 {
 }
 @media (max-width: 840px) {
   .shell { padding: 24px 16px 32px; }
-  .command-board, .entry-strip, .decision-strip, .next-grid, .active-plan-strip, .workbench, .right-rail, .knowledge-layout, .roadmap-list {
+  .command-board, .entry-strip, .decision-strip, .owner-decisions, .next-grid, .active-plan-strip, .workbench, .right-rail, .knowledge-layout, .roadmap-list {
     grid-template-columns: 1fr;
   }
   h1 { font-size: 30px; }
@@ -1548,6 +1603,64 @@ function renderActivePlans() {
       '<p>预览 / Preview: ' + escapeHtml(decisionPreview) + '</p>' +
     '</article>';
   }).join("");
+}
+
+function renderOwnerDecisionQueue() {
+  const tasks = state.operatingEntry.currentTasks || [];
+  const highRiskTasks = tasks.filter(function (task) { return task.riskLevel === "high"; });
+  const plansWithDecisions = (state.activePlans || []).filter(function (plan) {
+    return plan.humanDecisionCount > 0;
+  });
+  const decayBacklog = state.operatingEntry.extensions?.["ai-hrms.decayPreventionBacklog"];
+  const activeBacklogItem = decayBacklog?.items?.find(function (item) {
+    return item.status === "active";
+  });
+
+  const queueItems = [
+    ...plansWithDecisions.slice(0, 2).map(function (plan) {
+      return {
+        label: "计划决策 / Plan decision",
+        status: String(plan.humanDecisionCount) + " pending",
+        title: plan.title,
+        detail: plan.humanDecisionPreview.join(" / "),
+        command: plan.filename
+      };
+    }),
+    ...highRiskTasks.slice(0, 1).map(function (task) {
+      return {
+        label: "高风险候选 / High-risk candidate",
+        status: task.riskLevel,
+        title: task.title,
+        detail: "需要 human owner 决策、ApprovalGate、secret 边界和数据生命周期设计。 / Requires human owner decision, ApprovalGate, secret boundary, and data lifecycle design.",
+        command: task.taskId
+      };
+    }),
+    activeBacklogItem
+      ? {
+          label: "人工复核 / Human review",
+          status: activeBacklogItem.status,
+          title: activeBacklogItem.formalTaskId,
+          detail: "衰减预防 backlog 只追踪来源和验证；不自动创建 issue、发布 Commons 或修改仓库。 / Decay prevention backlog only tracks provenance and validation; it does not create issues, publish Commons assets, or modify the repo automatically.",
+          command: activeBacklogItem.candidateWorkItemId
+        }
+      : null
+  ].filter(Boolean).slice(0, 4);
+
+  document.getElementById("ownerDecisionQueue").innerHTML =
+    '<div class="decision-queue-intro">' +
+      '<p class="eyebrow">需要 owner 决策 / Owner Decision Queue</p>' +
+      '<h2>候选决策，不是自动分派 / Candidate decisions, not automatic assignments</h2>' +
+      '<p>这里集中展示会影响架构、连接器、数据生命周期或自审晋升的人工 checkpoint。拒绝、延后、缩小范围或转交都不能成为负面贡献信号。 / This queue gathers human checkpoints that affect architecture, connectors, data lifecycle, or self-review promotion. Refusal, delay, scope reduction, or transfer must not become a negative contribution signal.</p>' +
+    '</div>' +
+    queueItems.map(function (item) {
+      return '<article class="decision-queue-item">' +
+        '<header><span class="eyebrow">' + escapeHtml(item.label) + '</span><span class="status-pill compact">' +
+          escapeHtml(item.status) + '</span></header>' +
+        '<strong>' + escapeHtml(item.title) + '</strong>' +
+        '<p>' + escapeHtml(item.detail) + '</p>' +
+        '<code>' + escapeHtml(item.command) + '</code>' +
+      '</article>';
+    }).join("");
 }
 
 function renderOperatingEntry() {
@@ -1955,6 +2068,7 @@ function renderAll() {
   renderProofStats();
   renderOperatingEntry();
   renderActivePlans();
+  renderOwnerDecisionQueue();
   renderTemplates();
   renderEntryModes();
   renderReport(card);
