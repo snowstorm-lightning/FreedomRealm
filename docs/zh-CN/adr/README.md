@@ -10,7 +10,8 @@
 - [ADR-0006: 自适应运行档位](ADR-0006-adaptive-runtime-profiles.md)
 - [ADR-0007: 治理型 AI 中枢](ADR-0007-governance-ai-brain.md)
 - [ADR-0008: 跨实例通信协议兼容性](ADR-0008-federation-protocol-compatibility.md)
-- [ADR-0009: 单一现代稳定技术栈基线](ADR-0009-single-modern-stable-tech-baseline.md)
+- [ADR-0009: 单一现代稳定技术栈基线](ADR-0009-single-modern-stable-tech-baseline.md)（控制面语言部分由 ADR-0010 修正）
+- [ADR-0010: Go 控制面与 Rust 治理内核语言方向](ADR-0010-core-control-plane-language-direction.md)
 
 ## ADR 规则
 

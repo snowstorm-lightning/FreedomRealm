@@ -7,9 +7,10 @@ AI-HRMS 采用“AI-HRMS Core Control Plane + GovernanceBrain + Agent Runtime + 
 ```mermaid
 flowchart LR
     UI[Workspace / Console<br/>Web UI or CLI]
-    API[AI-HRMS Core Control Plane<br/>NestJS + Prisma]
+    API[AI-HRMS Core Control Plane<br/>Go service]
+    PK[Policy / Contract / Protocol Kernel<br/>Rust]
     WF[Workflow Backbone<br/>Temporal]
-    AR[Agent Runtime<br/>FastAPI + LangGraph]
+    AR[Agent Runtime / AI Adapters<br/>Python + LangGraph]
     AD[Adaptive Runtime Layer]
     GB[GovernanceBrain<br/>Context Graph + Task Fit + Model Capability]
     RP[Resource Profile Detector]
@@ -27,6 +28,7 @@ flowchart LR
     OBS[Grafana + Loki + Tempo + Langfuse]
 
     UI --> API
+    API --> PK
     API <--> WF
     WF <--> AR
     API --> AD
@@ -46,7 +48,6 @@ flowchart LR
     API --> FG
     API --> ER
     API <--> DB
-    AR <--> DB
     API --> KC
     AR --> KC
     API --> OT
@@ -59,9 +60,9 @@ flowchart LR
 
 ## 技术栈基线
 
-基线验证时间：2026-05-10。
+基线验证时间：2026-05-17。
 
-AI-HRMS 只维护一条技术栈基线。基线选择原则是：在保证生产稳定、依赖兼容、跨平台可用和可回滚的前提下，使用尽可能新的稳定版本。`Current`、RC、beta、canary、preview-only 和 experimental-only 能力不得作为 Enterprise Mode 的强制依赖；Node.js 运行时必须使用当前 LTS 线，直到更新的偶数主版本正式进入 LTS。
+AI-HRMS 只维护一条分层技术栈基线。基线选择原则是：在保证生产稳定、依赖兼容、跨平台可用、可审计和可回滚的前提下，为每个架构层选择合适语言。`Current`、RC、beta、canary、preview-only 和 experimental-only 能力不得作为 Enterprise Mode 的强制依赖。ADR-0010 已将长期生产 Core Control Plane 的默认方向修正为 Go 服务主干，并将高治理契约收敛到 Rust Policy / Contract / Protocol Kernel；Node.js 继续用于 TypeScript 前端、Demo Mode、仓库脚本和轻量 glue code。
 
 | 层 | 选型 | 用途 |
 | --- | --- | --- |
@@ -69,23 +70,24 @@ AI-HRMS 只维护一条技术栈基线。基线选择原则是：在保证生产
 | CLI / Minimal UI | CLI-first，极简 Web UI 后续读取同一执行数据 | Tiny/Demo Mode 的最小体验、报告卡导出和后续展示 |
 | 数据获取 | TanStack Query | 查询缓存、失效控制、后台刷新 |
 | E2E | Playwright | 人机协作流、审批流、Demo Mode 回归 |
-| 控制面 | Node.js 24 LTS, NestJS 11 | HR 核心域、ProjectInstance、审批、任务、策略、审计 API |
-| ORM | Prisma ORM 6.x | 模式定义、迁移、类型安全查询 |
+| 控制面 | Go，具体框架在 Phase 1 服务实现 ADR / execution plan 中确定 | HR 核心域、ProjectInstance、审批、任务、策略、审计 API、ReportCard 服务、Federation Gateway、本地单二进制服务 |
+| Policy / Contract / Protocol Kernel | Rust | ToolContract 校验、PolicyRule 执行、DataClassification 继承、FederationMessage envelope、ExecutionReportCard schema、风险等级判定 |
+| 数据访问与迁移 | 随 Go 控制面选型确定，必须类型安全、可审计、可回滚 | 模式定义、迁移、查询和事件 outbox |
 | 主数据库 | PostgreSQL 18 | Enterprise/Community 事务数据、事件 outbox、检索元数据 |
 | 轻量存储 | SQLite 或文件存储 | Tiny/Demo/Local Mode 的最小运行 |
 | 向量能力 | pgvector，可降级关闭 | 知识检索、长期记忆、样本召回 |
-| Agent Runtime | Python 3.14 stable, FastAPI, LangGraph, Pydantic v2 | graph 执行、tool-calling、HITL 中断 |
+| Agent Runtime / AI adapter | Python 3.14 stable, LangGraph, Pydantic v2，可按需要使用 FastAPI | graph 执行、tool-calling、HITL 中断、模型实验、evals、外部 agent adapter；不直接写核心事实 |
 | Workflow | Temporal，可在轻量档位降级为本地状态机 | 长流程、补偿、超时、审批闸门、恢复 |
 | 模型网关 | LiteLLM Proxy / ModelRoute | 统一模型协议、预算、策略、审计 |
 | 治理型 AI 中枢 | GovernanceBrain | 项目上下文图谱、智能分派建议、模型能力治理、受控自我迭代候选 |
 | 身份 | Keycloak，可在轻量档位降级为本地身份 | OIDC/SAML/LDAP/AD 和 Enterprise 身份治理 |
 | 可观测性 | OTel Collector, Grafana, Loki, Tempo, Langfuse | 业务与 LLM 双重观测，可按档位降级 |
 
-当前不把 Node.js 26 设为基线，因为它在 2026-05-10 仍处于 Current 阶段，尚未进入 LTS。等 Node.js 26 进入 LTS，并且 NestJS、Prisma、Next.js、Playwright 和项目 CI 全部通过后，直接替换单一 Node 基线，不保留双线。
+当前 Node.js 基线只约束 Web、Demo 和仓库脚本。Node.js 26 或后续版本只有在进入 LTS，并且 Next.js、Playwright、pnpm workspace 和项目 CI 全部通过后，才能替换前端与工具链基线。Node.js / NestJS 不再是长期生产 Core Control Plane 的默认方向；若未来重新采用，必须新增 ADR 说明原因、边界、风险、测试和回滚方式。
 
 ## 控制面模块
 
-控制面采用模块化单体，首期推荐模块如下：
+控制面采用模块化单体，长期生产实现默认采用 Go 服务主干，并调用 Rust Policy / Contract / Protocol Kernel 处理高治理契约。首期推荐模块如下：
 
 - `org`：组织根、部门树、负责人、组织编码与目录视图。
 - `workforce`：账号、员工档案、雇佣生命周期、考勤事实。

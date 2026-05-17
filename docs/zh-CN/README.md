@@ -51,6 +51,7 @@
 - [adr/ADR-0006-adaptive-runtime-profiles.md](adr/ADR-0006-adaptive-runtime-profiles.md)：自适应运行档位。
 - [adr/ADR-0007-governance-ai-brain.md](adr/ADR-0007-governance-ai-brain.md)：治理型 AI 中枢。
 - [adr/ADR-0008-federation-protocol-compatibility.md](adr/ADR-0008-federation-protocol-compatibility.md)：跨实例通信协议兼容性。
+- [adr/ADR-0010-core-control-plane-language-direction.md](adr/ADR-0010-core-control-plane-language-direction.md)：Go 控制面与 Rust 治理内核语言方向，修正 ADR-0009 中控制面默认 Node.js / NestJS 的部分。
 - [execution-plans/active/phase-0-5-ai-hrms-repositioning.md](execution-plans/active/phase-0-5-ai-hrms-repositioning.md)：Phase 0.5 定位与自适应 Demo 基础计划。
 - [execution-plans/active/phase-0-6-web-workbench-mvp.md](execution-plans/active/phase-0-6-web-workbench-mvp.md)：Phase 0.6 Web Workbench MVP 执行计划。
 

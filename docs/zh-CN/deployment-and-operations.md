@@ -29,8 +29,9 @@
 flowchart TB
     subgraph Intranet[Enterprise Intranet]
         UI[Next.js UI]
-        API[NestJS Control Plane]
-        AR[FastAPI Agent Runtime]
+        API[Go Control Plane]
+        PK[Rust Policy/Contract Kernel]
+        AR[Python Agent Runtime]
         WF[Temporal]
         DB[(PostgreSQL + pgvector)]
         KC[Keycloak]
@@ -44,6 +45,7 @@ flowchart TB
     end
 
     UI --> API
+    API --> PK
     API --> DB
     API --> WF
     API --> KC

@@ -19,7 +19,8 @@
 | 场景 | Windows | Linux | macOS | WSL | 要求 |
 | --- | --- | --- | --- | --- | --- |
 | 文档编辑 | 支持 | 支持 | 支持 | 支持 | Git + 编辑器 |
-| Node 策略包开发 | 支持 | 支持 | 支持 | 支持 | Node 24 + pnpm |
+| TypeScript Web / Demo / 仓库脚本 | 支持 | 支持 | 支持 | 支持 | Node 24 + pnpm |
+| Go 控制面与 Rust 治理内核实现 | 后续支持 | 后续支持 | 后续支持 | 后续支持 | 具体工具链由 Phase 1 ADR / execution plan 固化 |
 | Python Agent Runtime | 后续支持 | 后续支持 | 后续支持 | 后续支持 | Python 3.14 stable + uv |
 | 轻量 Demo | 支持 | 支持 | 支持 | 支持 | Node + mock/stub；CLI 与静态 Web Workbench |
 | 完整本地栈 | 通过容器兜底 | 通过容器兜底 | 通过容器兜底 | 通过容器兜底 | Docker/Compose/devcontainer |
@@ -86,16 +87,26 @@ pnpm validate:env -- config/environments/dev.sample.json
 
 ## 依赖与版本
 
-Node 侧：
+Node / TypeScript 侧：
 
 - 根 `package.json` 必须声明 `packageManager`。
 - Node 运行时使用单一稳定基线；当前为 `>=24.0.0 <26.0.0`，不把尚未进入 LTS 的 Node Current 版本作为强制基线。
+- Node.js 主要用于 TypeScript 前端、Demo Mode、仓库脚本和轻量 glue code，不再作为长期生产 Core Control Plane 的默认主语言。
 - 一旦引入外部依赖，必须提交 `pnpm-lock.yaml`。
 - 无外部依赖阶段可使用 `pnpm install --frozen-lockfile=false`；一旦提交 lockfile，CI 必须切换为 `pnpm install --frozen-lockfile` 或等价严格安装。
 
+Go 控制面与 Rust 治理内核侧：
+
+- Core Control Plane 的长期生产方向默认采用 Go 服务主干，具体服务框架、数据库访问、迁移工具和测试策略必须在 Phase 1 服务实现 ADR 或 execution plan 中固化。
+- Rust 用于 Policy / Contract / Protocol Kernel、协议 envelope 校验、schema 校验、风险判定、CLI validator 和可选 WASM 插件。
+- Go 适合 API 服务、WorkItem 状态管理、ApprovalGate 服务、ProjectInstance 管理、AuditEvent 写入、ReportCard 服务和 Federation Gateway。
+- Windows 个人用户、Tiny Mode、Demo Mode 和 Local Mode 优先走 Go 单二进制、本地 SQLite / 文件存储和 mock 路径，不要求先安装完整企业栈或 Rust 构建链。
+- 不为尚未实现的 Go 服务或 Rust 内核创建空目录；新增目录前必须有可运行入口、测试、README 或长期维护责任。
+
 Python 侧：
 
-- Agent Runtime 使用 Python 3.14 stable；不得使用 rc、beta 或 alpha 作为生产基线。
+- Agent Runtime、AI adapter、evals 和模型实验可以使用 Python 3.14 stable；不得使用 rc、beta 或 alpha 作为生产基线。
+- Python 不默认拥有核心事实写入权；Python agent 输出必须经控制面校验、审计和必要审批。
 - Agent Runtime 引入外部依赖时必须使用 `uv`。
 - 必须提交 `uv.lock`。
 - 虚拟环境不得提交仓库。
@@ -251,8 +262,9 @@ Python 侧：
 | 目录 | 职责 | 约束 |
 | --- | --- | --- |
 | `apps/web` | 工作台、审批台、社区控制台 | 不直接访问数据库 |
-| `apps/control-plane` | NestJS 控制面、事实、权限、审批、审计 API | 不承载 LangGraph 执行 |
-| `apps/agent-runtime` | FastAPI + LangGraph 运行面 | 不直接写 HR 主数据 |
+| `apps/control-plane` | Go 控制面、事实、权限、审批、审计 API | 不承载 LangGraph 执行 |
+| `packages/governance-kernel` 或等价 Rust 包 | Rust Policy / Contract / Protocol Kernel | 不直接写业务事实，通过控制面调用 |
+| `apps/agent-runtime` | Python + LangGraph 运行面 / AI adapter | 不直接写 HR 主数据 |
 | `packages/contracts` | 共享术语、枚举、schema、事件常量 | 变更需同步 API 文档和测试 |
 | `packages/demo` | CLI 与 Web 共用的 Demo Mode 执行层、mock 输出和报告卡生成 | 不访问真实外部连接器，不持有 secret，不复制到 Web 私有逻辑 |
 | `packages/knowledge` | 本地 deterministic 知识导航、来源定位、AnswerCard 和 DocChallengeDraft 生成 | 默认不访问外部连接器、embedding 服务或真实模型 |

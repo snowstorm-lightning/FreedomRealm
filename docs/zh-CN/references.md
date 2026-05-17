@@ -31,10 +31,9 @@
 
 ## 后端与运行面
 
-- NestJS: <https://docs.nestjs.com/first-steps>
-- NestJS 11 migration: <https://docs.nestjs.com/migration-guide>
-- Prisma ORM: <https://docs.prisma.io/docs/orm>
-- Prisma system requirements: <https://docs.prisma.io/docs/orm/reference/system-requirements>
+- Go: <https://go.dev/doc/>
+- Rust: <https://www.rust-lang.org/learn>
+- Cargo: <https://doc.rust-lang.org/cargo/>
 - FastAPI: <https://fastapi.tiangolo.com/tutorial/first-steps/>
 - pnpm installation: <https://pnpm.io/installation>
 - uv: <https://docs.astral.sh/uv/>

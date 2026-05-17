@@ -68,6 +68,29 @@ const roadmap = [
   }
 ];
 
+const proofStats = [
+  {
+    label: "Understand",
+    value: "30 sec",
+    detail: "Positioning must be obvious without reading the architecture."
+  },
+  {
+    label: "Run",
+    value: "5-10 min",
+    detail: "Demo Mode works with mock data and no model key."
+  },
+  {
+    label: "Proof",
+    value: "30 min",
+    detail: "A first AI-assisted work proof is visible and reviewable."
+  },
+  {
+    label: "Governance",
+    value: "0 bypass",
+    detail: "High-risk actions still require ApprovalGate."
+  }
+];
+
 function toWebHref(repoRelativePath) {
   const normalized = repoRelativePath.split(path.sep).join("/");
   const prefix = "dist/web/";
@@ -155,15 +178,40 @@ function buildHtml() {
   <body>
     <main class="shell">
       <section class="hero" aria-label="Workbench overview">
-        <div>
-          <p class="eyebrow">AI-HRMS Workbench</p>
-          <h1>Turn AI-assisted work into reviewable proof.</h1>
-          <p class="lead">A half-landed software MVP for goals, exploration, governed templates, execution traces, and JSON-first report cards. Everything here is deterministic mock output.</p>
+        <div class="topbar">
+          <div class="brand-lockup">
+            <span class="brand-mark" aria-hidden="true">FR</span>
+            <div>
+              <p class="eyebrow">FreedomRealm / AI-HRMS</p>
+              <strong>Governed workbench</strong>
+            </div>
+          </div>
+          <div class="topbar-actions" aria-label="Runtime status">
+            <span>Demo Mode</span>
+            <span>Mock route</span>
+            <span>JSON source</span>
+          </div>
         </div>
-        <div class="hero-status" aria-label="MVP status">
-          <span>Demo Mode</span>
-          <strong>Mock route only</strong>
-          <small>No model key, connector, HR data, or write side effect.</small>
+
+        <div class="command-board">
+          <div class="command-copy">
+            <p class="eyebrow">Next action cockpit</p>
+            <h1>Make AI-assisted work visible, bounded, and reviewable.</h1>
+            <p class="lead">Pick an entry path, inspect a governed template, and review the canonical JSON report card without connecting a model, account, connector, or production data.</p>
+          </div>
+          <div class="hero-status" aria-label="MVP status">
+            <span>Runtime contract</span>
+            <strong>No live side effects</strong>
+            <small>No model key, connector, HR data, external write, or hidden training resource.</small>
+          </div>
+          <div class="proof-stats" id="proofStats" aria-label="MVP proof targets"></div>
+          <div class="flow-map" aria-label="Governed execution flow">
+            <span>Goal</span>
+            <span>Template</span>
+            <span>ToolContract</span>
+            <span>ApprovalGate</span>
+            <span>ReportCard</span>
+          </div>
         </div>
       </section>
 
@@ -250,24 +298,29 @@ function buildHtml() {
 
 const css = `:root {
   color-scheme: light;
-  --bg: #f5f6f2;
-  --ink: #20242a;
-  --muted: #5d6673;
-  --line: #d7ddd7;
+  --bg: #f6f8fb;
+  --ink: #1f252e;
+  --muted: #5f6977;
+  --line: #d8dee8;
   --panel: #ffffff;
-  --soft: #edf6f4;
-  --soft-2: #f6f0e8;
+  --soft: #e9f7f5;
+  --soft-2: #f3eefc;
   --accent: #0f766e;
-  --accent-strong: #134e4a;
+  --accent-strong: #115e59;
+  --indigo: #4338ca;
+  --amber: #9a6700;
   --warn: #8a5a00;
+  --shadow: 0 18px 45px rgba(31, 37, 46, 0.08);
 }
 
 * { box-sizing: border-box; }
+html { overflow-x: hidden; }
 body {
   margin: 0;
   background: var(--bg);
   color: var(--ink);
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  overflow-x: hidden;
 }
 button, a { font: inherit; }
 .shell {
@@ -277,11 +330,65 @@ button, a { font: inherit; }
 }
 .hero {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 280px;
-  gap: 24px;
-  align-items: end;
-  padding: 22px 0 26px;
+  gap: 16px;
+  padding: 0 0 18px;
   border-bottom: 1px solid var(--line);
+}
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 54px;
+}
+.brand-lockup {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.brand-mark {
+  display: inline-grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border-radius: 8px;
+  background: var(--ink);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+}
+.brand-lockup strong {
+  display: block;
+  font-size: 16px;
+}
+.topbar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+.topbar-actions span {
+  min-height: 28px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--muted);
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 730;
+}
+.command-board {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 14px;
+  align-items: stretch;
+}
+.command-copy {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  padding: 22px;
 }
 .eyebrow {
   margin: 0 0 8px;
@@ -294,8 +401,8 @@ button, a { font: inherit; }
 h1 {
   margin: 0;
   max-width: 900px;
-  font-size: 48px;
-  line-height: 1.04;
+  font-size: 36px;
+  line-height: 1.08;
   font-weight: 780;
   letter-spacing: 0;
 }
@@ -317,7 +424,7 @@ h3 {
   margin: 14px 0 0;
   max-width: 820px;
   color: var(--muted);
-  font-size: 18px;
+  font-size: 16px;
   line-height: 1.55;
 }
 .hero-status, .panel, .template-rail, .report-surface {
@@ -337,6 +444,58 @@ h3 {
 }
 .hero-status strong { font-size: 18px; }
 .hero-status small { color: var(--muted); line-height: 1.45; }
+.proof-stats {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+.proof-stat {
+  min-width: 0;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px;
+}
+.proof-stat span {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 740;
+}
+.proof-stat strong {
+  display: block;
+  margin-top: 5px;
+  color: var(--ink);
+  font-size: 24px;
+  line-height: 1.1;
+}
+.proof-stat p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  line-height: 1.4;
+  font-size: 13px;
+}
+.flow-map {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  align-items: stretch;
+}
+.flow-map span {
+  min-height: 38px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--accent-strong);
+  font-size: 13px;
+  font-weight: 780;
+  text-align: center;
+  padding: 8px;
+}
 .entry-strip {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(420px, 0.9fr);
@@ -364,6 +523,15 @@ h3 {
   padding: 10px 12px;
   text-align: left;
   cursor: pointer;
+}
+.entry-actions button {
+  display: grid;
+  gap: 5px;
+}
+.entry-actions button small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
 }
 .entry-actions button[aria-pressed="true"],
 .template-button[aria-current="true"] {
@@ -402,7 +570,7 @@ h3 {
   align-items: center;
   border-radius: 999px;
   background: var(--soft-2);
-  color: var(--warn);
+  color: var(--amber);
   padding: 3px 8px;
   font-size: 12px;
   font-weight: 760;
@@ -434,6 +602,9 @@ h3 {
 }
 .template-rail, .report-surface, .panel {
   padding: 18px;
+}
+.template-rail, .report-surface {
+  box-shadow: var(--shadow);
 }
 .template-list {
   display: grid;
@@ -687,11 +858,11 @@ h3 {
 }
 @media (max-width: 840px) {
   .shell { padding: 24px 16px 32px; }
-  .hero, .entry-strip, .next-grid, .workbench, .right-rail, .knowledge-layout, .roadmap-list {
+  .command-board, .entry-strip, .next-grid, .workbench, .right-rail, .knowledge-layout, .roadmap-list {
     grid-template-columns: 1fr;
   }
-  h1 { font-size: 34px; }
-  .entry-actions, .meta-grid, .report-grid, .guard-grid {
+  h1 { font-size: 30px; }
+  .entry-actions, .meta-grid, .report-grid, .guard-grid, .proof-stats, .flow-map {
     grid-template-columns: 1fr;
   }
   .report-title-row {
@@ -781,6 +952,16 @@ function renderOperatingEntry() {
       '<section class="guard-block"><strong>Harness principles</strong><p>' +
         escapeHtml(entry.harnessPrinciples.slice(0, 3).join(" / ")) + '</p></section>' +
     '</div>';
+}
+
+function renderProofStats() {
+  document.getElementById("proofStats").innerHTML = state.proofStats.map(function (item) {
+    return '<article class="proof-stat">' +
+      '<span>' + escapeHtml(item.label) + '</span>' +
+      '<strong>' + escapeHtml(item.value) + '</strong>' +
+      '<p>' + escapeHtml(item.detail) + '</p>' +
+    '</article>';
+  }).join("");
 }
 
 function renderReport(card) {
@@ -918,7 +1099,8 @@ function renderTemplates() {
 function renderEntryModes() {
   document.getElementById("entryModes").innerHTML = state.entryModes.map(function (entry) {
     return '<button type="button" data-entry="' + escapeHtml(entry.id) + '" aria-pressed="' + String(entry.id === selectedEntryId) + '">' +
-      escapeHtml(entry.label) +
+      '<strong>' + escapeHtml(entry.label) + '</strong>' +
+      '<small>' + escapeHtml(entry.summary) + '</small>' +
     '</button>';
   }).join("");
   document.querySelectorAll("[data-entry]").forEach(function (button) {
@@ -940,6 +1122,7 @@ function renderRoadmap() {
 
 function renderAll() {
   const card = state.cards.find(function (candidate) { return candidate.templateId === selectedTemplateId; }) || state.cards[0];
+  renderProofStats();
   renderOperatingEntry();
   renderTemplates();
   renderEntryModes();
@@ -988,6 +1171,7 @@ const state = {
   operatingEntry,
   entryModes,
   roadmap,
+  proofStats,
   cards: executions.map(toWorkbenchCard),
   knowledgeExamples: knowledgeExecutions.map(toKnowledgeExample)
 };

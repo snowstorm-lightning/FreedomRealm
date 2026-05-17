@@ -59,9 +59,13 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   const html = await readFile(path.join(repoRoot, "dist/web/index.html"), "utf8");
   const app = await readFile(path.join(repoRoot, "dist/web/app.js"), "utf8");
   assert.match(html, /AI-HRMS Workbench/u);
+  assert.match(html, /FreedomRealm \/ AI-HRMS/u);
+  assert.match(html, /No live side effects/u);
   assert.match(html, /Next Workbench/u);
   assert.match(html, /Knowledge Loop/u);
   assert.match(html, /Ask Maintained Docs/u);
+  assert.match(app, /30 sec/u);
+  assert.match(app, /5-10 min/u);
   assert.match(app, /project-operating-entry\.v1/u);
   assert.match(app, /AgentWorkLease/u);
   assert.match(app, /writeSet/u);

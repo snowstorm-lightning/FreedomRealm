@@ -101,7 +101,9 @@
 涉及运行时、框架、数据库、ORM、测试工具或构建工具升级时，必须回答：
 
 - 是否仍维护单一技术栈基线，而不是同时维护 preview/stable 双线。
-- 是否选择官方稳定版本；Node.js 必须处于 Active LTS 或 Maintenance LTS，不能使用 Current 作为生产强制基线。
+- 是否选择官方稳定版本；Node.js 仅约束 TypeScript 前端、Demo 和仓库脚本时，必须处于 Active LTS 或 Maintenance LTS，不能使用 Current 作为生产强制基线。
+- Core Control Plane 是否默认采用 Go 服务主干；若改用 Node.js、Python、Rust-only 或其他语言作为长期生产控制面，是否已有 ADR 说明原因、边界、替代方案、风险、测试和回滚方式。
+- Policy / Contract / Protocol Kernel 是否采用 Rust，或说明不用 Rust 时如何保持 schema、协议、数据分级和风险判定的强校验。
 - 是否避免把 RC、beta、canary、preview-only 或 experimental-only 能力作为 Enterprise Mode 必需能力。
 - 是否有官方 release note、system requirements 或支持周期依据。
 - 是否已同步 `package.json` engines、CI、developer-experience、architecture-blueprint、ADR 和执行计划。

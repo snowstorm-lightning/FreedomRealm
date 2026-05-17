@@ -13,7 +13,7 @@
 ## 非目标
 
 - 不实现 HR 主数据 API。
-- 不启动 Next.js、NestJS、FastAPI、Temporal 或 LiteLLM 服务。
+- 不启动 Next.js、Go 控制面、Rust 治理内核、Python Agent Runtime、Temporal 或 LiteLLM 服务。
 - 不接入真实 secret、数据库、Keycloak realm 或模型供应商 key。
 - 不允许 Agent Runtime 直接修改 HR 主数据。
 
