@@ -59,12 +59,57 @@
 多 agent 协作不应靠“大家都看完整仓库”来维持秩序，而应靠以下机制：
 
 - `WorkShard`：把一个大 `WorkItem` 切成可独立理解、实现和验证的子工作面。
-- `AgentWorkLease`：每个执行者领取工作前声明目标、`readSet`、`writeSet`、允许工具、禁止动作、超时、交付物和回滚方式。
+- `AgentWorkLease`：每个执行者领取工作前声明身份、目标、`readSet`、`writeSet`、允许工具、禁止动作、数据分级、风险等级、`ModelRoute`、checkpoint、交付物、回滚方式和合并要求。
 - `writeSet`：声明可写文件、目录、接口或文档范围。多个并行 shard 的 `writeSet` 默认不得重叠。
 - `ChangePacket`：每个 shard 交付的结构化结果，至少包含变更摘要、文件列表、接口影响、测试结果、风险、人工复核点和回滚说明。
 - `MergeGate`：合并前的门禁，负责检查 `writeSet` 冲突、契约变更、测试结果、文档一致性和人工审批要求。
 
 同一 ProjectInstance 内的多 agent 协作必须保留统一 owner。子 agent 可以并行探索、实现或评审，但不能各自把结果直接并入主线事实。最终合并必须通过 `MergeGate`，并生成总 `ExecutionReportCard` 或汇总型 `Observation`。
+
+`AgentWorkLease` 的推荐字段与项目运行入口 manifest 保持一致：
+
+```text
+leaseId
+workItemId
+shardId
+parentShardId
+ownerAgentRole
+objective
+nonGoals
+readSet
+writeSet
+allowedToolContracts
+forbiddenActions
+dataClassification
+riskLevel
+modelRoute
+expectedOutputSchema
+checkpointPolicy
+validationCommands
+deliverables
+rollbackPlan
+mergeGateRequirements
+stopConditions
+```
+
+其中 `writeSet`、`dataClassification`、`riskLevel`、`modelRoute` 和 `stopConditions` 是防止越权扩张的关键字段。没有 lease 的 subagent 只能做只读探索；需要写入时必须先由主 agent 或 human owner 授权。子 agent 不能自行接触 secret、生产数据、真实外部连接器，也不能把候选输出直接变成正式 `WorkItem`、公开资产或训练资源。
+
+`WorkShard` 生命周期：
+
+1. 由主 agent 或 human owner 明确 `WorkItem`、目标、验收和停止条件。
+2. 拆分 shard，并为每个 shard 生成 `AgentWorkLease`。
+3. shard 在 lease 内执行，输出 `ShardResult`，包含文件读取、文件修改、决策、风险、验证结果和未解决问题。
+4. 主 agent 汇总为 `ChangePacket`。
+5. `MergeGate` 检查 `writeSet`、契约、测试、文档、数据分级、审批和成员权利。
+6. 合并后输出总 `ChangePacket`、必要的 `ExecutionReportCard` 或候选后续 `WorkItem`。
+
+防冲突规则：
+
+- 并行 shard 的 `writeSet` 默认必须互斥。
+- 同一路径不得同时执行 update、delete 或重写；同一 schema、接口、命令或长期文档段落不得由多个 shard 并行定义。
+- 必须重叠时，后启动的 shard 等待、缩小范围或转为只读；如果仍需并行，必须指定统一 owner 并在 `MergeGate` 人工复核。
+- 影响 `ApprovalGate`、`ToolContract`、`DataClassification`、`ExecutionReportCard`、`ModelRoute` 或 `FederationMessage` 的变更不能被低风险 shard 顺带合入。
+- 连续两个 shard 输出互相矛盾且无法裁决时停止推进，生成待 human owner 决策的问题清单。
 
 推荐拆分边界：
 
@@ -117,8 +162,8 @@ config/
 - 每个高风险流程必须有审批闸门和回滚设计
 - 每个重要输出必须定义评测标准
 - 每个新增脚本或本地运行入口必须通过开发环境可移植性门禁
-- 每个并行 `WorkShard` 必须声明 `AgentWorkLease`、`writeSet`、交付物和合并门禁
-- 多 agent 交付必须通过 `MergeGate` 验证冲突、契约、测试、文档和人工复核点
+- 每个并行 `WorkShard` 必须声明完整 `AgentWorkLease`、`writeSet`、交付物和合并门禁
+- 多 agent 交付必须通过 `MergeGate` 验证冲突、契约、测试、文档、数据分级、成员权利和人工复核点
 
 ## 文档完备性要求
 

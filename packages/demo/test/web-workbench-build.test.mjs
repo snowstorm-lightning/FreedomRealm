@@ -78,16 +78,27 @@ test("web demo builds a multi-template static workbench from shared demo data", 
     "packages/demo/test/web-workbench-build.test.mjs"
   ]);
   for (const field of [
-    "goal",
+    "leaseId",
+    "workItemId",
+    "shardId",
+    "parentShardId",
+    "ownerAgentRole",
+    "objective",
     "nonGoals",
     "readSet",
     "writeSet",
     "allowedToolContracts",
     "forbiddenActions",
-    "checkpoint",
+    "dataClassification",
+    "riskLevel",
+    "modelRoute",
+    "expectedOutputSchema",
+    "checkpointPolicy",
     "verificationCommands",
     "deliverables",
-    "rollbackPlan"
+    "rollbackPlan",
+    "mergeGateRequirements",
+    "stopConditions"
   ]) {
     assert.equal(state.operatingEntry.leaseTemplate.requiredFields.includes(field), true, field);
   }
@@ -133,6 +144,7 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   assert.match(app, /AgentWorkLease/u);
   assert.match(app, /AgentWorkLease preview/u);
   assert.match(app, /writeSet/u);
+  assert.match(app, /subagent 不能自行扩大 writeSet/u);
   assert.match(app, /MergeGate/u);
   assert.match(app, /checkpoint/u);
   assert.match(app, /ApprovalGate/u);

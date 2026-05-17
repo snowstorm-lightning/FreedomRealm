@@ -31,11 +31,20 @@
 当一个 `WorkItem` 拆成多个 `WorkShard` 或由多个 `AgentActor` / `HumanActor` 并行推进时，还必须定义：
 
 - 每个 `WorkShard` 的 owner、目标、输入、输出和验收标准。
-- 每个 `AgentWorkLease` 的 `readSet`、`writeSet`、允许 `ToolContract`、禁止动作、超时和回滚路径。
+- 每个 `AgentWorkLease` 的 `leaseId`、`workItemId`、`shardId`、`parentShardId`、`ownerAgentRole`、`objective`、`nonGoals`、`readSet`、`writeSet`、允许 `ToolContract`、禁止动作、数据分级、风险等级、`ModelRoute`、输出 schema、checkpoint、验证命令、交付物、回滚路径、合并要求和停止条件。
 - `writeSet` 是否互斥；如不互斥，必须说明冲突解决和人工 owner。
 - 每个 `ChangePacket` 的文件列表、接口影响、测试结果、风险和人工复核点。
-- `MergeGate` 的合并顺序、契约校验、测试命令、文档一致性检查和审批要求。
+- `MergeGate` 的合并顺序、契约校验、测试命令、文档一致性检查、数据分级、成员权利、模型路由、Federation 影响和审批要求。
 - 统一 `ExecutionReportCard` 或 `Observation` 如何汇总所有 shard 的结果。
+
+`MergeGate` 不通过时，不得声称任务完成。常见阻断包括：
+
+- 修改了未授权 `writeSet`，或多个 shard 并行写同一路径、schema、接口、命令入口或长期文档段落。
+- 新增术语、架构方向、技术栈方向或项目定位与 README、ARCHITECTURE、ADR、术语表不一致。
+- 让 AI 分派变成命令，削弱成员拒绝、延后、协商、缩小范围或转交建议的权利。
+- 绕过 `ApprovalGate`、`ToolContract`、`DataClassification`、预算、审计或 `ModelRoute`。
+- 把自审发现、模型输出、外部 agent 输出或候选 `WorkItem` 伪装成正式事实。
+- 影响 `ExecutionReportCard`、`FederationMessage`、训练资源或公开分享路径，却没有 schema、测试、审批、脱敏或回滚说明。
 
 每个 GovernanceBrain 能力还必须定义：
 
@@ -62,7 +71,9 @@
 - `config/project-operating-entry.json` 是否使用 `project-operating-entry.v1` 并通过 `validateProjectOperatingEntry`。
 - 是否至少保留一个 P0 任务，并为每个任务声明 owner、产出、验收、验证命令、风险等级和建议 `writeSet`。
 - startup / verification 命令是否只引用根 `package.json` 中存在的 `pnpm` scripts。
+- `leaseTemplate.requiredFields` 是否覆盖完整 `AgentWorkLease` 字段，并至少包含 `readSet`、`writeSet`、`verificationCommands` 和 `rollbackPlan`。
 - `conflictRules.defaultWriteSetPolicy` 是否保持 `non-overlapping`。
+- `conflictRules.rules` 是否声明 subagent 不得自行扩大 `writeSet`、冲突时等待或缩小范围、以及无法裁决时回到 human owner。
 - `continuationRules.allowStopWhen` 是否包含 `ApprovalGate` 和 `dataClassification` 触发条件。
 - Web Workbench 是否读取同一 manifest，而不是复制一份任务清单。
 - `pnpm validate:operating-entry` 和 `pnpm check` 是否通过。

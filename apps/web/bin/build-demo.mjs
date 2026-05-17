@@ -679,6 +679,14 @@ h3 {
   color: var(--muted);
   line-height: 1.45;
 }
+.guard-block ul {
+  display: grid;
+  gap: 6px;
+  margin: 8px 0 0;
+  padding-left: 18px;
+  color: var(--muted);
+  line-height: 1.4;
+}
 .risk-note {
   color: var(--warn);
   font-weight: 700;
@@ -1121,6 +1129,9 @@ function renderOperatingEntry() {
   const mergeRule = entry.conflictRules.rules.find(function (rule) {
     return rule.includes("MergeGate");
   }) || "MergeGate checks contracts, docs, tests, dataClassification, and ApprovalGate.";
+  const conflictRuleItems = entry.conflictRules.rules.slice(0, 4).map(function (rule) {
+    return '<li>' + escapeHtml(rule) + '</li>';
+  }).join("");
   document.getElementById("operatingGuards").innerHTML =
     '<div class="section-heading">' +
       '<p class="eyebrow">Harness Guards</p>' +
@@ -1139,7 +1150,8 @@ function renderOperatingEntry() {
       '<section class="guard-block"><strong>AgentWorkLease fields</strong><p>' +
         escapeHtml(leaseFields.join(", ")) + '</p></section>' +
       '<section class="guard-block"><strong>writeSet policy</strong><p>' +
-        escapeHtml(entry.conflictRules.defaultWriteSetPolicy) + '; ' + escapeHtml(mergeRule) + '</p></section>' +
+        escapeHtml(entry.conflictRules.defaultWriteSetPolicy) + '; ' + escapeHtml(mergeRule) + '</p>' +
+        '<ul>' + conflictRuleItems + '</ul></section>' +
       '<section class="guard-block"><strong>Stop conditions</strong><p>' +
         escapeHtml(stopRules.slice(0, 3).join(" / ")) + '</p></section>' +
       '<section class="guard-block"><strong>Harness principles</strong><p>' +

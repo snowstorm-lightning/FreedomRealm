@@ -189,26 +189,41 @@
   },
   "leaseTemplate": {
     "requiredFields": [
-      "goal",
+      "leaseId",
+      "workItemId",
+      "shardId",
+      "parentShardId",
+      "ownerAgentRole",
+      "objective",
       "nonGoals",
       "readSet",
       "writeSet",
       "allowedToolContracts",
       "forbiddenActions",
-      "checkpoint",
+      "dataClassification",
+      "riskLevel",
+      "modelRoute",
+      "expectedOutputSchema",
+      "checkpointPolicy",
       "verificationCommands",
       "deliverables",
-      "rollbackPlan"
+      "rollbackPlan",
+      "mergeGateRequirements",
+      "stopConditions"
     ]
   },
   "conflictRules": {
     "defaultWriteSetPolicy": "non-overlapping",
     "rules": [
       "并行 WorkShard 的 writeSet 默认不得重叠",
+      "subagent 不能自行扩大 writeSet；需要扩大时必须回到主 agent 或 human owner",
       "必须重叠时需要指定统一 owner",
       "后启动的 shard 必须等待、缩小范围或转为只读探索",
+      "同一路径不得同时执行 update/delete/write；同一接口或 schema 不得由多个 shard 并行定义",
+      "跨 ApprovalGate、ToolContract、DataClassification、ExecutionReportCard 或 FederationMessage 的变更必须进入 MergeGate",
       "ChangePacket 必须列出文件、接口影响、测试结果、风险、人工复核点和回滚方式",
-      "MergeGate 必须检查契约、文档一致性、测试、dataClassification 和审批要求"
+      "MergeGate 必须检查契约、文档一致性、测试、dataClassification 和审批要求",
+      "连续两个 shard 输出互相矛盾且无法裁决时必须停止并请求 human owner 决策"
     ]
   },
   "continuationRules": {

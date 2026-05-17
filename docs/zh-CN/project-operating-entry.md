@@ -46,18 +46,31 @@ P0 是当前打开仓库后默认优先级。除非用户明确改变方向，ag
 - 需要并行探索不同方案。
 - 影响 `ToolContract`、`ApprovalGate`、`ExecutionReportCard`、数据分级或预算策略。
 
-每个 `WorkShard` 必须有对应 `AgentWorkLease`，至少包含：
+每个 `WorkShard` 必须有对应 `AgentWorkLease`。主 agent 可以自动生成 lease，但不能省略边界。当前标准字段为：
 
-- 目标和非目标。
+- `leaseId`、`workItemId`、`shardId`、`parentShardId`。
+- `ownerAgentRole`、`objective`、`nonGoals`。
 - `readSet`：允许读取的主要文件、目录或数据引用。
-- `writeSet`：允许修改的文件、目录、接口或文档范围。
-- 允许使用的 `ToolContract` 或本地命令。
-- 禁止动作，尤其是高风险写入、真实外部连接器、生产数据和 secret 访问。
-- 超时或 checkpoint 时间。
-- 验证命令。
-- 交付物和回滚说明。
+- `writeSet`：允许修改的文件、目录、接口、schema 或文档范围。
+- `allowedToolContracts`、`forbiddenActions`，禁止动作必须覆盖真实外部连接器、生产数据、secret、公开分享和未授权高风险写入。
+- `dataClassification`、`riskLevel`、`modelRoute`。
+- `expectedOutputSchema`、`checkpointPolicy`、`validationCommands`。
+- `deliverables`、`rollbackPlan`、`mergeGateRequirements`、`stopConditions`。
+
+没有 `AgentWorkLease` 的 subagent 不得修改文件、配置、代码、schema 或长期文档。subagent 也不得自行扩大 `writeSet`；需要扩大时必须回到主 agent 或 human owner。
 
 并行 `WorkShard` 的 `writeSet` 默认不得重叠。必须重叠时，需要指定统一 owner，并在 `MergeGate` 中人工复核。
+
+## WorkShard 生命周期
+
+多 agent 任务按以下顺序推进：
+
+1. 主 agent 选择一个正式或候选 `WorkItem`，明确目标、风险、验证命令和停止条件。
+2. 主 agent 拆分 `WorkShard`，为每个 shard 生成 `AgentWorkLease`。
+3. 子 agent 在 lease 内探索、实现或评审，输出结构化 `ShardResult`，不得直接并入主线事实。
+4. 主 agent 汇总 `ShardResult`，生成或更新 `ChangePacket`。
+5. 进入 `MergeGate`，检查冲突、契约、数据分级、审批、测试和文档一致性。
+6. `MergeGate` 通过后才允许提交或进入下一步；不通过时只能修复同范围问题、缩小范围或请求 human owner 决策。
 
 ## 防冲突规则
 
@@ -66,9 +79,30 @@ P0 是当前打开仓库后默认优先级。除非用户明确改变方向，ag
 - 一个任务只能有一个最终 owner。
 - 子 agent 可以探索、实现或评审，但不能独立把结果并入主线事实。
 - `writeSet` 冲突时，后启动的 shard 必须等待、缩小范围或转为只读探索。
+- 同一路径不得同时执行 update、delete 或重写；同一 schema、接口或命令入口不得由多个 shard 并行定义。
+- 影响 `ApprovalGate`、`ToolContract`、`DataClassification`、`ExecutionReportCard`、`ModelRoute` 或 `FederationMessage` 的变更必须显式进入 `MergeGate`。
 - `ChangePacket` 必须列出文件、接口影响、测试结果、风险、人工复核点和回滚方式。
-- `MergeGate` 必须检查契约、文档一致性、测试、数据分级和审批要求。
+- `MergeGate` 必须检查契约、文档一致性、测试、数据分级、成员权利、模型路由和审批要求。
 - 高风险动作仍必须回到 `ApprovalGate`，不能因为拆成多个 agent 而降低风险等级。
+- 连续两个 shard 输出互相矛盾且无法裁决时必须停止，并请求 human owner 决策。
+
+## ChangePacket 和 MergeGate
+
+涉及实现、文档、schema、架构或配置的合并必须形成 `ChangePacket`，至少说明：
+
+- changedFiles、changedConcepts、interfaceImpact、schemaImpact、documentationImpact。
+- securityImpact、dataLifecycleImpact、memberRightsImpact、modelRouteImpact、federationImpact。
+- testsRun、validationResults、risks、rollbackPlan、followUpWorkItems、humanReviewRequired。
+
+`MergeGate` 最小检查清单：
+
+- `writeSet` 是否合规，是否存在未声明路径或并行冲突。
+- 是否引入未登记术语，是否违反 AI-HRMS / FreedomRealm 定位。
+- 是否违反技术栈方向、`ApprovalGate`、`DataClassification`、成员权利或反监控边界。
+- 是否影响 `ExecutionReportCard`、`ToolContract`、`FederationMessage` 或 `ModelRoute`。
+- 是否同步了相关文档、manifest 或测试。
+- 是否有可运行验证和明确回滚方式。
+- 是否需要 human owner 决策。
 
 ## 持续推进与停止条件
 
