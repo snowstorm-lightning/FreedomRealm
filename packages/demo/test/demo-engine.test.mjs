@@ -229,6 +229,11 @@ test("renders delivery-level HTML from valid JSON-first report cards", async () 
   assert.match(html, /Canonical JSON/u);
   assert.match(html, /Eval samples/u);
   assert.match(html, /Failure path/u);
+  assert.match(html, /Human decision checkpoint/u);
+  assert.match(html, /Owner decision/u);
+  assert.match(html, /What needs a person before this moves forward/u);
+  assert.match(html, /negative contribution signal/u);
+  assert.match(html, /human-demo-owner/u);
   assert.match(html, /Template Evaluation Samples/u);
   assert.match(html, /reviewRequired=true/u);
   assert.match(html, /Review &lt;script&gt;alert/u);

@@ -912,6 +912,48 @@ function renderHtmlList(items) {
     .join("");
 }
 
+function renderHumanDecisionHtml(card) {
+  const firstNextAction = Array.isArray(card.nextActions) ? card.nextActions[0] : null;
+  const approvalGate = card.extensions["ai-hrms.demo"]?.approvalGate;
+  const reviewRequired = card.metrics?.requiresHumanReview === true;
+  const approvalNeeded = card.approvalStatus === "requires_human_review";
+  const approvalDecision = approvalGate?.decision ?? card.approvalStatus;
+  const decisionItems = [
+    {
+      label: "Owner decision",
+      title: reviewRequired ? card.humanOwnerId : "No owner action pending",
+      detail: reviewRequired
+        ? "Treat this output as candidate evidence until a HumanActor accepts, edits, defers, or rejects it."
+        : "The rendered card can be read without promoting it into a WorkItem."
+    },
+    {
+      label: "ApprovalGate",
+      title: approvalDecision,
+      detail: approvalNeeded
+        ? "Do not execute side effects, publish, assign, share, or train from this card before approval."
+        : "No high-risk side effect is requested by this report card."
+    },
+    {
+      label: "Next choice",
+      title: firstNextAction?.action ?? "No candidate action",
+      detail: firstNextAction?.reason ?? "Keep the card as an audit artifact; no automatic WorkItem is created."
+    }
+  ];
+
+  return `<section class="decision-checkpoint" aria-label="Human decision checkpoint">
+          <header>
+            <p class="eyebrow">Human decision checkpoint</p>
+            <h3>What needs a person before this moves forward</h3>
+            <p>AI output remains a recommendation. Refusal, delay, scope reduction, or transfer must not become a negative contribution signal.</p>
+          </header>
+          ${decisionItems
+            .map(
+              (item) => `<div><span>${escapeHtml(item.label)}</span><strong>${escapeHtml(item.title)}</strong><p>${escapeHtml(item.detail)}</p></div>`
+            )
+            .join("")}
+        </section>`;
+}
+
 export function renderDeliveryReportHtml({
   reportCards,
   title = "AI-HRMS Delivery Report",
@@ -956,6 +998,7 @@ export function renderDeliveryReportHtml({
           <div><span>Failure path</span><strong>${escapeHtml(failureSample?.failureType ?? "none")}</strong></div>
           <div><span>Data boundary</span><strong>${escapeHtml(`${card.dataClassification} / ${card.redactionStatus}`)}</strong></div>
         </section>
+        ${renderHumanDecisionHtml(card)}
         <section>
           <h3>Findings</h3>
           <ul>${renderHtmlList(card.findings)}</ul>
@@ -1007,10 +1050,19 @@ export function renderDeliveryReportHtml({
     .evidence div { min-width: 0; border: 1px solid #dbe2d8; border-radius: 6px; background: #fbfcfa; padding: 10px; }
     .evidence span { display: block; color: #536158; font-size: 12px; text-transform: uppercase; }
     .evidence strong { display: block; margin-top: 5px; overflow-wrap: anywhere; }
+    .decision-checkpoint { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; border: 1px solid #d8c37a; border-radius: 8px; background: #fff8e1; padding: 12px; margin: 18px 0; }
+    .decision-checkpoint header { grid-column: 1 / -1; }
+    .decision-checkpoint header p { margin: 6px 0 0; color: #8a5a00; }
+    .decision-checkpoint div { min-width: 0; border: 1px solid #ecdca7; border-radius: 6px; background: #fffdf5; padding: 10px; }
+    .decision-checkpoint span { display: block; color: #8a5a00; font-size: 12px; font-weight: 700; text-transform: uppercase; }
+    .decision-checkpoint strong { display: block; margin-top: 5px; overflow-wrap: anywhere; }
+    .decision-checkpoint div p { margin: 7px 0 0; color: #6b5414; font-size: 13px; }
     ul { margin: 0; padding-left: 20px; }
     li { margin: 7px 0; }
     @media (max-width: 720px) {
       .summary, dl, .evidence { grid-template-columns: 1fr 1fr; }
+      .decision-checkpoint { grid-template-columns: 1fr; }
+      .decision-checkpoint header { grid-column: 1 / -1; }
       h1 { font-size: 28px; }
     }
   </style>
