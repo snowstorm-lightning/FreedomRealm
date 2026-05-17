@@ -263,7 +263,10 @@ function extractStatus(markdown) {
   const statusLines = extractSection(markdown, "状态")
     .map((line) => line.trim())
     .filter(Boolean);
-  return statusLines[0] || "Active";
+  return {
+    value: statusLines[0] || "Active",
+    source: statusLines.length > 0 ? "explicit" : "inferred"
+  };
 }
 
 async function readActivePlans() {
@@ -276,12 +279,14 @@ async function readActivePlans() {
     const markdown = await readFile(path.join(repoRoot, repoRelativePath), "utf8");
     const title = markdown.match(/^#\s+(.+)$/mu)?.[1] || filename.replace(/\.md$/u, "");
     const humanDecisionBullets = extractBullets(markdown, "Human Owner 决策点", 5);
+    const status = extractStatus(markdown);
     return {
       index,
       filename,
       path: repoRelativePath,
       title,
-      status: extractStatus(markdown),
+      status: status.value,
+      statusSource: status.source,
       goals: extractBullets(markdown, "目标", 3),
       nonGoals: extractBullets(markdown, "非目标", 3),
       acceptance: extractBullets(markdown, "验收标准", 3),
@@ -1743,6 +1748,9 @@ function renderActivePlans() {
       '<p>决策点 / Human decisions: ' + escapeHtml(String(plan.humanDecisionCount)) + '</p>' +
       (goalItems ? '<ul>' + goalItems + '</ul>' : '') +
       '<p class="plan-warning">只读计划入口，不是自动实现授权。 / Read-only plan entry, not automatic implementation authorization.</p>' +
+      (plan.statusSource === "inferred"
+        ? '<p class="plan-warning">缺少显式状态，当前按 active 推断。 / Missing explicit status; currently inferred as active.</p>'
+        : '') +
       (plan.planOnly
         ? '<p class="plan-warning">该计划包含非目标或待决策边界。 / This plan includes non-goals or decision boundaries.</p>'
         : '') +

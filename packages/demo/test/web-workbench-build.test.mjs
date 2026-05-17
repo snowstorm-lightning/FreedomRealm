@@ -88,10 +88,15 @@ test("web demo builds a multi-template static workbench from shared demo data", 
     (plan) => plan.filename === "phase-1-go-control-plane-skeleton.md"
   );
   assert.equal(goControlPlanePlan?.status, "Active");
+  assert.equal(goControlPlanePlan?.statusSource, "inferred");
   assert.equal(goControlPlanePlan?.planOnly, true);
   assert.equal(goControlPlanePlan?.humanDecisionCount, 5);
   assert.match(goControlPlanePlan?.title || "", /Go Core Control Plane Skeleton/u);
   assert.match(goControlPlanePlan?.href || "", /phase-1-go-control-plane-skeleton\.md/u);
+  const repositioningPlan = state.activePlans.find(
+    (plan) => plan.filename === "phase-0-5-ai-hrms-repositioning.md"
+  );
+  assert.equal(repositioningPlan?.statusSource, "explicit");
   const decayBacklog = state.operatingEntry.extensions["ai-hrms.decayPreventionBacklog"];
   assert.ok(decayBacklog);
   assert.equal(decayBacklog.promotionPolicy, "human_owner_review_required");
@@ -261,6 +266,8 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   assert.match(app, /决策点 \/ Human decisions/u);
   assert.match(app, /Read-only plan entry, not automatic implementation authorization/u);
   assert.match(app, /只读计划入口，不是自动实现授权/u);
+  assert.match(app, /Missing explicit status; currently inferred as active/u);
+  assert.match(app, /缺少显式状态，当前按 active 推断/u);
   assert.match(app, /Owner Decision Queue/u);
   assert.match(app, /需要 owner 决策 \/ Owner Decision Queue/u);
   assert.match(app, /Candidate decisions, not automatic assignments/u);
