@@ -134,6 +134,8 @@ test("web demo builds a multi-template static workbench from shared demo data", 
     assert.equal(card.templateEvaluationSamples.reviewRequired, true);
     assert.equal(card.templateEvaluationSamples.samples.length >= 1, true);
     assert.ok(card.templateEvaluationSamples.samples[0].sampleId);
+    assert.ok(card.failureSample.failureType);
+    assert.ok(card.failureSample.recovery);
     assert.ok(card.dataClassification);
     assert.ok(card.redactionStatus);
     assert.ok(card.sharePermission);
@@ -166,6 +168,11 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   assert.match(app, /checkpoint/u);
   assert.match(app, /ApprovalGate/u);
   assert.match(app, /ExecutionReportCard JSON is canonical/u);
+  assert.match(app, /Report-card evidence strip/u);
+  assert.match(app, /Canonical JSON source/u);
+  assert.match(app, /Eval samples/u);
+  assert.match(app, /Failure path/u);
+  assert.match(app, /Approval \/ data boundary/u);
   assert.match(app, /Candidate Next Actions/u);
   assert.match(app, /Draft a bounded WorkItem/u);
   assert.match(app, /Ask maintained docs/u);

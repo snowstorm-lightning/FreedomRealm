@@ -822,6 +822,37 @@ h3 {
   color: var(--warn);
   line-height: 1.45;
 }
+.evidence-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin: 16px 0;
+}
+.evidence-card {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 12px;
+}
+.evidence-card span {
+  display: block;
+  color: var(--accent-strong);
+  font-size: 12px;
+  font-weight: 760;
+  text-transform: uppercase;
+}
+.evidence-card strong {
+  display: block;
+  margin-top: 6px;
+  overflow-wrap: anywhere;
+}
+.evidence-card p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
 .meta-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1030,6 +1061,9 @@ h3 {
   .entry-actions, .meta-grid, .report-grid, .report-digest, .guard-grid, .proof-stats, .flow-map {
     grid-template-columns: 1fr;
   }
+  .evidence-strip {
+    grid-template-columns: 1fr;
+  }
   .report-title-row {
     display: grid;
   }
@@ -1190,6 +1224,7 @@ function renderReport(card) {
   const allCandidateWorkItems = [...candidateWorkItems, ...workPlanCandidateItems];
   const suggestedWorkShards = card.workPlan?.suggestedWorkShards || [];
   const templateEvaluationSamples = card.templateEvaluationSamples?.samples || [];
+  const firstTemplateEvaluationSample = templateEvaluationSamples[0];
   const evalSampleItem = card.evalSample
     ? [
         {
@@ -1221,6 +1256,21 @@ function renderReport(card) {
       '<div class="wide"><span>Candidate next action</span><strong>' +
         escapeHtml(firstNextAction ? firstNextAction.action : "Human review") + '</strong></div>' +
       '<p class="wide">ExecutionReportCard JSON is canonical. Markdown, HTML, and this Web Workbench are renders for review.</p>' +
+    '</section>' +
+    '<section class="evidence-strip" aria-label="Report-card evidence strip">' +
+      '<article class="evidence-card"><span>Canonical JSON source</span><strong>' +
+        escapeHtml(card.reportCardId) + '</strong><p>Use the JSON link for audit, replay, and report-card validation.</p></article>' +
+      '<article class="evidence-card"><span>Eval samples</span><strong>' +
+        escapeHtml(firstTemplateEvaluationSample ? firstTemplateEvaluationSample.sampleId : "none") +
+        '</strong><p>candidate, reviewRequired=' + escapeHtml(String(card.templateEvaluationSamples?.reviewRequired === true)) +
+        '</p></article>' +
+      '<article class="evidence-card"><span>Failure path</span><strong>' +
+        escapeHtml(card.failureSample.failureType) + '</strong><p>' +
+        escapeHtml(card.failureSample.statusIfTriggered) + '</p></article>' +
+      '<article class="evidence-card"><span>Approval / data boundary</span><strong>' +
+        escapeHtml(card.approvalStatus) + '</strong><p>' +
+        escapeHtml(card.dataClassification + ", " + card.redactionStatus + ", " + card.sharePermission) +
+        '</p></article>' +
     '</section>' +
     renderMeta(card) +
     '<div class="report-grid">' +
