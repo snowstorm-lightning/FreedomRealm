@@ -1369,7 +1369,13 @@ function renderReport(card) {
         ? '<section class="wide"><h3>Candidate WorkItems</h3>' + renderList(allCandidateWorkItems.map(function (item) {
             return {
               title: (item.candidateWorkItemId ? item.candidateWorkItemId + " / " : "") + item.title,
-              detail: item.priority + ", " + item.riskLevel + ", writeSet: " + item.suggestedWriteSet.join(", ")
+              detail:
+                "status: " + item.status +
+                ", approvalRequired=" + String(item.approvalRequired === true) +
+                ", owner: " + (item.ownerActorTypes || []).join(" + ") +
+                ", " + item.priority +
+                ", " + item.riskLevel +
+                ", writeSet: " + item.suggestedWriteSet.join(", ")
             };
           }), "title") + '</section>'
         : '') +
@@ -1377,7 +1383,7 @@ function renderReport(card) {
         ? '<section class="wide"><h3>Candidate WorkShards</h3>' + renderList(suggestedWorkShards.map(function (shard) {
             return {
               title: shard.shardId + " / " + shard.ownerAgentRole,
-              detail: shard.riskLevel + ", modelRoute: " + shard.modelRoute + ", verify: " +
+              detail: "candidate shard, not assigned, " + shard.riskLevel + ", modelRoute: " + shard.modelRoute + ", verify: " +
                 shard.validationCommands.join(" / ") + ", writeSet: " + (shard.writeSet.length > 0 ? shard.writeSet.join(", ") : "read-only")
             };
           }), "title") + '</section>'

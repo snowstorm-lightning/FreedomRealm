@@ -124,6 +124,22 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   assert.equal(state.cards.length, 7);
   assert.equal(state.knowledgeExamples.length, 3);
   assert.equal(new Set(state.cards.map((card) => card.jsonHref)).size, state.cards.length);
+  const repoWorkbenchCard = state.cards.find((card) => card.templateId === "repo_understanding_and_work_plan");
+  assert.ok(repoWorkbenchCard?.workPlan);
+  assert.equal(
+    repoWorkbenchCard.workPlan.candidateWorkItems.every((item) => item.status === "candidate"),
+    true
+  );
+  assert.equal(
+    repoWorkbenchCard.workPlan.candidateWorkItems.every((item) => item.approvalRequired === true),
+    true
+  );
+  assert.equal(
+    repoWorkbenchCard.workPlan.candidateWorkItems.some((item) =>
+      item.ownerActorTypes.includes("HumanActor") && item.ownerActorTypes.includes("AgentActor")
+    ),
+    true
+  );
   for (const card of state.cards) {
     assert.match(card.jsonHref, /^\.\/data\/.+\.json$/u);
     assert.match(card.markdownHref, /^\.\/data\/.+\.md$/u);
@@ -185,6 +201,10 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   assert.match(app, /Inspect a sample proof/u);
   assert.match(app, /Candidate WorkItems/u);
   assert.match(app, /Candidate WorkShards/u);
+  assert.match(app, /status: /u);
+  assert.match(app, /approvalRequired=/u);
+  assert.match(app, /owner: /u);
+  assert.match(app, /candidate shard, not assigned/u);
   assert.match(app, /Eval Sample Candidate/u);
   assert.match(app, /Template Evaluation Samples/u);
   assert.match(app, /candidate-work-item-001/u);
