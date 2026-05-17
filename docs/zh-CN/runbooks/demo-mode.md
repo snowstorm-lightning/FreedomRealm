@@ -124,6 +124,7 @@ pnpm report:html
 
 - 从 `dist/demo-mode/`、`dist/self-review/` 和 `dist/web/data/` 收集有效 `ExecutionReportCard` JSON。
 - 输出 `dist/reports/delivery-report.html`。
+- 渲染顺序按 `ExecutionReportCard.generatedAt` 新到旧排列，方便阶段交付时先查看最新证据。
 - 跳过非报告卡 JSON，例如 `AnswerCard` 和 `DocChallengeDraft`。
 
 HTML 只是整体交付或阶段汇总报告渲染物。单次报告卡的 canonical source 仍是 JSON，默认阅读物仍是 Markdown。
