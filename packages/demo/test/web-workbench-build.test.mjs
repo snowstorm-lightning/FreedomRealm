@@ -173,6 +173,19 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   assert.match(state.reviewPrompts[1].prompt, /ApprovalGate.+data classification/u);
   assert.match(state.reviewPrompts[2].prompt, /Owner Decision Queue/u);
   assert.match(state.reviewPrompts[3].prompt, /too dense.+too hidden/u);
+  assert.equal(state.feedbackTargets.length, 4);
+  assert.equal(state.feedbackTargets[0].label, "定位清晰 / Positioning clarity");
+  assert.match(state.feedbackTargets[0].cue, /traditional HRMS.+generic agent framework/u);
+  assert.match(state.feedbackTargets[1].cue, /ApprovalGate.+data classification/u);
+  assert.match(state.feedbackTargets[2].cue, /candidate suggestions.+human decisions/u);
+  assert.match(state.feedbackTargets[3].cue, /too dense.+too hidden/u);
+  assert.deepEqual(state.safetyBadges, [
+    "仅 mock / Mock only",
+    "无真实连接器 / No real connector",
+    "无生产数据 / No production data",
+    "无 secret / No secret",
+    "保留 ApprovalGate / ApprovalGate preserved"
+  ]);
   assert.equal(state.modeCards.length, 5);
   assert.deepEqual(
     state.modeCards.map((modeCard) => modeCard.mode),
@@ -239,6 +252,8 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   assert.match(html, /无实时副作用 \/ No live side effects/u);
   assert.match(html, /No model key, connector, HR data, external write, or hidden training resource/u);
   assert.match(html, /无模型 key、连接器、HR 数据、外部写入或隐藏训练资源/u);
+  assert.match(html, /首屏反馈目标 \/ First-screen feedback targets/u);
+  assert.match(html, /演示安全边界 \/ Demo safety boundaries/u);
   assert.match(html, /Recommended Next Action/u);
   assert.match(html, /推荐下一步 \/ Recommended Next Action/u);
   assert.match(html, /Owner decision queue/u);
@@ -262,6 +277,14 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   assert.match(app, /Where should ApprovalGate, data classification, audit, or rollback be clearer/u);
   assert.match(app, /Does the Owner Decision Queue clearly separate human decisions from candidate suggestions/u);
   assert.match(app, /Which information feels too dense, too light, or too hidden for useful feedback/u);
+  assert.match(app, /定位清晰 \/ Positioning clarity/u);
+  assert.match(app, /治理边界 \/ Governance boundary/u);
+  assert.match(app, /下一步清楚 \/ Next action clarity/u);
+  assert.match(app, /视觉负担 \/ Visual load/u);
+  assert.match(app, /仅 mock \/ Mock only/u);
+  assert.match(app, /无真实连接器 \/ No real connector/u);
+  assert.match(app, /无生产数据 \/ No production data/u);
+  assert.match(app, /保留 ApprovalGate \/ ApprovalGate preserved/u);
   assert.match(app, /Tiny Mode/u);
   assert.match(app, /Demo Mode/u);
   assert.match(app, /Local Mode/u);

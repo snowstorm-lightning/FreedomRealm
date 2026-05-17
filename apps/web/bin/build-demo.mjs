@@ -128,6 +128,37 @@ const reviewPrompts = [
   }
 ];
 
+const feedbackTargets = [
+  {
+    label: "定位清晰 / Positioning clarity",
+    cue: "30 秒内能否看懂项目不是传统 HRMS，也不是普通 agent framework？ / Can the reviewer tell in 30 seconds that this is not traditional HRMS or a generic agent framework?",
+    anchor: "FreedomRealm / AI-HRMS"
+  },
+  {
+    label: "治理边界 / Governance boundary",
+    cue: "ApprovalGate、数据分级、审计和回滚是否足够显眼？ / Are ApprovalGate, data classification, audit, and rollback visible enough?",
+    anchor: "ApprovalGate"
+  },
+  {
+    label: "下一步清楚 / Next action clarity",
+    cue: "候选建议、人类决策和不可自动推进的事项是否分开？ / Are candidate suggestions, human decisions, and blocked auto-progress separated?",
+    anchor: "Owner Decision Queue"
+  },
+  {
+    label: "视觉负担 / Visual load",
+    cue: "哪些内容太密、太轻或太隐蔽，影响修改意见？ / What feels too dense, too light, or too hidden for useful feedback?",
+    anchor: "Workbench"
+  }
+];
+
+const safetyBadges = [
+  "仅 mock / Mock only",
+  "无真实连接器 / No real connector",
+  "无生产数据 / No production data",
+  "无 secret / No secret",
+  "保留 ApprovalGate / ApprovalGate preserved"
+];
+
 const modeCards = [
   {
     mode: "Tiny Mode",
@@ -339,7 +370,9 @@ function buildHtml() {
             <span>运行契约 / Runtime contract</span>
             <strong>无实时副作用 / No live side effects</strong>
             <small>无模型 key、连接器、HR 数据、外部写入或隐藏训练资源。 / No model key, connector, HR data, external write, or hidden training resource.</small>
+            <div class="safety-badges" id="safetyBadges" aria-label="演示安全边界 / Demo safety boundaries"></div>
           </div>
+          <div class="feedback-targets" id="feedbackTargets" aria-label="首屏反馈目标 / First-screen feedback targets"></div>
           <div class="proof-stats" id="proofStats" aria-label="MVP 凭证目标 / MVP proof targets"></div>
           <div class="flow-map" aria-label="治理执行流 / Governed execution flow">
             <span>工作单元 / WorkItem</span>
@@ -622,6 +655,53 @@ h3 {
 }
 .hero-status strong { font-size: 18px; }
 .hero-status small { color: var(--muted); line-height: 1.45; }
+.safety-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+.safety-badges span {
+  min-height: 24px;
+  border: 1px solid rgba(15, 118, 110, 0.24);
+  border-radius: 999px;
+  background: var(--soft);
+  color: var(--accent-strong);
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 760;
+  line-height: 1.25;
+}
+.feedback-targets {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+.feedback-target {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  padding: 12px;
+}
+.feedback-target span {
+  display: block;
+  color: var(--accent-strong);
+  font-size: 12px;
+  font-weight: 760;
+}
+.feedback-target strong {
+  display: block;
+  margin-top: 5px;
+  font-size: 14px;
+}
+.feedback-target p {
+  margin: 7px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
 .proof-stats {
   grid-column: 1 / -1;
   display: grid;
@@ -1564,6 +1644,9 @@ h3 {
   .mode-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+  .feedback-targets {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
   .owner-decisions {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1577,7 +1660,7 @@ h3 {
 }
 @media (max-width: 840px) {
   .shell { padding: 24px 16px 32px; }
-  .command-board, .entry-strip, .review-prompt-grid, .mode-grid, .decision-strip, .owner-decisions, .next-grid, .active-plan-strip, .workbench, .right-rail, .knowledge-layout, .roadmap-list {
+  .command-board, .entry-strip, .feedback-targets, .review-prompt-grid, .mode-grid, .decision-strip, .owner-decisions, .next-grid, .active-plan-strip, .workbench, .right-rail, .knowledge-layout, .roadmap-list {
     grid-template-columns: 1fr;
   }
   h1 { font-size: 30px; }
@@ -1928,6 +2011,22 @@ function renderReviewPrompts() {
   }).join("");
 }
 
+function renderFeedbackTargets() {
+  document.getElementById("feedbackTargets").innerHTML = state.feedbackTargets.map(function (item) {
+    return '<article class="feedback-target">' +
+      '<span>' + escapeHtml(item.label) + '</span>' +
+      '<strong>' + escapeHtml(item.anchor) + '</strong>' +
+      '<p>' + escapeHtml(item.cue) + '</p>' +
+    '</article>';
+  }).join("");
+}
+
+function renderSafetyBadges() {
+  document.getElementById("safetyBadges").innerHTML = state.safetyBadges.map(function (badge) {
+    return '<span>' + escapeHtml(badge) + '</span>';
+  }).join("");
+}
+
 function renderModeCards() {
   document.getElementById("modeCards").innerHTML = state.modeCards.map(function (item) {
     return '<article class="mode-card">' +
@@ -2241,6 +2340,8 @@ function renderRoadmap() {
 function renderAll() {
   const card = state.cards.find(function (candidate) { return candidate.templateId === selectedTemplateId; }) || state.cards[0];
   renderProofStats();
+  renderFeedbackTargets();
+  renderSafetyBadges();
   renderReviewPrompts();
   renderModeCards();
   renderOperatingEntry();
@@ -2297,6 +2398,8 @@ const state = {
   roadmap,
   proofStats,
   reviewPrompts,
+  feedbackTargets,
+  safetyBadges,
   modeCards,
   cards: executions.map(toWorkbenchCard),
   knowledgeExamples: knowledgeExecutions.map(toKnowledgeExample)
