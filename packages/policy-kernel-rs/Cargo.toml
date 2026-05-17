@@ -1,0 +1,10 @@
+[package]
+name = "ai-hrms-policy-kernel"
+version = "0.1.0"
+edition = "2021"
+publish = false
+description = "Minimal std-only Rust policy and contract kernel skeleton for AI-HRMS."
+
+[lib]
+name = "ai_hrms_policy_kernel"
+path = "src/lib.rs"

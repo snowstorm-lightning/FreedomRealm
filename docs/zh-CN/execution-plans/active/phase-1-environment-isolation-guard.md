@@ -13,7 +13,7 @@
 ## 非目标
 
 - 不实现 HR 主数据 API。
-- 不启动 Next.js、Go 控制面、Rust 治理内核、Python Agent Runtime、Temporal 或 LiteLLM 服务。
+- 不启动 Next.js、Go 控制面、Rust 治理内核生产服务、Python Agent Runtime、Temporal 或 LiteLLM 服务；经 human owner 明确批准后，可以保留不接入生产路径的 Rust policy kernel skeleton，用于验证术语、风险和审批边界。
 - 不接入真实 secret、数据库、Keycloak realm 或模型供应商 key。
 - 不允许 Agent Runtime 直接修改 HR 主数据。
 
@@ -80,7 +80,7 @@
 - 仓库级 `pnpm check` 在 Linux 与 Windows CI 中通过。
 - 新增根目录资产均属于当前阶段正式入口、CI 或跨平台守卫。
 - 文档说明当前新增实现与后续服务边界。
-- 新增目录仍局限于当前阶段正式资产，未为尚未实现服务创建空目录。
+- 新增目录仍局限于当前阶段正式资产，未为尚未实现服务创建空目录；若存在 Rust policy kernel skeleton，必须具备 `Cargo.toml`、README、源码和可运行测试，并明确不接入生产控制面。
 
 ## 完成后的归档说明
 

@@ -149,7 +149,19 @@ if (await pathExists("packages")) {
         addIssue(errors, "workspace_package_not_registered", `${workspacePath} has package.json but is not registered as a workspace.`, workspacePath);
       }
     } else {
-      addIssue(warnings, "package_without_manifest", `${workspacePath} exists without package.json.`, workspacePath);
+      const cargoTomlPath = path.join("packages", entry.name, "Cargo.toml");
+      if (await pathExists(cargoTomlPath)) {
+        const readmePath = path.join("packages", entry.name, "README.md");
+        const srcLibPath = path.join("packages", entry.name, "src", "lib.rs");
+        if (!(await pathExists(readmePath))) {
+          addIssue(errors, "rust_package_missing_readme", `${workspacePath} must contain README.md.`, workspacePath);
+        }
+        if (!(await pathExists(srcLibPath))) {
+          addIssue(errors, "rust_package_missing_src", `${workspacePath} must contain src/lib.rs.`, workspacePath);
+        }
+      } else {
+        addIssue(warnings, "package_without_manifest", `${workspacePath} exists without package.json or Cargo.toml.`, workspacePath);
+      }
     }
   }
 }
