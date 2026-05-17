@@ -67,6 +67,7 @@ Web Workbench 当前是静态 demo build：
 
 - 默认展示 7 个内置模板：`repo_understanding_and_work_plan`、`knowledge_navigation_and_challenge`、`external_agent_connector_safety_demo`、`issue_pr_triage_and_review`、`personal_work_proof`、`project_self_review_and_decay_prevention` 和 `docs_review_and_improvement`。
 - 可在页面内切换模板，查看同一执行数据生成的报告卡、执行链、失败路径样例和 JSON / Markdown 输出。
+- 模板列表会显示 risk、approval、route 和 share badges；这些 badges 只来自已生成的 `ExecutionReportCard` 字段，不引入新的事实源。
 - 页面还会读取 `config/project-operating-entry.json`，展示 `Next Workbench`、当前任务清单、`AgentWorkLease`、`writeSet`、`MergeGate` 和 checkpoint / stop 条件。
 - 报告卡预览会显示 human decision checkpoint，来源是 JSON 报告卡中的 `status`、`approvalStatus`、`humanOwnerId`、`nextActions` 和 demo `ApprovalGate`，用于说明哪些动作必须由人复核后才能继续。
 - `Candidate WorkItems` 和 `Candidate WorkShards` 必须显式显示候选状态、owner、`approvalRequired`、`writeSet` 和验证命令；它们不是已经接受的分派，也不会自动升级为正式 WorkItem。
