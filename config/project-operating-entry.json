@@ -162,7 +162,8 @@
         "失败样本保留期望阻断点、人工复核状态和可复现输入引用"
       ],
       "verificationCommands": [
-        "pnpm validate:templates"
+        "pnpm validate:templates",
+        "pnpm check"
       ],
       "riskLevel": "medium",
       "suggestedWriteSet": [

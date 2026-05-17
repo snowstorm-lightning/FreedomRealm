@@ -31,7 +31,7 @@ P0 是当前打开仓库后默认优先级。除非用户明确改变方向，ag
 | P0 | 建立多 agent 防冲突最小规则 | HumanActor + AgentActor | `AgentWorkLease` 模板、`writeSet` 冲突规则、`MergeGate` 检查清单 | 质量门禁和执行计划同步 |
 | P0 | 抬高 MVP 验收标准 | HumanActor | MVP 从“能跑通”升级为“可评价、可分派、可复盘、可继续推进” | capability、quality gates、phase 0.6 计划同步 |
 | P1 | 把自我审查结果转成正式 `WorkItem` 候选 | AgentActor | 自审报告卡到候选任务的映射规则 | 不自动修改仓库，只生成候选 |
-| P1 | 为首批用户可见模板补评测样本 | AgentActor | template manifest、失败样本、`evaluationSamples`、报告卡案例 | `pnpm validate:templates` 通过，样本可引用且不依赖真实连接器 |
+| P1 | 为首批用户可见模板补评测样本 | AgentActor | template manifest、失败样本、`evaluationSamples`、报告卡案例 | `pnpm validate:templates` 和 `pnpm check` 通过，样本可引用且不依赖真实连接器 |
 | P2 | 真实连接器和 live model 增强 | HumanActor 审批后 | 受控增强路径 | 不改变 MVP 通过标准，不绕过 `ApprovalGate` |
 
 ## 分派规则
