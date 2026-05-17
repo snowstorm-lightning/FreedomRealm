@@ -215,5 +215,12 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   assert.match(app, /external_agent_connector_safety_demo/u);
   assert.match(app, /personal_work_proof/u);
   assert.match(app, /project_self_review_and_decay_prevention/u);
+  assert.match(app, /Template governance badges/u);
+  assert.match(app, /Risk: /u);
+  assert.match(app, /Approval: /u);
+  assert.match(app, /Route: /u);
+  assert.match(app, /mock route/u);
+  assert.match(app, /Share: /u);
+  assert.match(app, /private/u);
   assert.match(app, /Challenge this point/u);
 });

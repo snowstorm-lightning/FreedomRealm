@@ -761,6 +761,29 @@ h3 {
   font-size: 13px;
   line-height: 1.35;
 }
+.template-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 2px;
+}
+.template-badges span {
+  min-height: 22px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #f8fafc;
+  color: var(--muted);
+  padding: 3px 7px;
+  font-size: 11px;
+  font-weight: 720;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+.template-button[aria-current="true"] .template-badges span {
+  border-color: rgba(15, 118, 110, 0.28);
+  background: #ffffff;
+  color: var(--accent-strong);
+}
 .report-header {
   display: grid;
   gap: 12px;
@@ -1478,12 +1501,28 @@ function renderKnowledgeExamples() {
   });
 }
 
+function renderTemplateBadges(card) {
+  const route = card.modelRoute.mock ? "mock route" : card.modelRoute.actual;
+  const badges = [
+    "Risk: " + card.riskLevel,
+    "Approval: " + card.approvalStatus,
+    "Route: " + route,
+    "Share: " + card.sharePermission
+  ];
+  return '<div class="template-badges" aria-label="Template governance badges">' +
+    badges.map(function (badge) {
+      return '<span>' + escapeHtml(badge) + '</span>';
+    }).join("") +
+  '</div>';
+}
+
 function renderTemplates() {
   document.getElementById("templateList").innerHTML = state.cards.map(function (card) {
     const current = card.templateId === selectedTemplateId;
     return '<button type="button" class="template-button" data-template="' + escapeHtml(card.templateId) + '" aria-current="' + String(current) + '">' +
       '<strong>' + escapeHtml(card.displayName) + '</strong>' +
       '<span>' + escapeHtml(card.taskGoal) + '</span>' +
+      renderTemplateBadges(card) +
     '</button>';
   }).join("");
   document.querySelectorAll("[data-template]").forEach(function (button) {
