@@ -1,5 +1,14 @@
 # Phase 0.6 Web Workbench MVP 执行计划
 
+## 归档记录
+
+- 完成日期：2026-05-17。
+- 验收依据：`user-approved-continuation-20260517` 批准将 Phase 0.6 从 active 归档为 completed；归档检查使用 `pnpm validate:operating-entry` 和 `pnpm check`。
+- 实际交付物：CLI-first Demo Mode、静态 Web Workbench、模板 manifest、JSON-first `ExecutionReportCard`、知识导航样例、外部 agent mock connector 安全样例、自我审查入口、HTML 总报告入口、`project-operating-entry.v1` manifest 和相关校验命令。
+- 与原计划偏差：未执行真实模型、真实外部 connector、GitHub issue / PR 创建、secret 读取、生产数据访问或正式 Web app 迁移；这些仍是后续审批任务或增强路径。
+- 未解决风险：P2 live connectors 仍需单独 `ApprovalGate`、审计和回滚设计；模板评测样本、connector 治理同步和衰减预防 backlog 已保留为后续正式任务。
+- 后续事项：继续从 [../README.md](../README.md) 的 active 计划和 [../../project-operating-entry.md](../../project-operating-entry.md) 的当前任务清单领取下一步。
+
 ## 背景和问题陈述
 
 当前 AI-HRMS 已经具备 CLI-first Demo Mode、模板 manifest、mock model、`ToolContract` 策略判断和 JSON-first `ExecutionReportCard`。但产品层仍不足以让用户评价：用户看不到清晰第一屏、无法比较模板、无法理解执行链路，也无法判断报告卡如何成为传播资产、能力证据和后续贡献入口。

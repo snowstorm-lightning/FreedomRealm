@@ -43,7 +43,7 @@
       ],
       "sourceRefs": [
         "docs/zh-CN/project-operating-entry.md",
-        "docs/zh-CN/execution-plans/active/phase-0-6-web-workbench-mvp.md"
+        "docs/zh-CN/execution-plans/completed/phase-0-6-web-workbench-mvp.md"
       ]
     },
     {
@@ -113,21 +113,69 @@
       ]
     },
     {
-      "taskId": "p1-self-review-to-workitems",
+      "taskId": "p1-connector-governance-sync",
       "priority": "P1",
-      "title": "把自我审查结果转成正式 WorkItem 候选",
+      "title": "同步外部 agent connector 治理文档与测试",
       "ownerActorTypes": [
+        "HumanActor",
         "AgentActor"
       ],
       "outputs": [
-        "自审报告卡到候选任务的映射规则",
-        "候选 WorkItem 列表",
-        "ai-hrms.selfReview 扩展"
+        "ExternalConnector 治理文档同步说明",
+        "ApprovalGate 与 dataClassification 一致性检查",
+        "相关策略测试更新"
       ],
       "acceptanceCriteria": [
-        "self-review 不自动修改仓库",
-        "候选任务保留来源、owner、风险、readSet、writeSet、验收标准和验证命令",
-        "候选任务只作为人工复核材料，不自动创建 issue、PR 或正式 WorkItem"
+        "保留 candidate-work-item-001、sourceFindingIds、sourceRecommendationIds 和 user-approved-continuation-20260517 人工批准记录",
+        "Connector governance docs and policy tests describe the same ApprovalGate and data classification boundary.",
+        "No real connector execution is enabled by the change.",
+        "All affected docs keep ExternalConnector terminology."
+      ],
+      "verificationCommands": [
+        "pnpm check"
+      ],
+      "riskLevel": "medium",
+      "suggestedWriteSet": [
+        "docs/zh-CN/api-contracts.md",
+        "docs/zh-CN/security-and-governance.md",
+        "docs/zh-CN/quality-gates.md",
+        "packages/policy/test/environment-isolation.test.mjs"
+      ],
+      "candidateOrigin": {
+        "candidateWorkItemId": "candidate-work-item-001",
+        "sourceFindingIds": [
+          "finding-001"
+        ],
+        "sourceRecommendationIds": [
+          "recommendation-001"
+        ],
+        "sourceReportPath": "dist/self-review/report-02cd1888-6f32-495e-b171-da73d311a116.json",
+        "humanApprovalRef": "user-approved-continuation-20260517"
+      },
+      "sourceRefs": [
+        "dist/self-review/report-02cd1888-6f32-495e-b171-da73d311a116.json",
+        "docs/zh-CN/api-contracts.md",
+        "docs/zh-CN/security-and-governance.md",
+        "docs/zh-CN/quality-gates.md"
+      ]
+    },
+    {
+      "taskId": "p1-decay-prevention-backlog",
+      "priority": "P1",
+      "title": "建立人工复核的衰减预防 backlog",
+      "ownerActorTypes": [
+        "HumanActor"
+      ],
+      "outputs": [
+        "human-reviewed decay prevention backlog",
+        "正式 WorkItem 记录",
+        "source finding / recommendation traceability"
+      ],
+      "acceptanceCriteria": [
+        "保留 candidate-work-item-002、sourceFindingIds、sourceRecommendationIds 和 user-approved-continuation-20260517 人工批准记录",
+        "Candidate WorkItems include source finding ids, owner, risk, readSet, writeSet, and verification commands.",
+        "Self-review output remains JSON-first and requires human review.",
+        "The command still does not modify repository documents or code."
       ],
       "verificationCommands": [
         "pnpm self-review",
@@ -135,11 +183,27 @@
       ],
       "riskLevel": "medium",
       "suggestedWriteSet": [
-        "packages/demo/src/index.mjs",
-        "packages/demo/test/demo-engine.test.mjs"
+        "config/project-operating-entry.json",
+        "docs/zh-CN/project-operating-entry.md",
+        "docs/zh-CN/quality-gates.md"
       ],
+      "candidateOrigin": {
+        "candidateWorkItemId": "candidate-work-item-002",
+        "sourceFindingIds": [
+          "finding-002",
+          "finding-003"
+        ],
+        "sourceRecommendationIds": [
+          "recommendation-002"
+        ],
+        "sourceReportPath": "dist/self-review/report-02cd1888-6f32-495e-b171-da73d311a116.json",
+        "humanApprovalRef": "user-approved-continuation-20260517"
+      },
       "sourceRefs": [
-        "config/templates/project_self_review_and_decay_prevention.json"
+        "dist/self-review/report-02cd1888-6f32-495e-b171-da73d311a116.json",
+        "config/project-operating-entry.json",
+        "docs/zh-CN/project-operating-entry.md",
+        "docs/zh-CN/quality-gates.md"
       ]
     },
     {

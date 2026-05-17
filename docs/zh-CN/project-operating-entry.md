@@ -27,12 +27,14 @@ P0 是当前打开仓库后默认优先级。除非用户明确改变方向，ag
 | 优先级 | 任务 | 建议 owner | 产出 | 验收 |
 | --- | --- | --- | --- | --- |
 | P0 | Web Workbench 第一屏继续收敛为“下一步工作台” | HumanActor + AgentActor | 三类入口、推荐下一步、报告卡预览、当前计划入口 | `pnpm web:demo` 和 `pnpm check` 通过 |
-| P0 | 把 `repo_understanding_and_work_plan` 输出转成可读任务清单 | AgentActor | `WorkItem` 候选、`WorkShard` 建议、风险和验证命令 | 报告卡包含 nextActions、风险、来源引用 |
+| P0 | 把项目运行入口提升为可校验 manifest | AgentActor | `project-operating-entry.v1` manifest、validator、根命令 | `pnpm validate:operating-entry` 和 `pnpm check` 通过 |
 | P0 | 建立多 agent 防冲突最小规则 | HumanActor + AgentActor | `AgentWorkLease` 模板、`writeSet` 冲突规则、`MergeGate` 检查清单 | 质量门禁和执行计划同步 |
-| P0 | 抬高 MVP 验收标准 | HumanActor | MVP 从“能跑通”升级为“可评价、可分派、可复盘、可继续推进” | capability、quality gates、phase 0.6 计划同步 |
-| P1 | 把自我审查结果转成正式 `WorkItem` 候选 | AgentActor | 自审报告卡到候选任务的映射规则 | 不自动修改仓库，只生成候选 |
+| P1 | 同步外部 agent connector 治理文档与测试 | HumanActor + AgentActor | `ExternalConnector` 治理文档同步说明、`ApprovalGate` 与数据分级一致性检查、相关策略测试更新 | `pnpm check` 通过；不启用真实 connector；保留 `candidate-work-item-001` 来源和 `user-approved-continuation-20260517` 人工批准记录 |
+| P1 | 建立人工复核的衰减预防 backlog | HumanActor | human-reviewed decay prevention backlog、正式 `WorkItem` 记录、来源追踪 | `pnpm self-review` 和 `pnpm check` 通过；保留 `candidate-work-item-002` 来源和 `user-approved-continuation-20260517` 人工批准记录 |
 | P1 | 为首批用户可见模板补评测样本 | AgentActor | template manifest、失败样本、`evaluationSamples`、报告卡案例 | `pnpm validate:templates` 和 `pnpm check` 通过，样本可引用且不依赖真实连接器 |
 | P2 | 真实连接器和 live model 增强 | HumanActor 审批后 | 受控增强路径 | 不改变 MVP 通过标准，不绕过 `ApprovalGate` |
+
+自我审查晋升记录：`dist/self-review/report-02cd1888-6f32-495e-b171-da73d311a116.json` 中的 `candidate-work-item-001` 和 `candidate-work-item-002` 已经由 `user-approved-continuation-20260517` 批准，从候选材料晋升为正式 P1 任务。该批准不授权执行 P2 live connectors、创建外部 issue / PR、访问 secret 或扩大数据分级边界。
 
 ## 分派规则
 

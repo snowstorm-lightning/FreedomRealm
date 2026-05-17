@@ -53,7 +53,7 @@
 - [adr/ADR-0008-federation-protocol-compatibility.md](adr/ADR-0008-federation-protocol-compatibility.md)：跨实例通信协议兼容性。
 - [adr/ADR-0010-core-control-plane-language-direction.md](adr/ADR-0010-core-control-plane-language-direction.md)：Go 控制面与 Rust 治理内核语言方向，修正 ADR-0009 中控制面默认 Node.js / NestJS 的部分。
 - [execution-plans/active/phase-0-5-ai-hrms-repositioning.md](execution-plans/active/phase-0-5-ai-hrms-repositioning.md)：Phase 0.5 定位与自适应 Demo 基础计划。
-- [execution-plans/active/phase-0-6-web-workbench-mvp.md](execution-plans/active/phase-0-6-web-workbench-mvp.md)：Phase 0.6 Web Workbench MVP 执行计划。
+- [execution-plans/completed/phase-0-6-web-workbench-mvp.md](execution-plans/completed/phase-0-6-web-workbench-mvp.md)：Phase 0.6 Web Workbench MVP 已归档执行计划。
 
 ## 文档维护规则
 
