@@ -932,7 +932,13 @@ export function renderDeliveryReportHtml({
 
   const cardsHtml = cards
     .map(
-      (card) => `<article class="card">
+      (card) => {
+        const canonicalJson = card.outputRefs.find(
+          (outputRef) => outputRef.kind === "ExecutionReportCard" && outputRef.canonical === true
+        );
+        const templateEvaluationSamples = card.extensions["ai-hrms.demo"]?.templateEvaluationSamples?.samples ?? [];
+        const failureSample = card.failure?.sample;
+        return `<article class="card">
         <header>
           <p class="eyebrow">${escapeHtml(card.templateId)}@${escapeHtml(card.templateVersion)}</p>
           <h2>${escapeHtml(card.taskGoal)}</h2>
@@ -944,15 +950,31 @@ export function renderDeliveryReportHtml({
           </dl>
         </header>
         <p>${escapeHtml(card.summary)}</p>
+        <section class="evidence" aria-label="Report evidence">
+          <div><span>Canonical JSON</span><strong>${escapeHtml(canonicalJson?.path ?? "missing")}</strong></div>
+          <div><span>Eval samples</span><strong>${escapeHtml(card.metrics?.candidateEvalSampleCount ?? 0)}</strong></div>
+          <div><span>Failure path</span><strong>${escapeHtml(failureSample?.failureType ?? "none")}</strong></div>
+          <div><span>Data boundary</span><strong>${escapeHtml(`${card.dataClassification} / ${card.redactionStatus}`)}</strong></div>
+        </section>
         <section>
           <h3>Findings</h3>
           <ul>${renderHtmlList(card.findings)}</ul>
         </section>
         <section>
+          <h3>Template Evaluation Samples</h3>
+          <ul>${renderHtmlList(
+            templateEvaluationSamples.map((sample) => ({
+              title: sample.sampleId,
+              detail: `${sample.failureModeCovered}; reviewRequired=true`
+            }))
+          )}</ul>
+        </section>
+        <section>
           <h3>Next Actions</h3>
           <ul>${renderHtmlList(card.nextActions)}</ul>
         </section>
-      </article>`
+      </article>`;
+      }
     )
     .join("\n");
 
@@ -981,10 +1003,14 @@ export function renderDeliveryReportHtml({
     dl { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 0; }
     dt, dd { margin: 0; }
     dd { font-weight: 700; }
+    .evidence { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 18px 0; }
+    .evidence div { min-width: 0; border: 1px solid #dbe2d8; border-radius: 6px; background: #fbfcfa; padding: 10px; }
+    .evidence span { display: block; color: #536158; font-size: 12px; text-transform: uppercase; }
+    .evidence strong { display: block; margin-top: 5px; overflow-wrap: anywhere; }
     ul { margin: 0; padding-left: 20px; }
     li { margin: 7px 0; }
     @media (max-width: 720px) {
-      .summary, dl { grid-template-columns: 1fr 1fr; }
+      .summary, dl, .evidence { grid-template-columns: 1fr 1fr; }
       h1 { font-size: 28px; }
     }
   </style>
