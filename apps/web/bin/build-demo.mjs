@@ -117,6 +117,7 @@ function toWorkbenchCard(execution, index) {
     generatedAt: reportCard.generatedAt,
     templateId: reportCard.templateId,
     templateVersion: reportCard.templateVersion,
+    humanOwnerId: reportCard.humanOwnerId,
     displayName: template.displayName,
     taskGoal: reportCard.taskGoal,
     status: reportCard.status,
@@ -853,6 +854,49 @@ h3 {
   font-size: 13px;
   line-height: 1.45;
 }
+.decision-checkpoint {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 16px 0;
+  border: 1px solid #d8c37a;
+  border-radius: 8px;
+  background: #fff8e1;
+  padding: 12px;
+}
+.decision-checkpoint header {
+  grid-column: 1 / -1;
+}
+.decision-checkpoint header p {
+  margin: 6px 0 0;
+  color: var(--warn);
+  line-height: 1.45;
+}
+.decision-checkpoint article {
+  min-width: 0;
+  border: 1px solid #ecdca7;
+  border-radius: 6px;
+  background: #fffdf5;
+  padding: 10px;
+}
+.decision-checkpoint span {
+  display: block;
+  color: var(--warn);
+  font-size: 12px;
+  font-weight: 760;
+  text-transform: uppercase;
+}
+.decision-checkpoint strong {
+  display: block;
+  margin-top: 5px;
+  overflow-wrap: anywhere;
+}
+.decision-checkpoint p {
+  margin: 7px 0 0;
+  color: #6b5414;
+  font-size: 13px;
+  line-height: 1.45;
+}
 .meta-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1064,6 +1108,9 @@ h3 {
   .evidence-strip {
     grid-template-columns: 1fr;
   }
+  .decision-checkpoint {
+    grid-template-columns: 1fr;
+  }
   .report-title-row {
     display: grid;
   }
@@ -1206,6 +1253,45 @@ function renderProofStats() {
   }).join("");
 }
 
+function renderHumanDecisionCheckpoint(card, firstNextAction) {
+  const reviewRequired = card.metrics.requiresHumanReview === true;
+  const approvalNeeded = card.approvalStatus === "requires_human_review";
+  const approvalGateDecision = card.approvalGate?.decision || card.approvalStatus;
+  const decisionItems = [
+    {
+      label: "Owner decision",
+      title: reviewRequired ? card.humanOwnerId : "No owner action pending",
+      detail: reviewRequired
+        ? "Treat this output as candidate evidence until a HumanActor accepts, edits, defers, or rejects it."
+        : "The current report card does not require a human checkpoint before reading the rendered output."
+    },
+    {
+      label: "ApprovalGate",
+      title: approvalGateDecision,
+      detail: approvalNeeded
+        ? "Do not execute side effects, publish, assign, share, or train from this card before approval."
+        : "No high-risk side effect is requested by this demo card."
+    },
+    {
+      label: "Next choice",
+      title: firstNextAction ? firstNextAction.action : "No candidate action",
+      detail: firstNextAction
+        ? firstNextAction.reason
+        : "Keep the card as an audit artifact; no automatic WorkItem is created."
+    }
+  ];
+
+  return '<section class="decision-checkpoint" aria-label="Human decision checkpoint">' +
+    '<header><p class="eyebrow">Human decision checkpoint</p>' +
+      '<h3>What needs a person before this moves forward</h3>' +
+      '<p>AI output remains a recommendation. Refusal, delay, scope reduction, or transfer must not become a negative contribution signal.</p></header>' +
+    decisionItems.map(function (item) {
+      return '<article><span>' + escapeHtml(item.label) + '</span><strong>' + escapeHtml(item.title) +
+        '</strong><p>' + escapeHtml(item.detail) + '</p></article>';
+    }).join("") +
+  '</section>';
+}
+
 function renderReport(card) {
   const toolItems = card.toolContractRefs.map(function (tool) {
     return {
@@ -1272,6 +1358,7 @@ function renderReport(card) {
         escapeHtml(card.dataClassification + ", " + card.redactionStatus + ", " + card.sharePermission) +
         '</p></article>' +
     '</section>' +
+    renderHumanDecisionCheckpoint(card, firstNextAction) +
     renderMeta(card) +
     '<div class="report-grid">' +
       '<section><h3>Findings</h3>' + renderList(card.findings, "title") + '</section>' +

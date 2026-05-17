@@ -128,6 +128,7 @@ test("web demo builds a multi-template static workbench from shared demo data", 
     assert.match(card.jsonHref, /^\.\/data\/.+\.json$/u);
     assert.match(card.markdownHref, /^\.\/data\/.+\.md$/u);
     assert.equal(card.modelRoute.mock, true);
+    assert.equal(card.humanOwnerId, "human-demo-owner");
     assert.equal(card.evalSample.status, "candidate");
     assert.equal(card.evalSample.sourceTemplateId, card.templateId);
     assert.equal(card.templateEvaluationSamples.source, "template.evaluationSamples");
@@ -173,6 +174,11 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   assert.match(app, /Eval samples/u);
   assert.match(app, /Failure path/u);
   assert.match(app, /Approval \/ data boundary/u);
+  assert.match(app, /Human decision checkpoint/u);
+  assert.match(app, /Owner decision/u);
+  assert.match(app, /What needs a person before this moves forward/u);
+  assert.match(app, /negative contribution signal/u);
+  assert.match(app, /human-demo-owner/u);
   assert.match(app, /Candidate Next Actions/u);
   assert.match(app, /Draft a bounded WorkItem/u);
   assert.match(app, /Ask maintained docs/u);
