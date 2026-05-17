@@ -36,6 +36,15 @@ P0 是当前打开仓库后默认优先级。除非用户明确改变方向，ag
 
 自我审查晋升记录：`dist/self-review/report-02cd1888-6f32-495e-b171-da73d311a116.json` 中的 `candidate-work-item-001` 和 `candidate-work-item-002` 已经由 `user-approved-continuation-20260517` 批准，从候选材料晋升为正式 P1 任务。该批准不授权执行 P2 live connectors、创建外部 issue / PR、访问 secret 或扩大数据分级边界。
 
+### 衰减预防 Backlog
+
+机器事实源在 `extensions["ai-hrms.decayPreventionBacklog"]` 中保留人工复核后的衰减预防 backlog。该 backlog 只用于追踪自我审查候选项的来源、owner、风险、`readSet`、`writeSet`、验证命令、人工批准引用和实现引用；它不授权 `pnpm self-review` 修改仓库，不自动创建 issue / PR，不自动公开 Commons 资产，也不把候选结论变成成员义务。
+
+当前记录：
+
+- `candidate-work-item-001` 已映射到 `p1-connector-governance-sync`，状态为 `implemented-in-repo`，实现引用为 `f6c3cb7`。
+- `candidate-work-item-002` 已映射到 `p1-decay-prevention-backlog`，状态为 `active`，继续要求 human owner 复核。
+
 ## 分派规则
 
 单 agent 适合处理范围明确、`writeSet` 单一、可以在一次验证内完成的任务。

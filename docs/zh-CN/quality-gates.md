@@ -301,6 +301,9 @@ MVP 不再只以“命令能跑通”为完成标准。进入 Phase 0.6 验收�
 - 是否把失败样本和 `needs_review` 状态保留下来，而不是隐藏治理摩擦。
 - 是否默认输出 JSON-first `ExecutionReportCard` 和 Markdown render。
 - 是否在整体交付需要可视化时才生成 HTML 汇总报告，且 HTML 只能从有效 JSON report cards 渲染。
+- 人工复核后的衰减预防 backlog 是否只写入 `project-operating-entry.v1` 的 namespaced extension，例如 `extensions["ai-hrms.decayPreventionBacklog"]`。
+- backlog item 是否保留 `candidateWorkItemId`、正式任务 id、状态、owner、风险、source finding / recommendation ids、`readSet`、`writeSet`、验证命令、人工批准引用和实现引用。
+- backlog 是否明确禁止自动创建 issue / PR、公开资产、成员义务或任何绕过 `ApprovalGate` 的写入。
 
 ## Anti-Capture Gate
 

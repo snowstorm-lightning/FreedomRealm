@@ -362,6 +362,86 @@
         "Claude Code subagents and Stop hooks"
       ],
       "mockOnly": true
+    },
+    "ai-hrms.decayPreventionBacklog": {
+      "sourceReportPath": "dist/self-review/report-44d9d1ae-2014-4a8f-ac9b-1c5efc7152e1.json",
+      "humanApprovalRef": "user-approved-continuation-20260517",
+      "promotionPolicy": "human_owner_review_required",
+      "autoCreateExternalIssues": false,
+      "items": [
+        {
+          "candidateWorkItemId": "candidate-work-item-001",
+          "formalTaskId": "p1-connector-governance-sync",
+          "status": "implemented-in-repo",
+          "priority": "P1",
+          "riskLevel": "medium",
+          "ownerActorTypes": [
+            "HumanActor",
+            "AgentActor"
+          ],
+          "sourceFindingIds": [
+            "finding-001"
+          ],
+          "sourceRecommendationIds": [
+            "recommendation-001"
+          ],
+          "readSet": [
+            "README.md",
+            "ARCHITECTURE.md",
+            "docs/zh-CN/developer-experience.md",
+            "docs/zh-CN/quality-gates.md",
+            "docs/zh-CN/roadmap.md",
+            "docs/zh-CN/capability-development-and-mvp.md"
+          ],
+          "writeSet": [
+            "docs/zh-CN/api-contracts.md",
+            "docs/zh-CN/security-and-governance.md",
+            "docs/zh-CN/quality-gates.md",
+            "packages/policy/test/environment-isolation.test.mjs"
+          ],
+          "verificationCommands": [
+            "pnpm check"
+          ],
+          "implementationRefs": [
+            "f6c3cb7"
+          ]
+        },
+        {
+          "candidateWorkItemId": "candidate-work-item-002",
+          "formalTaskId": "p1-decay-prevention-backlog",
+          "status": "active",
+          "priority": "P1",
+          "riskLevel": "medium",
+          "ownerActorTypes": [
+            "HumanActor"
+          ],
+          "sourceFindingIds": [
+            "finding-002",
+            "finding-003"
+          ],
+          "sourceRecommendationIds": [
+            "recommendation-002"
+          ],
+          "readSet": [
+            "README.md",
+            "ARCHITECTURE.md",
+            "docs/zh-CN/developer-experience.md",
+            "docs/zh-CN/quality-gates.md",
+            "docs/zh-CN/roadmap.md",
+            "docs/zh-CN/capability-development-and-mvp.md"
+          ],
+          "writeSet": [
+            "config/project-operating-entry.json",
+            "docs/zh-CN/project-operating-entry.md",
+            "docs/zh-CN/quality-gates.md"
+          ],
+          "verificationCommands": [
+            "pnpm self-review",
+            "pnpm check"
+          ],
+          "implementationRefs": []
+        }
+      ]
     }
   }
 }
