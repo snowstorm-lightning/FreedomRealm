@@ -70,6 +70,7 @@ test("web demo builds a multi-template static workbench from shared demo data", 
 
   const html = await readFile(path.join(repoRoot, "dist/web/index.html"), "utf8");
   const app = await readFile(path.join(repoRoot, "dist/web/app.js"), "utf8");
+  const css = await readFile(path.join(repoRoot, "dist/web/styles.css"), "utf8");
   const operatingEntry = JSON.parse(await readFile(path.join(repoRoot, "config/project-operating-entry.json"), "utf8"));
   const operatingEntryValidation = validateProjectOperatingEntry(operatingEntry);
   assert.equal(operatingEntryValidation.ok, true, JSON.stringify(operatingEntryValidation.errors, null, 2));
@@ -341,6 +342,8 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   assert.match(app, /project-operating-entry\.v1/u);
   assert.match(app, /p0-next-workbench-entry/u);
   assert.match(app, /p2-live-connectors/u);
+  assert.match(css, /\.proof-stat \{\n  min-width: 0;\n  background: var\(--panel\);/u);
+  assert.match(css, /\.proof-stat p \{\n  margin: 6px 0 0;\n  color: var\(--muted\);\n  line-height: 1\.35;\n  font-size: 12px;/u);
   assert.match(app, /Current task queue/u);
   assert.match(app, /当前任务队列 \/ Current task queue/u);
   assert.match(app, /Active P0 WorkItem/u);

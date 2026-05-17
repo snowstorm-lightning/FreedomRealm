@@ -744,7 +744,7 @@ h3 {
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: 8px;
-  padding: 14px;
+  padding: 11px 12px;
 }
 .proof-stat span {
   display: block;
@@ -754,16 +754,17 @@ h3 {
 }
 .proof-stat strong {
   display: block;
-  margin-top: 5px;
+  margin-top: 4px;
   color: var(--ink);
-  font-size: 24px;
+  font-size: 21px;
   line-height: 1.1;
+  overflow-wrap: anywhere;
 }
 .proof-stat p {
-  margin: 8px 0 0;
+  margin: 6px 0 0;
   color: var(--muted);
-  line-height: 1.4;
-  font-size: 13px;
+  line-height: 1.35;
+  font-size: 12px;
 }
 .flow-map {
   grid-column: 1 / -1;
