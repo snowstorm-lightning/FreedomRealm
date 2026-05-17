@@ -954,6 +954,18 @@ function renderHumanDecisionHtml(card) {
         </section>`;
 }
 
+function compareReportCardsByGeneratedAtDescending(left, right) {
+  const leftTime = Date.parse(left.generatedAt);
+  const rightTime = Date.parse(right.generatedAt);
+  if (Number.isFinite(leftTime) && Number.isFinite(rightTime) && leftTime !== rightTime) {
+    return rightTime - leftTime;
+  }
+  if (Number.isFinite(rightTime) !== Number.isFinite(leftTime)) {
+    return Number.isFinite(rightTime) ? 1 : -1;
+  }
+  return String(left.reportCardId).localeCompare(String(right.reportCardId));
+}
+
 export function renderDeliveryReportHtml({
   reportCards,
   title = "AI-HRMS Delivery Report",
@@ -970,7 +982,7 @@ export function renderDeliveryReportHtml({
       throw new Error(`Cannot render invalid ExecutionReportCard: ${details}`);
     }
     return card;
-  });
+  }).sort(compareReportCardsByGeneratedAtDescending);
 
   const cardsHtml = cards
     .map(
@@ -1072,7 +1084,7 @@ export function renderDeliveryReportHtml({
     <header class="hero">
       <p class="eyebrow">Generated ${escapeHtml(generatedAt)}</p>
       <h1>${escapeHtml(title)}</h1>
-      <p>This HTML is a delivery-level render. The canonical source remains JSON ExecutionReportCard; Markdown remains the default per-run reading format.</p>
+      <p>This HTML is a delivery-level render sorted newest first. The canonical source remains JSON ExecutionReportCard; Markdown remains the default per-run reading format.</p>
     </header>
     <section class="summary" aria-label="Report summary">
       <div class="metric"><span>Report cards</span><strong>${cards.length}</strong></div>

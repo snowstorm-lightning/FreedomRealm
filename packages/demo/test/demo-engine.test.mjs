@@ -218,13 +218,23 @@ test("renders delivery-level HTML from valid JSON-first report cards", async () 
     outputDir: "dist/test-delivery-report"
   });
   execution.reportCard.summary = "Review <script>alert('x')</script> safely.";
+  const olderCard = structuredClone(execution.reportCard);
+  olderCard.reportCardId = "report-delivery-older";
+  olderCard.generatedAt = "2026-05-17T09:00:00.000Z";
+  olderCard.taskGoal = "Older delivery card";
+  const newerCard = structuredClone(execution.reportCard);
+  newerCard.reportCardId = "report-delivery-newer";
+  newerCard.generatedAt = "2026-05-17T10:00:00.000Z";
+  newerCard.taskGoal = "Newer delivery card";
 
   const html = renderDeliveryReportHtml({
-    reportCards: [execution.reportCard],
+    reportCards: [olderCard, newerCard],
     title: "Delivery <Report>"
   });
 
   assert.match(html, /AI-HRMS Delivery|Delivery &lt;Report&gt;/u);
+  assert.match(html, /sorted newest first/u);
+  assert.equal(html.indexOf("Newer delivery card") < html.indexOf("Older delivery card"), true);
   assert.match(html, /JSON ExecutionReportCard/u);
   assert.match(html, /Canonical JSON/u);
   assert.match(html, /Eval samples/u);
