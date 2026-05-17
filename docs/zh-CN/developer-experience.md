@@ -48,6 +48,7 @@ pnpm knowledge:demo -- --query "AI-HRMS 下一步应该做什么？"
 pnpm self-review
 pnpm report:html
 pnpm validate:operating-entry
+pnpm validate:templates
 pnpm web:demo
 pnpm validate:workspace
 pnpm validate:env:all
@@ -137,7 +138,7 @@ Python 侧：
 - Node 24 LTS。
 - Corepack + `pnpm@10.0.0`。
 - `pnpm install --frozen-lockfile=false`，在首次引入外部依赖并提交 lockfile 后切换为严格 frozen install。
-- `pnpm check`，覆盖 workspace、环境样例和测试。
+- `pnpm check`，覆盖 workspace、环境样例、运行入口、模板 manifest 和测试。
 - `git diff --check` 或等价空白检查。
 
 成熟后增加：

@@ -120,6 +120,7 @@ pnpm demo -- --template external_agent_connector_safety_demo
 pnpm self-review
 pnpm report:html
 pnpm validate:operating-entry
+pnpm validate:templates
 pnpm web:demo
 pnpm check
 ```
@@ -132,6 +133,7 @@ pnpm check
 - Web 使用共享 Demo engine 生成的 JSON 报告卡。
 - `pnpm knowledge:demo` 生成 AnswerCard、DocChallengeDraft 和引用二者的 ExecutionReportCard。
 - 所有报告卡通过 `validateExecutionReportCard`。
+- `pnpm validate:templates` 能校验首批模板 manifest、failure samples 和 `evaluationSamples`。
 - `pnpm check` 通过。
 - 文档同步说明新增目录、命令和约束。
 - `project-operating-entry.md` 能作为下一轮任务选择和 agent 分派入口。
