@@ -132,6 +132,15 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   assert.equal(new Set(state.cards.map((card) => card.jsonHref)).size, state.cards.length);
   const repoWorkbenchCard = state.cards.find((card) => card.templateId === "repo_understanding_and_work_plan");
   assert.ok(repoWorkbenchCard?.workPlan);
+  const promotedConnectorTask = state.operatingEntry.currentTasks.find((task) =>
+    task.taskId === "p1-connector-governance-sync"
+  );
+  assert.equal(promotedConnectorTask?.candidateOrigin?.candidateWorkItemId, "candidate-work-item-001");
+  assert.deepEqual(promotedConnectorTask?.candidateOrigin?.sourceFindingIds, ["finding-001"]);
+  assert.equal(
+    promotedConnectorTask?.candidateOrigin?.humanApprovalRef,
+    "user-approved-continuation-20260517"
+  );
   assert.equal(
     repoWorkbenchCard.workPlan.candidateWorkItems.every((item) => item.status === "candidate"),
     true
@@ -197,6 +206,12 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   assert.match(app, /当前任务队列 \/ Current task queue/u);
   assert.match(app, /Active P0 WorkItem/u);
   assert.match(app, /当前 P0 WorkItem \/ Active P0 WorkItem/u);
+  assert.match(app, /验收 \/ Acceptance/u);
+  assert.match(app, /来源 \/ Sources/u);
+  assert.match(app, /候选来源 \/ Candidate origin/u);
+  assert.match(app, /candidateWorkItemId=/u);
+  assert.match(app, /sourceFindingIds=/u);
+  assert.match(app, /humanApprovalRef=/u);
   assert.match(app, /AgentWorkLease/u);
   assert.match(app, /AgentWorkLease preview/u);
   assert.match(app, /当前 shard 的 AgentWorkLease 预览 \/ AgentWorkLease preview/u);

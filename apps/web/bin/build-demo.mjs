@@ -721,6 +721,36 @@ h3 {
   color: var(--muted);
   line-height: 1.45;
 }
+.task-meta {
+  display: grid;
+  gap: 6px;
+  margin-top: 9px;
+  color: var(--muted);
+}
+.task-meta span {
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 760;
+}
+.task-meta ul {
+  display: grid;
+  gap: 5px;
+  margin: 0;
+  padding-left: 18px;
+  line-height: 1.35;
+}
+.task-origin {
+  margin-top: 9px;
+  border-left: 3px solid var(--accent);
+  padding-left: 10px;
+  color: var(--muted);
+  line-height: 1.4;
+}
+.task-origin strong {
+  display: block;
+  color: var(--ink);
+  font-size: 12px;
+}
 .guard-block ul {
   display: grid;
   gap: 6px;
@@ -1219,6 +1249,49 @@ function renderMeta(card) {
   }).join("") + '</dl>';
 }
 
+function renderTaskMetaList(label, items, limit) {
+  if (!Array.isArray(items) || items.length === 0) {
+    return "";
+  }
+  const visibleItems = items.slice(0, limit);
+  const overflowCount = Math.max(0, items.length - visibleItems.length);
+  return '<div class="task-meta">' +
+    '<span>' + escapeHtml(label) + '</span>' +
+    '<ul>' + visibleItems.map(function (item) {
+      return '<li>' + escapeHtml(item) + '</li>';
+    }).join("") +
+      (overflowCount > 0 ? '<li>+' + String(overflowCount) + ' more</li>' : '') +
+    '</ul>' +
+  '</div>';
+}
+
+function renderTaskOrigin(origin) {
+  if (!origin || typeof origin !== "object") {
+    return "";
+  }
+  const findingIds = Array.isArray(origin.sourceFindingIds)
+    ? origin.sourceFindingIds.join(", ")
+    : "";
+  const recommendationIds = Array.isArray(origin.sourceRecommendationIds)
+    ? origin.sourceRecommendationIds.join(", ")
+    : "";
+  const parts = [
+    origin.candidateWorkItemId ? "candidateWorkItemId=" + origin.candidateWorkItemId : "",
+    findingIds ? "sourceFindingIds=" + findingIds : "",
+    recommendationIds ? "sourceRecommendationIds=" + recommendationIds : "",
+    origin.humanApprovalRef ? "humanApprovalRef=" + origin.humanApprovalRef : ""
+  ].filter(Boolean);
+
+  if (parts.length === 0) {
+    return "";
+  }
+
+  return '<div class="task-origin">' +
+    '<strong>候选来源 / Candidate origin</strong>' +
+    escapeHtml(parts.join("; ")) +
+  '</div>';
+}
+
 function renderOperatingEntry() {
   const entry = state.operatingEntry;
   const tasks = entry.currentTasks || [];
@@ -1261,6 +1334,9 @@ function renderOperatingEntry() {
             '<p>风险 / Risk: ' + escapeHtml(task.riskLevel) + '; 验证 / verify: ' +
               escapeHtml(task.verificationCommands.join(" / ")) + '</p>' +
             '<p>writeSet: ' + escapeHtml(task.suggestedWriteSet.join(", ")) + '</p>' +
+            renderTaskMetaList("验收 / Acceptance", task.acceptanceCriteria, 2) +
+            renderTaskMetaList("来源 / Sources", task.sourceRefs, 2) +
+            renderTaskOrigin(task.candidateOrigin) +
             (task.riskLevel === "high"
               ? '<p class="risk-note">任何 live 执行前都需要 human owner 决策和 ApprovalGate。 / Human owner decision and ApprovalGate are required before any live execution.</p>'
               : '') +
