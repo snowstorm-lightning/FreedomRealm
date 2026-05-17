@@ -21,6 +21,15 @@ test("creates repo understanding report cards through the shared demo engine", a
   assert.equal(execution.reportCard.templateId, "repo_understanding_and_work_plan");
   assert.equal(execution.reportCard.extensions["ai-hrms.demo"].modelRoute.mock, true);
   assert.equal(execution.reportCard.approvalStatus, "requires_human_review");
+  const workPlan = execution.reportCard.extensions["ai-hrms.workPlan"];
+  assert.equal(workPlan.noWriteSideEffects, true);
+  assert.equal(workPlan.reviewRequired, true);
+  assert.equal(workPlan.candidateWorkItems.length, 2);
+  assert.equal(workPlan.suggestedWorkShards.length, 3);
+  assert.equal(workPlan.candidateWorkItems.every((item) => Array.isArray(item.suggestedWriteSet)), true);
+  assert.equal(workPlan.suggestedWorkShards.some((shard) => shard.writeSet.length === 0), true);
+  assert.equal(execution.reportCard.metrics.candidateWorkItemCount, 2);
+  assert.equal(execution.reportCard.metrics.suggestedWorkShardCount, 3);
   assert.match(execution.markdown, /ExecutionReportCard/u);
 });
 

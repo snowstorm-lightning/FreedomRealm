@@ -149,6 +149,7 @@ function toWorkbenchCard(execution, index) {
     executionTrace: demo.executionTrace,
     failureSample: reportCard.failure.sample,
     mockOutputNotice: demo.mockOutputNotice,
+    workPlan: reportCard.extensions["ai-hrms.workPlan"] ?? null,
     selfReview: reportCard.extensions["ai-hrms.selfReview"] ?? null,
     answerCard: knowledge?.answerCard ?? null,
     docChallengeDraft: knowledge?.docChallengeDraft ?? null,
@@ -1183,6 +1184,9 @@ function renderReport(card) {
     };
   });
   const candidateWorkItems = card.selfReview?.candidateWorkItems || [];
+  const workPlanCandidateItems = card.workPlan?.candidateWorkItems || [];
+  const allCandidateWorkItems = [...candidateWorkItems, ...workPlanCandidateItems];
+  const suggestedWorkShards = card.workPlan?.suggestedWorkShards || [];
   const firstNextAction = card.nextActions[0];
   document.getElementById("reportSurface").innerHTML =
     '<header class="report-header">' +
@@ -1208,11 +1212,20 @@ function renderReport(card) {
       '<section><h3>Recommendations</h3>' + renderList(card.recommendations, "title") + '</section>' +
       '<section><h3>Candidate Next Actions</h3>' + renderList(card.nextActions, "action") + '</section>' +
       '<section><h3>Tool Contracts</h3>' + renderList(toolItems, "toolName") + '</section>' +
-      (candidateWorkItems.length > 0
-        ? '<section class="wide"><h3>Candidate WorkItems</h3>' + renderList(candidateWorkItems.map(function (item) {
+      (allCandidateWorkItems.length > 0
+        ? '<section class="wide"><h3>Candidate WorkItems</h3>' + renderList(allCandidateWorkItems.map(function (item) {
             return {
-              title: item.title,
+              title: (item.candidateWorkItemId ? item.candidateWorkItemId + " / " : "") + item.title,
               detail: item.priority + ", " + item.riskLevel + ", writeSet: " + item.suggestedWriteSet.join(", ")
+            };
+          }), "title") + '</section>'
+        : '') +
+      (suggestedWorkShards.length > 0
+        ? '<section class="wide"><h3>Candidate WorkShards</h3>' + renderList(suggestedWorkShards.map(function (shard) {
+            return {
+              title: shard.shardId + " / " + shard.ownerAgentRole,
+              detail: shard.riskLevel + ", modelRoute: " + shard.modelRoute + ", verify: " +
+                shard.validationCommands.join(" / ") + ", writeSet: " + (shard.writeSet.length > 0 ? shard.writeSet.join(", ") : "read-only")
             };
           }), "title") + '</section>'
         : '') +

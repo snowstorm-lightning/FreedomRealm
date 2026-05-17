@@ -547,6 +547,115 @@ function buildSelfReviewCandidateWorkItems({ analysis, inputRefs }) {
   ];
 }
 
+function buildRepoWorkPlanArtifacts({ analysis, inputRefs }) {
+  const suggestedReadSet = inputRefs.map((inputRef) => inputRef.path);
+  return {
+    noWriteSideEffects: true,
+    reviewRequired: true,
+    sourceFindingIds: analysis.findings.map((finding) => finding.id),
+    sourceRecommendationIds: analysis.recommendations.map((recommendation) => recommendation.id),
+    candidateWorkItems: [
+      {
+        candidateWorkItemId: "repo-work-item-001",
+        title: "Turn repo understanding into a visible next-action Workbench",
+        status: "candidate",
+        priority: "P0",
+        riskLevel: "medium",
+        ownerActorTypes: ["HumanActor", "AgentActor"],
+        goal:
+          "Make the first Web Workbench screen show entry modes, current P0 work, report-card proof, and governance boundaries from shared data.",
+        nonGoals: [
+          "Do not connect live models or real external connectors.",
+          "Do not replace JSON ExecutionReportCard with HTML as the source of truth."
+        ],
+        suggestedReadSet,
+        suggestedWriteSet: [
+          "apps/web/bin/build-demo.mjs",
+          "packages/demo/test/web-workbench-build.test.mjs",
+          "config/project-operating-entry.json"
+        ],
+        acceptanceCriteria: [
+          "Workbench renders current P0/P1/P2 task lanes from project-operating-entry.v1.",
+          "Entry mode selection updates a recommended template and keeps report cards JSON-first.",
+          "Browser verification finds no horizontal overflow."
+        ],
+        verificationCommands: ["pnpm web:demo", "pnpm check"],
+        approvalRequired: true,
+        sourceRefIds: inputRefs.map((inputRef) => inputRef.refId)
+      },
+      {
+        candidateWorkItemId: "repo-work-item-002",
+        title: "Harden multi-agent WorkShard handoff before larger implementation",
+        status: "candidate",
+        priority: "P0",
+        riskLevel: "medium",
+        ownerActorTypes: ["HumanActor", "AgentActor"],
+        goal:
+          "Make AgentWorkLease, writeSet conflict rules, ChangePacket, and MergeGate visible in docs, manifest, Web Workbench, and tests.",
+        nonGoals: [
+          "Do not let subagents expand writeSet without approval.",
+          "Do not downgrade ApprovalGate, DataClassification, member rights, or ModelRoute requirements."
+        ],
+        suggestedReadSet,
+        suggestedWriteSet: [
+          "config/project-operating-entry.json",
+          "docs/zh-CN/project-operating-entry.md",
+          "docs/zh-CN/harness-engineering.md",
+          "docs/zh-CN/quality-gates.md"
+        ],
+        acceptanceCriteria: [
+          "AgentWorkLease fields include modelRoute, dataClassification, riskLevel, rollbackPlan, mergeGateRequirements, and stopConditions.",
+          "Conflict rules require non-overlapping writeSet and human owner review when conflicts cannot be resolved.",
+          "Web Workbench displays the same manifest-derived guard rules."
+        ],
+        verificationCommands: ["pnpm validate:operating-entry", "pnpm check"],
+        approvalRequired: true,
+        sourceRefIds: inputRefs.map((inputRef) => inputRef.refId)
+      }
+    ],
+    suggestedWorkShards: [
+      {
+        shardId: "repo-shard-product",
+        ownerAgentRole: "ProductAgent",
+        objective: "Review first-screen clarity and next-action flow.",
+        readSet: ["apps/web/bin/build-demo.mjs", "docs/zh-CN/execution-plans/active/phase-0-6-web-workbench-mvp.md"],
+        writeSet: [],
+        riskLevel: "low",
+        dataClassification: "internal",
+        modelRoute: "reasoning_deep",
+        validationCommands: ["pnpm web:demo"],
+        expectedOutputSchema: "ShardResult"
+      },
+      {
+        shardId: "repo-shard-contract",
+        ownerAgentRole: "ContractAgent",
+        objective: "Check that report-card, operating-entry, and Web state remain machine-verifiable.",
+        readSet: ["packages/demo/test/web-workbench-build.test.mjs", "config/project-operating-entry.json"],
+        writeSet: [],
+        riskLevel: "low",
+        dataClassification: "internal",
+        modelRoute: "coding_strong",
+        validationCommands: ["pnpm check"],
+        expectedOutputSchema: "ShardResult"
+      },
+      {
+        shardId: "repo-shard-implementation",
+        ownerAgentRole: "ImplementationAgent",
+        objective: "Apply the smallest scoped UI or documentation change after product and contract review.",
+        readSet: suggestedReadSet,
+        writeSet: ["apps/web/bin/build-demo.mjs", "packages/demo/test/web-workbench-build.test.mjs"],
+        riskLevel: "medium",
+        dataClassification: "internal",
+        modelRoute: "coding_strong",
+        validationCommands: ["pnpm web:demo", "pnpm check"],
+        expectedOutputSchema: "ChangePacket"
+      }
+    ],
+    mockOutputNotice:
+      "Repo work-plan candidates are review material only. They do not create issues, PRs, assignments, or repository changes."
+  };
+}
+
 function makeAuditRef(eventType, trace, extra = {}) {
   return {
     auditEventId: `audit-${randomUUID()}`,
@@ -920,10 +1029,16 @@ export async function createDemoExecution({
         })
       : null;
   const analysis = buildMockAnalysis(templateId, knowledgeArtifacts);
+  const repoWorkPlan =
+    templateId === "repo_understanding_and_work_plan"
+      ? buildRepoWorkPlanArtifacts({ analysis, inputRefs })
+      : null;
   const selfReviewCandidateWorkItems =
     templateId === "project_self_review_and_decay_prevention"
       ? buildSelfReviewCandidateWorkItems({ analysis, inputRefs })
       : [];
+  const candidateWorkItemCount =
+    selfReviewCandidateWorkItems.length + (repoWorkPlan?.candidateWorkItems.length ?? 0);
 
   const workItem = {
     workItemId: trace.workItemId,
@@ -1123,7 +1238,8 @@ export async function createDemoExecution({
       requiresHumanReview: analysis.requiresHumanReview,
       candidateLearningArtifactCount: 1,
       candidateEvalSampleCount: 1,
-      candidateWorkItemCount: selfReviewCandidateWorkItems.length,
+      candidateWorkItemCount,
+      suggestedWorkShardCount: repoWorkPlan?.suggestedWorkShards.length ?? 0,
       modelRouteActual: modelRoute.actual,
       externalAgentConnectorCount: externalAgentArtifacts?.connectors.length ?? 0,
       externalAgentRequiresApproval: externalAgentArtifacts?.requiresApproval ?? false,
@@ -1194,6 +1310,11 @@ export async function createDemoExecution({
               mockOutputNotice:
                 "Knowledge navigation used local deterministic mock semantic search and did not call embeddings, live models, or external connectors."
             }
+          }
+        : {}),
+      ...(repoWorkPlan
+        ? {
+            "ai-hrms.workPlan": repoWorkPlan
           }
         : {}),
       ...(selfReviewCandidateWorkItems.length > 0

@@ -154,7 +154,10 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   assert.match(app, /Ask maintained docs/u);
   assert.match(app, /Inspect a sample proof/u);
   assert.match(app, /Candidate WorkItems/u);
+  assert.match(app, /Candidate WorkShards/u);
   assert.match(app, /candidate-work-item-001/u);
+  assert.match(app, /repo-work-item-001/u);
+  assert.match(app, /repo-shard-product/u);
   assert.match(app, /repo_understanding_and_work_plan/u);
   assert.match(app, /knowledge_navigation_and_challenge/u);
   assert.match(app, /external_agent_connector_safety_demo/u);
