@@ -42,7 +42,7 @@
 
 ## 运行手册
 
-- [runbooks/demo-mode.md](runbooks/demo-mode.md)：Demo Mode 运行手册，覆盖 CLI、静态 Web Workbench、`knowledge_navigation_and_challenge`、AnswerCard 和 DocChallengeDraft。
+- [runbooks/demo-mode.md](runbooks/demo-mode.md)：Demo Mode 运行手册，覆盖 CLI、静态 Web Workbench、`Review Prompts`、`Running Modes`、`Owner Decision Queue`、`Next Workbench`、active execution plans、decay prevention backlog、`knowledge_navigation_and_challenge`、AnswerCard 和 DocChallengeDraft。
 
 重点新增：
 

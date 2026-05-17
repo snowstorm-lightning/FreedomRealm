@@ -99,7 +99,7 @@ pnpm report:html
 pnpm web:demo
 ```
 
-默认输出写入 `dist/web/index.html`，展示 `repo_understanding_and_work_plan`、`knowledge_navigation_and_challenge`、`external_agent_connector_safety_demo`、`issue_pr_triage_and_review`、`personal_work_proof`、`project_self_review_and_decay_prevention` 和 `docs_review_and_improvement`，并包含 3 个内置知识问答样例和 `Next Workbench` 任务入口。
+默认输出写入 `dist/web/index.html`，展示 `repo_understanding_and_work_plan`、`knowledge_navigation_and_challenge`、`external_agent_connector_safety_demo`、`issue_pr_triage_and_review`、`personal_work_proof`、`project_self_review_and_decay_prevention` 和 `docs_review_and_improvement`，并包含 3 个内置知识问答样例。Workbench 首屏还会显示中英双语 `Review Prompts`、`Running Modes`、`Owner Decision Queue`、`Next Workbench`、active execution plans、人工复核的 decay prevention backlog、报告卡预览和 human decision checkpoint；这些面板只读取本地 mock/demo 数据、manifest 和 Markdown 计划，不授权真实 connector、secret、生产数据、外部 issue / PR、Commons 发布或自动分派。
 
 知识导航与异议闭环可单独运行：
 
