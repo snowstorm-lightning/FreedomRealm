@@ -59,7 +59,7 @@ pnpm validate:env -- config/environments/dev.sample.json
 
 适合只改文档、contracts、policy、schemas、eval samples、Demo engine、Knowledge engine 或轻量 Web Workbench。
 
-- 安装 Node 和 pnpm。
+- 使用满足根 `package.json` 中 `engines.node` 的 Node 运行时和仓库声明的 pnpm；可以是系统安装、工具链自带或宿主应用内置的 Node，不要求修改全局 PATH 或替换系统 Node。
 - 使用仓库内 `packageManager`；引入外部依赖后使用 `pnpm-lock.yaml`。
 - 使用项目本地依赖，不依赖全局 node_modules。
 - 只连接 `dev` 资源或 mock/stub。
@@ -91,7 +91,7 @@ pnpm validate:env -- config/environments/dev.sample.json
 Node / TypeScript 侧：
 
 - 根 `package.json` 必须声明 `packageManager`。
-- Node 运行时使用单一稳定基线；当前为 `>=24.0.0 <26.0.0`，不把尚未进入 LTS 的 Node Current 版本作为强制基线。
+- Node 运行时使用单一稳定基线；当前为 `>=24.0.0 <26.0.0`。例如 Node `24.14.0` 满足当前范围；本地已有可用的捆绑运行时或工具链运行时时，不要求安装或替换系统 Node。
 - Node.js 主要用于 TypeScript 前端、Demo Mode、仓库脚本和轻量 glue code，不再作为长期生产 Core Control Plane 的默认主语言。
 - 一旦引入外部依赖，必须提交 `pnpm-lock.yaml`。
 - 无外部依赖阶段可使用 `pnpm install --frozen-lockfile=false`；一旦提交 lockfile，CI 必须切换为 `pnpm install --frozen-lockfile` 或等价严格安装。
@@ -119,7 +119,7 @@ Python 侧：
 
 ## Doctor 检查
 
-当前提供 `pnpm run doctor`，用于本地诊断但不自动修改用户环境。使用 `pnpm run doctor` 是为了避免误触发 pnpm 自带的 `doctor` 子命令。当前检查至少覆盖：
+当前提供 `pnpm run doctor`，用于本地诊断但不自动修改用户环境。使用 `pnpm run doctor` 是为了避免误触发 pnpm 自带的 `doctor` 子命令。Doctor 会报告实际执行脚本的 Node 版本、二进制路径和 `engines.node` 范围；如果宿主工具提供的捆绑 Node 已满足该范围，应优先使用该运行时，而不是改全局 PATH 或系统安装。当前检查至少覆盖：
 
 - Node 版本是否满足要求。
 - pnpm 版本是否匹配 `packageManager`。

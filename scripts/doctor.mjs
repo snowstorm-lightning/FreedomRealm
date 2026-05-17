@@ -33,6 +33,10 @@ function parseMajor(version) {
   return Number.parseInt(version.replace(/^v/u, "").split(".")[0], 10);
 }
 
+function formatNodeRuntime() {
+  return `${process.version} at ${process.execPath}`;
+}
+
 function parseNodeEngineRange(range) {
   return {
     minMajor: Number.parseInt(range.match(/>=\s*(\d+)/u)?.[1] ?? "24", 10),
@@ -57,10 +61,13 @@ const nodeMajor = parseMajor(process.version);
 const nodeEngine = packageJson.engines?.node ?? ">=24.0.0 <26.0.0";
 const { minMajor, maxExclusiveMajor } = parseNodeEngineRange(nodeEngine);
 if (nodeMajor >= minMajor && (maxExclusiveMajor === null || nodeMajor < maxExclusiveMajor)) {
-  printStatus("ok", `node ${process.version}`);
+  printStatus("ok", `node ${formatNodeRuntime()} satisfies ${nodeEngine}`);
 } else {
   failed = true;
-  printStatus("FAIL", `node ${process.version}; expected ${nodeEngine}`);
+  printStatus(
+    "FAIL",
+    `node ${formatNodeRuntime()}; expected ${nodeEngine}. Run doctor with any Node runtime in that range; no global PATH or system Node change is required if a valid bundled runtime is available.`
+  );
 }
 
 const packageManager = packageJson.packageManager ?? "pnpm@10.0.0";
