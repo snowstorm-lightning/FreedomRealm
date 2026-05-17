@@ -34,19 +34,28 @@ const entryModes = [
     id: "goal",
     label: "I have a goal",
     summary:
-      "Start from a task goal, select a governed template, and generate a reviewable work proof."
+      "Start from a task goal, select a governed template, and generate a reviewable work proof.",
+    primaryTemplateId: "repo_understanding_and_work_plan",
+    action: "Draft a bounded WorkItem",
+    command: "pnpm demo -- --template repo_understanding_and_work_plan"
   },
   {
     id: "explore",
     label: "I want to explore",
     summary:
-      "Start without a fixed identity. Use interests, materials, constraints, and time to choose a small proof."
+      "Start without a fixed identity. Use interests, materials, constraints, and time to choose a small proof.",
+    primaryTemplateId: "knowledge_navigation_and_challenge",
+    action: "Ask maintained docs",
+    command: "pnpm knowledge:demo -- --query \"AI-HRMS 下一步应该做什么？\""
   },
   {
     id: "demo",
     label: "Show me an example",
     summary:
-      "Use built-in mock data to inspect the execution chain, report card, and next actions."
+      "Use built-in mock data to inspect the execution chain, report card, and next actions.",
+    primaryTemplateId: "personal_work_proof",
+    action: "Inspect a sample proof",
+    command: "pnpm web:demo"
   }
 ];
 
@@ -190,6 +199,7 @@ function buildHtml() {
             <span>Demo Mode</span>
             <span>Mock route</span>
             <span>JSON source</span>
+            <span>OS-neutral</span>
           </div>
         </div>
 
@@ -206,10 +216,11 @@ function buildHtml() {
           </div>
           <div class="proof-stats" id="proofStats" aria-label="MVP proof targets"></div>
           <div class="flow-map" aria-label="Governed execution flow">
-            <span>Goal</span>
-            <span>Template</span>
+            <span>WorkItem</span>
+            <span>AgentActor</span>
             <span>ToolContract</span>
             <span>ApprovalGate</span>
+            <span>Observation</span>
             <span>ReportCard</span>
           </div>
         </div>
@@ -221,6 +232,18 @@ function buildHtml() {
           <p id="entryNote">Start from a task goal, select a governed template, and generate a reviewable work proof.</p>
         </div>
         <div class="entry-actions" id="entryModes"></div>
+      </section>
+
+      <section class="decision-strip" aria-label="Recommended next action">
+        <div>
+          <p class="eyebrow">Recommended Next Action</p>
+          <h2 id="entryActionTitle">Draft a bounded WorkItem</h2>
+          <p id="entryActionDetail">Start from a task goal, select a governed template, and generate a reviewable work proof.</p>
+        </div>
+        <div class="command-tile">
+          <span>Local command</span>
+          <code id="entryCommand">pnpm demo -- --template repo_understanding_and_work_plan</code>
+        </div>
       </section>
 
       <section class="next-workbench" aria-label="Next Workbench">
@@ -479,7 +502,7 @@ h3 {
 .flow-map {
   grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 8px;
   align-items: stretch;
 }
@@ -539,6 +562,47 @@ h3 {
   background: var(--soft);
   color: var(--accent-strong);
 }
+.decision-strip {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.55fr);
+  gap: 14px;
+  align-items: stretch;
+  padding: 16px 0 20px;
+  border-bottom: 1px solid var(--line);
+}
+.decision-strip > div,
+.command-tile {
+  min-width: 0;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 16px;
+}
+.decision-strip p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  line-height: 1.45;
+}
+.command-tile {
+  display: grid;
+  align-content: center;
+  gap: 8px;
+}
+.command-tile span {
+  color: var(--accent-strong);
+  font-size: 12px;
+  font-weight: 760;
+  text-transform: uppercase;
+}
+.command-tile code {
+  display: block;
+  overflow-wrap: anywhere;
+  border-radius: 6px;
+  background: #f1f5f2;
+  color: var(--ink);
+  padding: 10px;
+  line-height: 1.4;
+}
 .next-workbench {
   padding: 20px 0;
   border-bottom: 1px solid var(--line);
@@ -553,6 +617,39 @@ h3 {
   display: grid;
   gap: 10px;
   margin-top: 12px;
+}
+.active-task {
+  display: grid;
+  gap: 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fbfcfa;
+  padding: 12px;
+  margin-top: 12px;
+}
+.active-task span {
+  color: var(--accent-strong);
+  font-size: 12px;
+  font-weight: 760;
+  text-transform: uppercase;
+}
+.active-task p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.45;
+}
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.chip-row span {
+  min-height: 24px;
+  border-radius: 999px;
+  background: var(--soft);
+  color: var(--accent-strong);
+  padding: 4px 8px;
+  text-transform: none;
 }
 .task-card {
   border-top: 1px solid var(--line);
@@ -582,11 +679,39 @@ h3 {
   color: var(--muted);
   line-height: 1.45;
 }
+.risk-note {
+  color: var(--warn);
+  font-weight: 700;
+}
 .guard-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
   margin-top: 12px;
+}
+.lease-preview {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fbfcfa;
+  padding: 12px;
+  margin-top: 12px;
+}
+.lease-preview dl {
+  display: grid;
+  gap: 8px;
+  margin: 10px 0 0;
+}
+.lease-preview div {
+  min-width: 0;
+}
+.lease-preview dt {
+  color: var(--muted);
+  font-size: 12px;
+}
+.lease-preview dd {
+  margin: 3px 0 0;
+  overflow-wrap: anywhere;
+  line-height: 1.35;
 }
 .guard-block {
   min-width: 0;
@@ -653,6 +778,35 @@ h3 {
   white-space: nowrap;
 }
 .mock-note {
+  margin: 0;
+  color: var(--warn);
+  line-height: 1.45;
+}
+.report-digest {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin: 16px 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fbfcfa;
+}
+.report-digest div {
+  min-width: 0;
+}
+.report-digest span {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 730;
+}
+.report-digest strong {
+  display: block;
+  margin-top: 4px;
+  overflow-wrap: anywhere;
+}
+.report-digest p {
   margin: 0;
   color: var(--warn);
   line-height: 1.45;
@@ -858,11 +1012,11 @@ h3 {
 }
 @media (max-width: 840px) {
   .shell { padding: 24px 16px 32px; }
-  .command-board, .entry-strip, .next-grid, .workbench, .right-rail, .knowledge-layout, .roadmap-list {
+  .command-board, .entry-strip, .decision-strip, .next-grid, .workbench, .right-rail, .knowledge-layout, .roadmap-list {
     grid-template-columns: 1fr;
   }
   h1 { font-size: 30px; }
-  .entry-actions, .meta-grid, .report-grid, .guard-grid, .proof-stats, .flow-map {
+  .entry-actions, .meta-grid, .report-grid, .report-digest, .guard-grid, .proof-stats, .flow-map {
     grid-template-columns: 1fr;
   }
   .report-title-row {
@@ -916,7 +1070,15 @@ function renderOperatingEntry() {
   const entry = state.operatingEntry;
   const tasks = entry.currentTasks || [];
   const p0Tasks = tasks.filter(function (task) { return task.priority === "P0"; });
-  const visibleTasks = (p0Tasks.length > 0 ? p0Tasks : tasks).slice(0, 4);
+  const activeTask = tasks.find(function (task) { return task.taskId === "p0-next-workbench-entry"; }) ||
+    p0Tasks[0] ||
+    tasks[0];
+  const taskGroups = ["P0", "P1", "P2"].map(function (priority) {
+    return {
+      priority,
+      tasks: tasks.filter(function (task) { return task.priority === priority; })
+    };
+  }).filter(function (group) { return group.tasks.length > 0; });
   const startupCommand = entry.startupCommands[0] || "pnpm self-review";
   document.getElementById("operatingTasks").innerHTML =
     '<div class="section-heading">' +
@@ -924,29 +1086,60 @@ function renderOperatingEntry() {
       '<h2>Current task queue</h2>' +
       '<p>Default next command: <strong>' + escapeHtml(startupCommand) + '</strong></p>' +
     '</div>' +
-    '<div class="task-list">' + visibleTasks.map(function (task) {
-      return '<article class="task-card">' +
-        '<header><strong>' + escapeHtml(task.title) + '</strong><span class="priority-pill">' +
-          escapeHtml(task.priority) + '</span></header>' +
-        '<p>Owner: ' + escapeHtml(task.ownerActorTypes.join(" + ")) + '</p>' +
-        '<p>Risk: ' + escapeHtml(task.riskLevel) + '; verify: ' +
-          escapeHtml(task.verificationCommands.join(" / ")) + '</p>' +
-        '<p>writeSet: ' + escapeHtml(task.suggestedWriteSet.join(", ")) + '</p>' +
-      '</article>';
+    (activeTask ? '<section class="active-task">' +
+      '<span>Active P0 WorkItem</span>' +
+      '<strong>' + escapeHtml(activeTask.taskId) + '</strong>' +
+      '<p>' + escapeHtml(activeTask.title) + '</p>' +
+      '<div class="chip-row">' +
+        (activeTask.outputs || []).slice(0, 4).map(function (output) {
+          return '<span>' + escapeHtml(output) + '</span>';
+        }).join("") +
+      '</div>' +
+    '</section>' : '') +
+    '<div class="task-list">' + taskGroups.map(function (group) {
+      return '<section class="task-lane" aria-label="' + escapeHtml(group.priority) + ' tasks">' +
+        '<h3>' + escapeHtml(group.priority) + ' lane</h3>' +
+        group.tasks.slice(0, 3).map(function (task) {
+          return '<article class="task-card">' +
+            '<header><strong>' + escapeHtml(task.title) + '</strong><span class="priority-pill">' +
+              escapeHtml(task.priority) + '</span></header>' +
+            '<p>TaskId: ' + escapeHtml(task.taskId) + '</p>' +
+            '<p>Owner: ' + escapeHtml(task.ownerActorTypes.join(" + ")) + '</p>' +
+            '<p>Risk: ' + escapeHtml(task.riskLevel) + '; verify: ' +
+              escapeHtml(task.verificationCommands.join(" / ")) + '</p>' +
+            '<p>writeSet: ' + escapeHtml(task.suggestedWriteSet.join(", ")) + '</p>' +
+            (task.riskLevel === "high"
+              ? '<p class="risk-note">Human owner decision and ApprovalGate are required before any live execution.</p>'
+              : '') +
+          '</article>';
+        }).join("") +
+      '</section>';
     }).join("") + '</div>';
 
   const leaseFields = entry.leaseTemplate.requiredFields || [];
   const stopRules = entry.continuationRules.allowStopWhen || [];
+  const mergeRule = entry.conflictRules.rules.find(function (rule) {
+    return rule.includes("MergeGate");
+  }) || "MergeGate checks contracts, docs, tests, dataClassification, and ApprovalGate.";
   document.getElementById("operatingGuards").innerHTML =
     '<div class="section-heading">' +
       '<p class="eyebrow">Harness Guards</p>' +
       '<h2>AgentWorkLease, writeSet, MergeGate, checkpoint</h2>' +
     '</div>' +
+    '<section class="lease-preview" aria-label="Current AgentWorkLease preview">' +
+      '<strong>AgentWorkLease preview for current shard</strong>' +
+      '<dl>' +
+        '<div><dt>readSet</dt><dd>config/project-operating-entry.json; generated ExecutionReportCard JSON</dd></div>' +
+        '<div><dt>writeSet</dt><dd>apps/web/bin/build-demo.mjs; packages/demo/test/web-workbench-build.test.mjs</dd></div>' +
+        '<div><dt>validationCommands</dt><dd>pnpm web:demo; pnpm check</dd></div>' +
+        '<div><dt>rollbackPlan</dt><dd>revert this static Web Workbench change and rebuild dist/web</dd></div>' +
+      '</dl>' +
+    '</section>' +
     '<div class="guard-grid">' +
       '<section class="guard-block"><strong>AgentWorkLease fields</strong><p>' +
         escapeHtml(leaseFields.join(", ")) + '</p></section>' +
       '<section class="guard-block"><strong>writeSet policy</strong><p>' +
-        escapeHtml(entry.conflictRules.defaultWriteSetPolicy) + '; MergeGate checks contracts, docs, tests, dataClassification, and ApprovalGate.</p></section>' +
+        escapeHtml(entry.conflictRules.defaultWriteSetPolicy) + '; ' + escapeHtml(mergeRule) + '</p></section>' +
       '<section class="guard-block"><strong>Stop conditions</strong><p>' +
         escapeHtml(stopRules.slice(0, 3).join(" / ")) + '</p></section>' +
       '<section class="guard-block"><strong>Harness principles</strong><p>' +
@@ -978,6 +1171,7 @@ function renderReport(card) {
     };
   });
   const candidateWorkItems = card.selfReview?.candidateWorkItems || [];
+  const firstNextAction = card.nextActions[0];
   document.getElementById("reportSurface").innerHTML =
     '<header class="report-header">' +
       '<div class="report-title-row">' +
@@ -987,11 +1181,20 @@ function renderReport(card) {
       '<p class="mock-note">' + escapeHtml(card.mockOutputNotice) + '</p>' +
       '<p>' + escapeHtml(card.summary) + '</p>' +
     '</header>' +
+    '<section class="report-digest" aria-label="Report card digest">' +
+      '<div><span>Status</span><strong>' + escapeHtml(card.status) + '</strong></div>' +
+      '<div><span>Risk</span><strong>' + escapeHtml(card.riskLevel) + '</strong></div>' +
+      '<div><span>Approval</span><strong>' + escapeHtml(card.approvalStatus) + '</strong></div>' +
+      '<div><span>Data</span><strong>' + escapeHtml(card.dataClassification) + '</strong></div>' +
+      '<div class="wide"><span>Candidate next action</span><strong>' +
+        escapeHtml(firstNextAction ? firstNextAction.action : "Human review") + '</strong></div>' +
+      '<p class="wide">ExecutionReportCard JSON is canonical. Markdown, HTML, and this Web Workbench are renders for review.</p>' +
+    '</section>' +
     renderMeta(card) +
     '<div class="report-grid">' +
       '<section><h3>Findings</h3>' + renderList(card.findings, "title") + '</section>' +
       '<section><h3>Recommendations</h3>' + renderList(card.recommendations, "title") + '</section>' +
-      '<section><h3>Next Actions</h3>' + renderList(card.nextActions, "action") + '</section>' +
+      '<section><h3>Candidate Next Actions</h3>' + renderList(card.nextActions, "action") + '</section>' +
       '<section><h3>Tool Contracts</h3>' + renderList(toolItems, "toolName") + '</section>' +
       (candidateWorkItems.length > 0
         ? '<section class="wide"><h3>Candidate WorkItems</h3>' + renderList(candidateWorkItems.map(function (item) {
@@ -1106,11 +1309,21 @@ function renderEntryModes() {
   document.querySelectorAll("[data-entry]").forEach(function (button) {
     button.addEventListener("click", function () {
       selectedEntryId = button.dataset.entry;
+      const selected = state.entryModes.find(function (entry) { return entry.id === selectedEntryId; });
+      if (selected && selected.primaryTemplateId) {
+        selectedTemplateId = selected.primaryTemplateId;
+      }
       renderEntryModes();
+      renderTemplates();
+      const card = state.cards.find(function (candidate) { return candidate.templateId === selectedTemplateId; }) || state.cards[0];
+      renderReport(card);
     });
   });
   const selected = state.entryModes.find(function (entry) { return entry.id === selectedEntryId; });
   document.getElementById("entryNote").textContent = selected.summary;
+  document.getElementById("entryActionTitle").textContent = selected.action;
+  document.getElementById("entryActionDetail").textContent = selected.summary;
+  document.getElementById("entryCommand").textContent = selected.command;
 }
 
 function renderRoadmap() {

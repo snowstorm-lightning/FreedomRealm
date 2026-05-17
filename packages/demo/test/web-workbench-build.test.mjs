@@ -7,7 +7,8 @@ import { fileURLToPath } from "node:url";
 import {
   validateAnswerCard,
   validateDocChallengeDraft,
-  validateExecutionReportCard
+  validateExecutionReportCard,
+  validateProjectOperatingEntry
 } from "../../contracts/src/index.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
@@ -58,20 +59,88 @@ test("web demo builds a multi-template static workbench from shared demo data", 
 
   const html = await readFile(path.join(repoRoot, "dist/web/index.html"), "utf8");
   const app = await readFile(path.join(repoRoot, "dist/web/app.js"), "utf8");
+  const operatingEntry = JSON.parse(await readFile(path.join(repoRoot, "config/project-operating-entry.json"), "utf8"));
+  const operatingEntryValidation = validateProjectOperatingEntry(operatingEntry);
+  assert.equal(operatingEntryValidation.ok, true, JSON.stringify(operatingEntryValidation.errors, null, 2));
+  const stateMatch = app.match(/^const state = (\{[\s\S]*?\});\nlet selectedTemplateId/u);
+  assert.ok(stateMatch, "app.js should embed a parseable state object");
+  const state = JSON.parse(stateMatch[1]);
+  assert.deepEqual(state.operatingEntry, operatingEntry);
+  assert.equal(validateProjectOperatingEntry(state.operatingEntry).ok, true);
+  const currentWorkbenchTask = state.operatingEntry.currentTasks.find(
+    (task) => task.taskId === "p0-next-workbench-entry"
+  );
+  assert.ok(currentWorkbenchTask);
+  assert.equal(currentWorkbenchTask.priority, "P0");
+  assert.deepEqual(currentWorkbenchTask.verificationCommands, ["pnpm web:demo", "pnpm check"]);
+  assert.deepEqual(currentWorkbenchTask.suggestedWriteSet, [
+    "apps/web/bin/build-demo.mjs",
+    "packages/demo/test/web-workbench-build.test.mjs"
+  ]);
+  for (const field of [
+    "goal",
+    "nonGoals",
+    "readSet",
+    "writeSet",
+    "allowedToolContracts",
+    "forbiddenActions",
+    "checkpoint",
+    "verificationCommands",
+    "deliverables",
+    "rollbackPlan"
+  ]) {
+    assert.equal(state.operatingEntry.leaseTemplate.requiredFields.includes(field), true, field);
+  }
+  assert.equal(state.operatingEntry.conflictRules.defaultWriteSetPolicy, "non-overlapping");
+  assert.equal(state.operatingEntry.conflictRules.rules.some((rule) => /MergeGate/u.test(rule)), true);
+  assert.equal(state.operatingEntry.continuationRules.allowStopWhen.some((rule) => /ApprovalGate/u.test(rule)), true);
+  assert.equal(
+    state.operatingEntry.continuationRules.allowStopWhen.some((rule) => /dataClassification/u.test(rule)),
+    true
+  );
+  assert.equal(state.operatingEntry.continuationRules.allowStopWhen.some((rule) => /writeSet/u.test(rule)), true);
+  assert.equal(state.cards.length, 7);
+  assert.equal(state.knowledgeExamples.length, 3);
+  assert.equal(new Set(state.cards.map((card) => card.jsonHref)).size, state.cards.length);
+  for (const card of state.cards) {
+    assert.match(card.jsonHref, /^\.\/data\/.+\.json$/u);
+    assert.match(card.markdownHref, /^\.\/data\/.+\.md$/u);
+    assert.equal(card.modelRoute.mock, true);
+    assert.ok(card.dataClassification);
+    assert.ok(card.redactionStatus);
+    assert.ok(card.sharePermission);
+  }
+  for (const example of state.knowledgeExamples) {
+    assert.match(example.reportCardHref, /^\.\/data\/.+\.json$/u);
+    assert.match(example.answerCardHref, /^\.\/data\/.+\.json$/u);
+    assert.match(example.docChallengeDraftHref, /^\.\/data\/.+\.json$/u);
+  }
   assert.match(html, /AI-HRMS Workbench/u);
   assert.match(html, /FreedomRealm \/ AI-HRMS/u);
   assert.match(html, /No live side effects/u);
+  assert.match(html, /No model key, connector, HR data, external write, or hidden training resource/u);
+  assert.match(html, /Recommended Next Action/u);
   assert.match(html, /Next Workbench/u);
   assert.match(html, /Knowledge Loop/u);
   assert.match(html, /Ask Maintained Docs/u);
   assert.match(app, /30 sec/u);
   assert.match(app, /5-10 min/u);
   assert.match(app, /project-operating-entry\.v1/u);
+  assert.match(app, /p0-next-workbench-entry/u);
+  assert.match(app, /p2-live-connectors/u);
+  assert.match(app, /Current task queue/u);
+  assert.match(app, /Active P0 WorkItem/u);
   assert.match(app, /AgentWorkLease/u);
+  assert.match(app, /AgentWorkLease preview/u);
   assert.match(app, /writeSet/u);
   assert.match(app, /MergeGate/u);
   assert.match(app, /checkpoint/u);
   assert.match(app, /ApprovalGate/u);
+  assert.match(app, /ExecutionReportCard JSON is canonical/u);
+  assert.match(app, /Candidate Next Actions/u);
+  assert.match(app, /Draft a bounded WorkItem/u);
+  assert.match(app, /Ask maintained docs/u);
+  assert.match(app, /Inspect a sample proof/u);
   assert.match(app, /Candidate WorkItems/u);
   assert.match(app, /candidate-work-item-001/u);
   assert.match(app, /repo_understanding_and_work_plan/u);
