@@ -72,7 +72,7 @@ Web Workbench 当前是静态 demo build：
 - 可在页面内切换模板，查看同一执行数据生成的报告卡、执行链、失败路径样例和 JSON / Markdown 输出。
 - 模板列表会显示 risk、approval、route 和 share badges；这些 badges 只来自已生成的 `ExecutionReportCard` 字段，不引入新的事实源。
 - 页面还会读取 `config/project-operating-entry.json`，展示 `Next Workbench`、当前任务清单、`AgentWorkLease`、`writeSet`、`MergeGate`、checkpoint / stop 条件，以及人工复核后的 decay prevention backlog。该 backlog 只追踪来源、验证命令、状态和实现引用，不自动创建 issue / PR、不发布 Commons、不训练模型、不修改仓库。
-- 页面会读取 `docs/zh-CN/execution-plans/active/` 的 active Markdown 计划，展示计划入口、目标摘要和 human decision 数量。active plan 卡片是只读入口，不是自动实现授权；例如 Go 控制面 skeleton 仍需要 human owner 决定 module path、HTTP 框架、Rust kernel 集成方式、首期 endpoint 范围和本地存储方式。
+- 页面会读取 `docs/zh-CN/execution-plans/active/` 的 active Markdown 计划，展示计划入口、目标摘要和 human decision 数量。active plan 卡片是只读入口，不是自动实现授权；缺少 `## 状态` 的计划会显示为推断 active，以便提示 human owner 检查是否需要补状态或归档。例如 Go 控制面 skeleton 仍需要 human owner 决定 module path、HTTP 框架、Rust kernel 集成方式、首期 endpoint 范围和本地存储方式。
 - 报告卡预览会显示 human decision checkpoint，来源是 JSON 报告卡中的 `status`、`approvalStatus`、`humanOwnerId`、`nextActions` 和 demo `ApprovalGate`，用于说明哪些动作必须由人复核后才能继续。
 - `Candidate WorkItems` 和 `Candidate WorkShards` 必须显式显示候选状态、owner、`approvalRequired`、`writeSet` 和验证命令；它们不是已经接受的分派，也不会自动升级为正式 WorkItem。
 - 额外展示 3 个内置知识问答样例，用本地 deterministic mock semantic search 生成 `AnswerCard`、`DocChallengeDraft` 和报告卡。
