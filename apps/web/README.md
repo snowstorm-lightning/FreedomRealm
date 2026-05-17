@@ -17,6 +17,8 @@ pnpm web:demo
 
 The generated page is written to `dist/web/index.html`.
 
+Visible UI frame copy is bilingual Chinese / English so reviewers can give feedback quickly. Canonical report-card body fields are still rendered from `ExecutionReportCard` JSON as written; the Web Workbench does not automatically translate, summarize, or rewrite those facts.
+
 The current build renders seven built-in templates:
 
 - `repo_understanding_and_work_plan`

@@ -186,6 +186,11 @@ test("web demo builds a multi-template static workbench from shared demo data", 
     "无 secret / No secret",
     "保留 ApprovalGate / ApprovalGate preserved"
   ]);
+  assert.match(state.languageBoundaryNotice, /UI frame is bilingual.+canonical JSON source text/u);
+  assert.equal(state.languageBoundary.length, 3);
+  assert.equal(state.languageBoundary[0].label, "页面框架 / UI frame");
+  assert.match(state.languageBoundary[1].detail, /canonical JSON.+no automatic translation/u);
+  assert.match(state.languageBoundary[2].detail, /candidate WorkItem.+human owner review/u);
   assert.equal(state.modeCards.length, 5);
   assert.deepEqual(
     state.modeCards.map((modeCard) => modeCard.mode),
@@ -254,6 +259,8 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   assert.match(html, /无模型 key、连接器、HR 数据、外部写入或隐藏训练资源/u);
   assert.match(html, /首屏反馈目标 \/ First-screen feedback targets/u);
   assert.match(html, /演示安全边界 \/ Demo safety boundaries/u);
+  assert.match(html, /页面框架提供中英双语；报告卡正文保持 canonical JSON 原文/u);
+  assert.match(html, /UI frame is bilingual; report-card body keeps canonical JSON source text/u);
   assert.match(html, /Recommended Next Action/u);
   assert.match(html, /推荐下一步 \/ Recommended Next Action/u);
   assert.match(html, /Owner decision queue/u);
@@ -285,6 +292,12 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   assert.match(app, /无真实连接器 \/ No real connector/u);
   assert.match(app, /无生产数据 \/ No production data/u);
   assert.match(app, /保留 ApprovalGate \/ ApprovalGate preserved/u);
+  assert.match(app, /页面框架 \/ UI frame/u);
+  assert.match(app, /双语展示边界 \/ Bilingual display boundary/u);
+  assert.match(app, /报告卡原文 \/ Report-card source text/u);
+  assert.match(app, /不自动翻译、摘要或改写事实/u);
+  assert.match(app, /no automatic translation, summarization, or fact rewriting/u);
+  assert.match(app, /修改路径 \/ Change path/u);
   assert.match(app, /Tiny Mode/u);
   assert.match(app, /Demo Mode/u);
   assert.match(app, /Local Mode/u);

@@ -67,6 +67,7 @@ Web Workbench 当前是静态 demo build：
 
 - 默认展示 7 个内置模板：`repo_understanding_and_work_plan`、`knowledge_navigation_and_challenge`、`external_agent_connector_safety_demo`、`issue_pr_triage_and_review`、`personal_work_proof`、`project_self_review_and_decay_prevention` 和 `docs_review_and_improvement`。
 - 页面文字采用中英双语并优先服务快速反馈；`Review Prompts` 会引导评审者围绕定位、治理边界、下一步决策和页面信息负担提出修改意见。
+- 中英双语只属于页面框架、导航、控制和反馈提示；报告卡正文仍按 canonical `ExecutionReportCard` JSON 原文渲染，不自动翻译、摘要或改写事实。若需要补充中文或英文事实源，应转成候选 `WorkItem` 并由 human owner 复核。
 - `Running Modes` 会展示 `Tiny Mode`、`Demo Mode`、`Local Mode`、`Community Mode` 和 `Enterprise Mode` 的适用对象与治理边界，说明 Windows 个人试用、mock 闭环、本地长期使用、社区实例和强治理组织的差异；档位降级不降低 `ApprovalGate`、审计、数据分级或隐私边界。
 - `Owner Decision Queue` 会把 Go 控制面计划、P2 live connector 候选和 self-review backlog 中需要 human owner 的 checkpoint 汇总展示；这些条目只是候选决策，不是自动分派，也不会把拒绝、延后、缩小范围或转交记为负面贡献。
 - 可在页面内切换模板，查看同一执行数据生成的报告卡、执行链、失败路径样例和 JSON / Markdown 输出。

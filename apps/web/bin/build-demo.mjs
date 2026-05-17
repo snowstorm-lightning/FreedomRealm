@@ -159,6 +159,26 @@ const safetyBadges = [
   "保留 ApprovalGate / ApprovalGate preserved"
 ];
 
+const languageBoundaryNotice =
+  "页面框架提供中英双语；报告卡正文保持 canonical JSON 原文。 / UI frame is bilingual; report-card body keeps canonical JSON source text.";
+
+const languageBoundary = [
+  {
+    label: "页面框架 / UI frame",
+    detail: "导航、控制、提示和反馈入口提供中英双语。 / Navigation, controls, prompts, and feedback surfaces are bilingual."
+  },
+  {
+    label: "报告卡原文 / Report-card source text",
+    detail:
+      "报告卡正文按 canonical JSON 原文展示，不自动翻译、摘要或改写事实。 / Report-card body content is rendered from canonical JSON as written; no automatic translation, summarization, or fact rewriting."
+  },
+  {
+    label: "修改路径 / Change path",
+    detail:
+      "需要补中文或英文事实源时，转成候选 WorkItem 并由 human owner 复核。 / Missing Chinese or English source content becomes a candidate WorkItem for human owner review."
+  }
+];
+
 const modeCards = [
   {
     mode: "Tiny Mode",
@@ -365,6 +385,7 @@ function buildHtml() {
             <p class="eyebrow">下一步驾驶舱 / Next action cockpit</p>
             <h1>让 AI 协助工作可见、有边界、可复核。 / Make AI-assisted work visible, bounded, and reviewable.</h1>
             <p class="lead">选择入口、查看治理模板，并复核 canonical JSON 报告卡；无需连接模型、账号、连接器或生产数据。 / Pick an entry path, inspect a governed template, and review the canonical JSON report card without connecting a model, account, connector, or production data.</p>
+            <p class="language-note">${languageBoundaryNotice}</p>
           </div>
           <div class="hero-status" aria-label="MVP 状态 / MVP status">
             <span>运行契约 / Runtime contract</span>
@@ -637,6 +658,16 @@ h3 {
   color: var(--muted);
   font-size: 16px;
   line-height: 1.55;
+}
+.language-note {
+  margin: 12px 0 0;
+  max-width: 820px;
+  border-left: 3px solid var(--accent);
+  padding-left: 10px;
+  color: var(--accent-strong);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.45;
 }
 .hero-status, .panel, .template-rail, .report-surface {
   background: var(--panel);
@@ -1341,6 +1372,31 @@ h3 {
   color: var(--warn);
   line-height: 1.45;
 }
+.language-boundary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 14px 0 0;
+}
+.language-boundary article {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fbfcfa;
+  padding: 10px;
+}
+.language-boundary span {
+  display: block;
+  color: var(--accent-strong);
+  font-size: 12px;
+  font-weight: 760;
+}
+.language-boundary p {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
 .report-digest {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1668,6 +1724,9 @@ h3 {
     grid-template-columns: 1fr;
   }
   .evidence-strip {
+    grid-template-columns: 1fr;
+  }
+  .language-boundary {
     grid-template-columns: 1fr;
   }
   .decision-checkpoint {
@@ -2027,6 +2086,14 @@ function renderSafetyBadges() {
   }).join("");
 }
 
+function renderLanguageBoundary() {
+  return '<section class="language-boundary" aria-label="双语展示边界 / Bilingual display boundary">' +
+    state.languageBoundary.map(function (item) {
+      return '<article><span>' + escapeHtml(item.label) + '</span><p>' + escapeHtml(item.detail) + '</p></article>';
+    }).join("") +
+  '</section>';
+}
+
 function renderModeCards() {
   document.getElementById("modeCards").innerHTML = state.modeCards.map(function (item) {
     return '<article class="mode-card">' +
@@ -2118,6 +2185,7 @@ function renderReport(card) {
       '</div>' +
       '<p class="mock-note">' + escapeHtml(card.mockOutputNotice) + '</p>' +
       '<p>' + escapeHtml(card.summary) + '</p>' +
+      renderLanguageBoundary() +
     '</header>' +
     '<section class="report-digest" aria-label="报告卡摘要 / Report card digest">' +
       '<div><span>状态 / Status</span><strong>' + escapeHtml(card.status) + '</strong></div>' +
@@ -2400,6 +2468,8 @@ const state = {
   reviewPrompts,
   feedbackTargets,
   safetyBadges,
+  languageBoundaryNotice,
+  languageBoundary,
   modeCards,
   cards: executions.map(toWorkbenchCard),
   knowledgeExamples: knowledgeExecutions.map(toKnowledgeExample)
