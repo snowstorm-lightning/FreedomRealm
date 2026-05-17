@@ -176,11 +176,15 @@ if (await pathExists("apps")) {
     const hasReadme = await pathExists(path.join(appPath, "README.md"));
     const hasPackage = await pathExists(path.join(appPath, "package.json"));
     const hasPyproject = await pathExists(path.join(appPath, "pyproject.toml"));
+    const hasGoModule = await pathExists(path.join(appPath, "go.mod"));
     if (!hasReadme) {
       addIssue(errors, "app_missing_readme", `${normalizeWorkspacePath(appPath)} must explain its owner, runtime, and local commands.`, appPath);
     }
-    if (!hasPackage && !hasPyproject) {
-      addIssue(errors, "app_missing_runtime_manifest", `${normalizeWorkspacePath(appPath)} must declare package.json or pyproject.toml.`, appPath);
+    if (!hasPackage && !hasPyproject && !hasGoModule) {
+      addIssue(errors, "app_missing_runtime_manifest", `${normalizeWorkspacePath(appPath)} must declare package.json, pyproject.toml, or go.mod.`, appPath);
+    }
+    if (hasGoModule && !(await pathExists(path.join(appPath, "cmd", entry.name, "main.go")))) {
+      addIssue(errors, "go_app_missing_entrypoint", `${normalizeWorkspacePath(appPath)} must contain cmd/${entry.name}/main.go.`, appPath);
     }
   }
 }
