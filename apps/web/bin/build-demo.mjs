@@ -32,71 +32,71 @@ const knowledgeQueries = [
 const entryModes = [
   {
     id: "goal",
-    label: "I have a goal",
+    label: "有明确目标 / I have a goal",
     summary:
-      "Start from a task goal, select a governed template, and generate a reviewable work proof.",
+      "从任务目标开始，选择治理模板，生成可复核工作凭证。 / Start from a task goal, select a governed template, and generate a reviewable work proof.",
     primaryTemplateId: "repo_understanding_and_work_plan",
-    action: "Draft a bounded WorkItem",
+    action: "起草有边界的 WorkItem / Draft a bounded WorkItem",
     command: "pnpm demo -- --template repo_understanding_and_work_plan"
   },
   {
     id: "explore",
-    label: "I want to explore",
+    label: "先探索 / I want to explore",
     summary:
-      "Start without a fixed identity. Use interests, materials, constraints, and time to choose a small proof.",
+      "无需固定身份，从兴趣、材料、约束和时间中选择一个小凭证。 / Start without a fixed identity. Use interests, materials, constraints, and time to choose a small proof.",
     primaryTemplateId: "knowledge_navigation_and_challenge",
-    action: "Ask maintained docs",
+    action: "询问维护文档 / Ask maintained docs",
     command: "pnpm knowledge:demo -- --query \"AI-HRMS 下一步应该做什么？\""
   },
   {
     id: "demo",
-    label: "Show me an example",
+    label: "查看示例 / Show me an example",
     summary:
-      "Use built-in mock data to inspect the execution chain, report card, and next actions.",
+      "用内置 mock 数据查看执行链、报告卡和候选下一步。 / Use built-in mock data to inspect the execution chain, report card, and next actions.",
     primaryTemplateId: "personal_work_proof",
-    action: "Inspect a sample proof",
+    action: "查看样例凭证 / Inspect a sample proof",
     command: "pnpm web:demo"
   }
 ];
 
 const roadmap = [
   {
-    horizon: "Now",
-    title: "Mock software MVP",
-    detail: "CLI and Web use the same demo engine, template manifests, and JSON report-card contract."
+    horizon: "当前 / Now",
+    title: "Mock 软件 MVP / Mock software MVP",
+    detail: "CLI 与 Web 共用 Demo engine、模板 manifest 和 JSON 报告卡契约。 / CLI and Web use the same demo engine, template manifests, and JSON report-card contract."
   },
   {
-    horizon: "Next",
-    title: "Knowledge navigation",
-    detail: "Semantic source lookup, AnswerCard, and DocChallenge flows turn questions into reviewable work."
+    horizon: "下一步 / Next",
+    title: "知识导航 / Knowledge navigation",
+    detail: "语义来源检索、AnswerCard 与 DocChallenge 把问题转成可复核工作。 / Semantic source lookup, AnswerCard, and DocChallenge flows turn questions into reviewable work."
   },
   {
-    horizon: "Later",
-    title: "Community proof loops",
-    detail: "Public cases, shared templates, and capability proofs grow only after review, redaction, and approval."
+    horizon: "后续 / Later",
+    title: "社区凭证循环 / Community proof loops",
+    detail: "公开案例、共享模板和能力凭证只能在复核、脱敏和审批后增长。 / Public cases, shared templates, and capability proofs grow only after review, redaction, and approval."
   }
 ];
 
 const proofStats = [
   {
-    label: "Understand",
-    value: "30 sec",
-    detail: "Positioning must be obvious without reading the architecture."
+    label: "理解 / Understand",
+    value: "30 秒 / 30 sec",
+    detail: "不读架构也能看懂定位。 / Positioning must be obvious without reading the architecture."
   },
   {
-    label: "Run",
-    value: "5-10 min",
-    detail: "Demo Mode works with mock data and no model key."
+    label: "运行 / Run",
+    value: "5-10 分钟 / 5-10 min",
+    detail: "Demo Mode 使用 mock 数据，无需模型 key。 / Demo Mode works with mock data and no model key."
   },
   {
-    label: "Proof",
-    value: "30 min",
-    detail: "A first AI-assisted work proof is visible and reviewable."
+    label: "凭证 / Proof",
+    value: "30 分钟 / 30 min",
+    detail: "首个 AI 协助工作凭证可见、可复核。 / A first AI-assisted work proof is visible and reviewable."
   },
   {
-    label: "Governance",
-    value: "0 bypass",
-    detail: "High-risk actions still require ApprovalGate."
+    label: "治理 / Governance",
+    value: "0 绕过 / 0 bypass",
+    detail: "高风险动作仍需 ApprovalGate。 / High-risk actions still require ApprovalGate."
   }
 ];
 
@@ -181,84 +181,84 @@ function toKnowledgeExample(execution, index) {
 
 function buildHtml() {
   return `<!doctype html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>AI-HRMS Workbench</title>
+    <title>AI-HRMS Workbench / AI-HRMS 工作台</title>
     <link rel="stylesheet" href="./styles.css">
   </head>
   <body>
     <main class="shell">
-      <section class="hero" aria-label="Workbench overview">
+      <section class="hero" aria-label="工作台概览 / Workbench overview">
         <div class="topbar">
           <div class="brand-lockup">
             <span class="brand-mark" aria-hidden="true">FR</span>
             <div>
               <p class="eyebrow">FreedomRealm / AI-HRMS</p>
-              <strong>Governed workbench</strong>
+              <strong>治理工作台 / Governed workbench</strong>
             </div>
           </div>
-          <div class="topbar-actions" aria-label="Runtime status">
-            <span>Demo Mode</span>
-            <span>Mock route</span>
-            <span>JSON source</span>
-            <span>OS-neutral</span>
+          <div class="topbar-actions" aria-label="运行状态 / Runtime status">
+            <span>演示档位 / Demo Mode</span>
+            <span>Mock 路由 / Mock route</span>
+            <span>JSON 事实源 / JSON source</span>
+            <span>跨平台 / OS-neutral</span>
           </div>
         </div>
 
         <div class="command-board">
           <div class="command-copy">
-            <p class="eyebrow">Next action cockpit</p>
-            <h1>Make AI-assisted work visible, bounded, and reviewable.</h1>
-            <p class="lead">Pick an entry path, inspect a governed template, and review the canonical JSON report card without connecting a model, account, connector, or production data.</p>
+            <p class="eyebrow">下一步驾驶舱 / Next action cockpit</p>
+            <h1>让 AI 协助工作可见、有边界、可复核。 / Make AI-assisted work visible, bounded, and reviewable.</h1>
+            <p class="lead">选择入口、查看治理模板，并复核 canonical JSON 报告卡；无需连接模型、账号、连接器或生产数据。 / Pick an entry path, inspect a governed template, and review the canonical JSON report card without connecting a model, account, connector, or production data.</p>
           </div>
-          <div class="hero-status" aria-label="MVP status">
-            <span>Runtime contract</span>
-            <strong>No live side effects</strong>
-            <small>No model key, connector, HR data, external write, or hidden training resource.</small>
+          <div class="hero-status" aria-label="MVP 状态 / MVP status">
+            <span>运行契约 / Runtime contract</span>
+            <strong>无实时副作用 / No live side effects</strong>
+            <small>无模型 key、连接器、HR 数据、外部写入或隐藏训练资源。 / No model key, connector, HR data, external write, or hidden training resource.</small>
           </div>
-          <div class="proof-stats" id="proofStats" aria-label="MVP proof targets"></div>
-          <div class="flow-map" aria-label="Governed execution flow">
-            <span>WorkItem</span>
-            <span>AgentActor</span>
-            <span>ToolContract</span>
-            <span>ApprovalGate</span>
-            <span>Observation</span>
-            <span>ReportCard</span>
+          <div class="proof-stats" id="proofStats" aria-label="MVP 凭证目标 / MVP proof targets"></div>
+          <div class="flow-map" aria-label="治理执行流 / Governed execution flow">
+            <span>工作单元 / WorkItem</span>
+            <span>智能体 / AgentActor</span>
+            <span>工具契约 / ToolContract</span>
+            <span>审批闸门 / ApprovalGate</span>
+            <span>观测记录 / Observation</span>
+            <span>报告卡 / ReportCard</span>
           </div>
         </div>
       </section>
 
-      <section class="entry-strip" aria-label="Entry modes">
+      <section class="entry-strip" aria-label="入口模式 / Entry modes">
         <div class="entry-copy">
-          <h2>Choose how to start</h2>
-          <p id="entryNote">Start from a task goal, select a governed template, and generate a reviewable work proof.</p>
-          <div class="entry-recommendation" aria-label="Current entry recommendation">
-            <span>Recommended Next Action</span>
-            <strong id="entryInlineActionTitle">Draft a bounded WorkItem</strong>
+          <h2>选择开始方式 / Choose how to start</h2>
+          <p id="entryNote">从任务目标开始，选择治理模板，生成可复核工作凭证。 / Start from a task goal, select a governed template, and generate a reviewable work proof.</p>
+          <div class="entry-recommendation" aria-label="当前入口建议 / Current entry recommendation">
+            <span>推荐下一步 / Recommended Next Action</span>
+            <strong id="entryInlineActionTitle">起草有边界的 WorkItem / Draft a bounded WorkItem</strong>
             <code id="entryInlineCommand">pnpm demo -- --template repo_understanding_and_work_plan</code>
           </div>
         </div>
         <div class="entry-actions" id="entryModes"></div>
       </section>
 
-      <section class="decision-strip" aria-label="Recommended next action">
+      <section class="decision-strip" aria-label="推荐下一步 / Recommended next action">
         <div>
-          <p class="eyebrow">Recommended Next Action</p>
-          <h2 id="entryActionTitle">Draft a bounded WorkItem</h2>
-          <p id="entryActionDetail">Start from a task goal, select a governed template, and generate a reviewable work proof.</p>
+          <p class="eyebrow">推荐下一步 / Recommended Next Action</p>
+          <h2 id="entryActionTitle">起草有边界的 WorkItem / Draft a bounded WorkItem</h2>
+          <p id="entryActionDetail">从任务目标开始，选择治理模板，生成可复核工作凭证。 / Start from a task goal, select a governed template, and generate a reviewable work proof.</p>
         </div>
         <div class="command-tile">
-          <span>Local command</span>
+          <span>本地命令 / Local command</span>
           <code id="entryCommand">pnpm demo -- --template repo_understanding_and_work_plan</code>
         </div>
       </section>
 
-      <section class="next-workbench" aria-label="Next Workbench">
+      <section class="next-workbench" aria-label="下一步工作台 / Next Workbench">
         <div class="section-heading">
-          <p class="eyebrow">Next Workbench</p>
-          <h2>Tasks, leases, conflict guards, and stopping rules</h2>
+          <p class="eyebrow">下一步工作台 / Next Workbench</p>
+          <h2>任务、租约、冲突防护与停止规则 / Tasks, leases, conflict guards, and stopping rules</h2>
         </div>
         <div class="next-grid">
           <article class="panel" id="operatingTasks"></article>
@@ -266,47 +266,47 @@ function buildHtml() {
         </div>
       </section>
 
-      <section class="workbench" aria-label="Workbench">
-        <aside class="template-rail" aria-label="Template list">
+      <section class="workbench" aria-label="工作台 / Workbench">
+        <aside class="template-rail" aria-label="模板列表 / Template list">
           <div class="section-heading">
-            <p class="eyebrow">Templates</p>
-            <h2>First usable paths</h2>
+            <p class="eyebrow">模板 / Templates</p>
+            <h2>首批可用路径 / First usable paths</h2>
           </div>
           <div id="templateList" class="template-list"></div>
         </aside>
 
-        <article class="report-surface" id="reportSurface" aria-label="Execution report card preview"></article>
+        <article class="report-surface" id="reportSurface" aria-label="执行报告卡预览 / Execution report card preview"></article>
 
-        <aside class="right-rail" aria-label="Execution details">
+        <aside class="right-rail" aria-label="执行细节 / Execution details">
           <section class="panel">
             <div class="section-heading">
-              <p class="eyebrow">Execution Chain</p>
-              <h2>Governed loop</h2>
+              <p class="eyebrow">执行链 / Execution Chain</p>
+              <h2>治理闭环 / Governed loop</h2>
             </div>
             <ol id="executionTrace" class="trace-list"></ol>
           </section>
 
           <section class="panel">
             <div class="section-heading">
-              <p class="eyebrow">Knowledge Loop</p>
-              <h2>Next product slice</h2>
+              <p class="eyebrow">知识循环 / Knowledge Loop</p>
+              <h2>下一段产品切片 / Next product slice</h2>
             </div>
             <div class="knowledge-box">
               <strong>AnswerCard</strong>
-              <span>Answer with source references from maintained docs.</span>
+              <span>用维护文档的来源引用回答。 / Answer with source references from maintained docs.</span>
             </div>
             <div class="knowledge-box">
               <strong>DocChallenge</strong>
-              <span>Let users challenge a specific source point, then create a reviewable work item.</span>
+              <span>允许用户挑战具体来源点，再形成可复核工作项。 / Let users challenge a specific source point, then create a reviewable work item.</span>
             </div>
           </section>
         </aside>
       </section>
 
-      <section class="knowledge-demo" aria-label="Ask maintained docs">
+      <section class="knowledge-demo" aria-label="询问维护文档 / Ask maintained docs">
         <div class="section-heading">
-          <p class="eyebrow">Ask Maintained Docs</p>
-          <h2>Source-backed answers and reviewable challenges</h2>
+          <p class="eyebrow">询问维护文档 / Ask Maintained Docs</p>
+          <h2>有来源的回答与可复核挑战 / Source-backed answers and reviewable challenges</h2>
         </div>
         <div class="knowledge-layout">
           <div class="question-list" id="knowledgeQuestionList"></div>
@@ -314,10 +314,10 @@ function buildHtml() {
         </div>
       </section>
 
-      <section class="roadmap" aria-label="Roadmap">
+      <section class="roadmap" aria-label="路线图 / Roadmap">
         <div class="section-heading">
-          <p class="eyebrow">Execution Plan</p>
-          <h2>From visible MVP to longer-term system</h2>
+          <p class="eyebrow">执行计划 / Execution Plan</p>
+          <h2>从可见 MVP 到长期系统 / From visible MVP to longer-term system</h2>
         </div>
         <div id="roadmapList" class="roadmap-list"></div>
       </section>
@@ -408,6 +408,7 @@ button, a { font: inherit; }
   padding: 5px 10px;
   font-size: 12px;
   font-weight: 730;
+  line-height: 1.2;
 }
 .command-board {
   display: grid;
@@ -437,12 +438,14 @@ h1 {
   line-height: 1.08;
   font-weight: 780;
   letter-spacing: 0;
+  overflow-wrap: anywhere;
 }
 h2 {
   margin: 0;
   font-size: 20px;
   line-height: 1.25;
   letter-spacing: 0;
+  overflow-wrap: anywhere;
 }
 h3 {
   margin: 0 0 10px;
@@ -451,6 +454,7 @@ h3 {
   color: var(--muted);
   text-transform: uppercase;
   letter-spacing: 0;
+  overflow-wrap: anywhere;
 }
 .lead {
   margin: 14px 0 0;
@@ -1201,14 +1205,14 @@ function renderList(items, titleKey) {
 
 function renderMeta(card) {
   const entries = [
-    ["Schema", card.schemaVersion],
-    ["Risk", card.riskLevel],
-    ["Approval", card.approvalStatus],
-    ["Share", card.sharePermission],
-    ["Model route", card.modelRoute.actual + (card.modelRoute.mock ? " / mock" : "")],
-    ["Data", card.dataClassification + " / " + card.redactionStatus],
-    ["Inputs", String(card.metrics.inputDocumentCount)],
-    ["Human review", card.metrics.requiresHumanReview ? "required" : "not required"]
+    ["契约 / Schema", card.schemaVersion],
+    ["风险 / Risk", card.riskLevel],
+    ["审批 / Approval", card.approvalStatus],
+    ["共享 / Share", card.sharePermission],
+    ["模型路由 / Model route", card.modelRoute.actual + (card.modelRoute.mock ? " / mock" : "")],
+    ["数据 / Data", card.dataClassification + " / " + card.redactionStatus],
+    ["输入 / Inputs", String(card.metrics.inputDocumentCount)],
+    ["人工复核 / Human review", card.metrics.requiresHumanReview ? "required" : "not required"]
   ];
   return '<dl class="meta-grid">' + entries.map(function (entry) {
     return '<div><dt>' + escapeHtml(entry[0]) + '</dt><dd>' + escapeHtml(entry[1]) + '</dd></div>';
@@ -1232,11 +1236,11 @@ function renderOperatingEntry() {
   document.getElementById("operatingTasks").innerHTML =
     '<div class="section-heading">' +
       '<p class="eyebrow">' + escapeHtml(entry.schemaVersion) + '</p>' +
-      '<h2>Current task queue</h2>' +
-      '<p>Default next command: <strong>' + escapeHtml(startupCommand) + '</strong></p>' +
+      '<h2>当前任务队列 / Current task queue</h2>' +
+      '<p>默认下一条命令 / Default next command: <strong>' + escapeHtml(startupCommand) + '</strong></p>' +
     '</div>' +
     (activeTask ? '<section class="active-task">' +
-      '<span>Active P0 WorkItem</span>' +
+      '<span>当前 P0 WorkItem / Active P0 WorkItem</span>' +
       '<strong>' + escapeHtml(activeTask.taskId) + '</strong>' +
       '<p>' + escapeHtml(activeTask.title) + '</p>' +
       '<div class="chip-row">' +
@@ -1246,19 +1250,19 @@ function renderOperatingEntry() {
       '</div>' +
     '</section>' : '') +
     '<div class="task-list">' + taskGroups.map(function (group) {
-      return '<section class="task-lane" aria-label="' + escapeHtml(group.priority) + ' tasks">' +
-        '<h3>' + escapeHtml(group.priority) + ' lane</h3>' +
+      return '<section class="task-lane" aria-label="' + escapeHtml(group.priority) + ' 任务 / tasks">' +
+        '<h3>' + escapeHtml(group.priority) + ' 队列 / lane</h3>' +
         group.tasks.slice(0, 3).map(function (task) {
           return '<article class="task-card">' +
             '<header><strong>' + escapeHtml(task.title) + '</strong><span class="priority-pill">' +
               escapeHtml(task.priority) + '</span></header>' +
-            '<p>TaskId: ' + escapeHtml(task.taskId) + '</p>' +
-            '<p>Owner: ' + escapeHtml(task.ownerActorTypes.join(" + ")) + '</p>' +
-            '<p>Risk: ' + escapeHtml(task.riskLevel) + '; verify: ' +
+            '<p>任务 ID / TaskId: ' + escapeHtml(task.taskId) + '</p>' +
+            '<p>负责人 / Owner: ' + escapeHtml(task.ownerActorTypes.join(" + ")) + '</p>' +
+            '<p>风险 / Risk: ' + escapeHtml(task.riskLevel) + '; 验证 / verify: ' +
               escapeHtml(task.verificationCommands.join(" / ")) + '</p>' +
             '<p>writeSet: ' + escapeHtml(task.suggestedWriteSet.join(", ")) + '</p>' +
             (task.riskLevel === "high"
-              ? '<p class="risk-note">Human owner decision and ApprovalGate are required before any live execution.</p>'
+              ? '<p class="risk-note">任何 live 执行前都需要 human owner 决策和 ApprovalGate。 / Human owner decision and ApprovalGate are required before any live execution.</p>'
               : '') +
           '</article>';
         }).join("") +
@@ -1275,27 +1279,27 @@ function renderOperatingEntry() {
   }).join("");
   document.getElementById("operatingGuards").innerHTML =
     '<div class="section-heading">' +
-      '<p class="eyebrow">Harness Guards</p>' +
-      '<h2>AgentWorkLease, writeSet, MergeGate, checkpoint</h2>' +
+      '<p class="eyebrow">执行防护 / Harness Guards</p>' +
+      '<h2>AgentWorkLease、writeSet、MergeGate 与 checkpoint / AgentWorkLease, writeSet, MergeGate, checkpoint</h2>' +
     '</div>' +
-    '<section class="lease-preview" aria-label="Current AgentWorkLease preview">' +
-      '<strong>AgentWorkLease preview for current shard</strong>' +
+    '<section class="lease-preview" aria-label="当前 AgentWorkLease 预览 / Current AgentWorkLease preview">' +
+      '<strong>当前 shard 的 AgentWorkLease 预览 / AgentWorkLease preview for current shard</strong>' +
       '<dl>' +
         '<div><dt>readSet</dt><dd>config/project-operating-entry.json; generated ExecutionReportCard JSON</dd></div>' +
         '<div><dt>writeSet</dt><dd>apps/web/bin/build-demo.mjs; packages/demo/test/web-workbench-build.test.mjs</dd></div>' +
         '<div><dt>validationCommands</dt><dd>pnpm web:demo; pnpm check</dd></div>' +
-        '<div><dt>rollbackPlan</dt><dd>revert this static Web Workbench change and rebuild dist/web</dd></div>' +
+        '<div><dt>rollbackPlan</dt><dd>回退本次静态 Web Workbench 文案并重建 dist/web / revert this static Web Workbench change and rebuild dist/web</dd></div>' +
       '</dl>' +
     '</section>' +
     '<div class="guard-grid">' +
-      '<section class="guard-block"><strong>AgentWorkLease fields</strong><p>' +
+      '<section class="guard-block"><strong>AgentWorkLease 字段 / AgentWorkLease fields</strong><p>' +
         escapeHtml(leaseFields.join(", ")) + '</p></section>' +
-      '<section class="guard-block"><strong>writeSet policy</strong><p>' +
+      '<section class="guard-block"><strong>writeSet 策略 / writeSet policy</strong><p>' +
         escapeHtml(entry.conflictRules.defaultWriteSetPolicy) + '; ' + escapeHtml(mergeRule) + '</p>' +
         '<ul>' + conflictRuleItems + '</ul></section>' +
-      '<section class="guard-block"><strong>Stop conditions</strong><p>' +
+      '<section class="guard-block"><strong>停止条件 / Stop conditions</strong><p>' +
         escapeHtml(stopRules.slice(0, 3).join(" / ")) + '</p></section>' +
-      '<section class="guard-block"><strong>Harness principles</strong><p>' +
+      '<section class="guard-block"><strong>执行原则 / Harness principles</strong><p>' +
         escapeHtml(entry.harnessPrinciples.slice(0, 3).join(" / ")) + '</p></section>' +
     '</div>';
 }
@@ -1316,32 +1320,32 @@ function renderHumanDecisionCheckpoint(card, firstNextAction) {
   const approvalGateDecision = card.approvalGate?.decision || card.approvalStatus;
   const decisionItems = [
     {
-      label: "Owner decision",
-      title: reviewRequired ? card.humanOwnerId : "No owner action pending",
+      label: "Owner 决策 / Owner decision",
+      title: reviewRequired ? card.humanOwnerId : "无 owner 动作待处理 / No owner action pending",
       detail: reviewRequired
-        ? "Treat this output as candidate evidence until a HumanActor accepts, edits, defers, or rejects it."
-        : "The current report card does not require a human checkpoint before reading the rendered output."
+        ? "HumanActor 接受、编辑、延后或拒绝前，只能把输出视为候选证据。 / Treat this output as candidate evidence until a HumanActor accepts, edits, defers, or rejects it."
+        : "阅读渲染输出前，当前报告卡不需要人工 checkpoint。 / The current report card does not require a human checkpoint before reading the rendered output."
     },
     {
       label: "ApprovalGate",
       title: approvalGateDecision,
       detail: approvalNeeded
-        ? "Do not execute side effects, publish, assign, share, or train from this card before approval."
-        : "No high-risk side effect is requested by this demo card."
+        ? "审批前，不得据此执行副作用、发布、分派、共享或训练。 / Do not execute side effects, publish, assign, share, or train from this card before approval."
+        : "该 demo 卡未请求高风险副作用。 / No high-risk side effect is requested by this demo card."
     },
     {
-      label: "Next choice",
-      title: firstNextAction ? firstNextAction.action : "No candidate action",
+      label: "下一选择 / Next choice",
+      title: firstNextAction ? firstNextAction.action : "无候选动作 / No candidate action",
       detail: firstNextAction
         ? firstNextAction.reason
-        : "Keep the card as an audit artifact; no automatic WorkItem is created."
+        : "保留为审计材料，不自动创建 WorkItem。 / Keep the card as an audit artifact; no automatic WorkItem is created."
     }
   ];
 
-  return '<section class="decision-checkpoint" aria-label="Human decision checkpoint">' +
-    '<header><p class="eyebrow">Human decision checkpoint</p>' +
-      '<h3>What needs a person before this moves forward</h3>' +
-      '<p>AI output remains a recommendation. Refusal, delay, scope reduction, or transfer must not become a negative contribution signal.</p></header>' +
+  return '<section class="decision-checkpoint" aria-label="人工决策 checkpoint / Human decision checkpoint">' +
+    '<header><p class="eyebrow">人工决策 checkpoint / Human decision checkpoint</p>' +
+      '<h3>继续前需要人确认什么 / What needs a person before this moves forward</h3>' +
+      '<p>AI 输出仍是建议，不是命令；拒绝、延后、缩小范围或转交不能成为负面贡献信号。 / AI output remains a recommendation. Refusal, delay, scope reduction, or transfer must not become a negative contribution signal.</p></header>' +
     decisionItems.map(function (item) {
       return '<article><span>' + escapeHtml(item.label) + '</span><strong>' + escapeHtml(item.title) +
         '</strong><p>' + escapeHtml(item.detail) + '</p></article>';
@@ -1353,7 +1357,7 @@ function renderReport(card) {
   const toolItems = card.toolContractRefs.map(function (tool) {
     return {
       toolName: tool.toolName,
-      detail: tool.riskLevel + " risk, autoExecute=" + String(tool.autoExecute)
+      detail: tool.riskLevel + " 风险 / risk, autoExecute=" + String(tool.autoExecute)
     };
   });
   const inputItems = card.inputRefs.map(function (input) {
@@ -1373,6 +1377,7 @@ function renderReport(card) {
         {
           title: card.evalSample.sampleType,
           detail:
+            "状态 / status: " +
             card.evalSample.status +
             ", approvalRequired=" +
             String(card.evalSample.approvalRequired) +
@@ -1391,26 +1396,26 @@ function renderReport(card) {
       '<p class="mock-note">' + escapeHtml(card.mockOutputNotice) + '</p>' +
       '<p>' + escapeHtml(card.summary) + '</p>' +
     '</header>' +
-    '<section class="report-digest" aria-label="Report card digest">' +
-      '<div><span>Status</span><strong>' + escapeHtml(card.status) + '</strong></div>' +
-      '<div><span>Risk</span><strong>' + escapeHtml(card.riskLevel) + '</strong></div>' +
-      '<div><span>Approval</span><strong>' + escapeHtml(card.approvalStatus) + '</strong></div>' +
-      '<div><span>Data</span><strong>' + escapeHtml(card.dataClassification) + '</strong></div>' +
-      '<div class="wide"><span>Candidate next action</span><strong>' +
-        escapeHtml(firstNextAction ? firstNextAction.action : "Human review") + '</strong></div>' +
-      '<p class="wide">ExecutionReportCard JSON is canonical. Markdown, HTML, and this Web Workbench are renders for review.</p>' +
+    '<section class="report-digest" aria-label="报告卡摘要 / Report card digest">' +
+      '<div><span>状态 / Status</span><strong>' + escapeHtml(card.status) + '</strong></div>' +
+      '<div><span>风险 / Risk</span><strong>' + escapeHtml(card.riskLevel) + '</strong></div>' +
+      '<div><span>审批 / Approval</span><strong>' + escapeHtml(card.approvalStatus) + '</strong></div>' +
+      '<div><span>数据 / Data</span><strong>' + escapeHtml(card.dataClassification) + '</strong></div>' +
+      '<div class="wide"><span>候选下一步 / Candidate next action</span><strong>' +
+        escapeHtml(firstNextAction ? firstNextAction.action : "人工复核 / Human review") + '</strong></div>' +
+      '<p class="wide">ExecutionReportCard JSON 是 canonical 事实源；Markdown、HTML 和 Web Workbench 只是复核渲染。 / ExecutionReportCard JSON is canonical. Markdown, HTML, and this Web Workbench are renders for review.</p>' +
     '</section>' +
-    '<section class="evidence-strip" aria-label="Report-card evidence strip">' +
-      '<article class="evidence-card"><span>Canonical JSON source</span><strong>' +
-        escapeHtml(card.reportCardId) + '</strong><p>Use the JSON link for audit, replay, and report-card validation.</p></article>' +
-      '<article class="evidence-card"><span>Eval samples</span><strong>' +
+    '<section class="evidence-strip" aria-label="报告卡证据条 / Report-card evidence strip">' +
+      '<article class="evidence-card"><span>Canonical JSON source / canonical JSON 来源</span><strong>' +
+        escapeHtml(card.reportCardId) + '</strong><p>使用 JSON 链接进行审计、重放和报告卡校验。 / Use the JSON link for audit, replay, and report-card validation.</p></article>' +
+      '<article class="evidence-card"><span>评测样本 / Eval samples</span><strong>' +
         escapeHtml(firstTemplateEvaluationSample ? firstTemplateEvaluationSample.sampleId : "none") +
         '</strong><p>candidate, reviewRequired=' + escapeHtml(String(card.templateEvaluationSamples?.reviewRequired === true)) +
         '</p></article>' +
-      '<article class="evidence-card"><span>Failure path</span><strong>' +
+      '<article class="evidence-card"><span>失败路径 / Failure path</span><strong>' +
         escapeHtml(card.failureSample.failureType) + '</strong><p>' +
         escapeHtml(card.failureSample.statusIfTriggered) + '</p></article>' +
-      '<article class="evidence-card"><span>Approval / data boundary</span><strong>' +
+      '<article class="evidence-card"><span>审批 / 数据边界 / Approval / data boundary</span><strong>' +
         escapeHtml(card.approvalStatus) + '</strong><p>' +
         escapeHtml(card.dataClassification + ", " + card.redactionStatus + ", " + card.sharePermission) +
         '</p></article>' +
@@ -1418,18 +1423,18 @@ function renderReport(card) {
     renderHumanDecisionCheckpoint(card, firstNextAction) +
     renderMeta(card) +
     '<div class="report-grid">' +
-      '<section><h3>Findings</h3>' + renderList(card.findings, "title") + '</section>' +
-      '<section><h3>Recommendations</h3>' + renderList(card.recommendations, "title") + '</section>' +
-      '<section><h3>Candidate Next Actions</h3>' + renderList(card.nextActions, "action") + '</section>' +
-      '<section><h3>Tool Contracts</h3>' + renderList(toolItems, "toolName") + '</section>' +
+      '<section><h3>发现 / Findings</h3>' + renderList(card.findings, "title") + '</section>' +
+      '<section><h3>建议 / Recommendations</h3>' + renderList(card.recommendations, "title") + '</section>' +
+      '<section><h3>候选下一步 / Candidate Next Actions</h3>' + renderList(card.nextActions, "action") + '</section>' +
+      '<section><h3>工具契约 / Tool Contracts</h3>' + renderList(toolItems, "toolName") + '</section>' +
       (allCandidateWorkItems.length > 0
-        ? '<section class="wide"><h3>Candidate WorkItems</h3>' + renderList(allCandidateWorkItems.map(function (item) {
+        ? '<section class="wide"><h3>候选 WorkItems / Candidate WorkItems</h3>' + renderList(allCandidateWorkItems.map(function (item) {
             return {
               title: (item.candidateWorkItemId ? item.candidateWorkItemId + " / " : "") + item.title,
               detail:
-                "status: " + item.status +
+                "状态 / status: " + item.status +
                 ", approvalRequired=" + String(item.approvalRequired === true) +
-                ", owner: " + (item.ownerActorTypes || []).join(" + ") +
+                ", 负责人 / owner: " + (item.ownerActorTypes || []).join(" + ") +
                 ", " + item.priority +
                 ", " + item.riskLevel +
                 ", writeSet: " + item.suggestedWriteSet.join(", ")
@@ -1437,35 +1442,35 @@ function renderReport(card) {
           }), "title") + '</section>'
         : '') +
       (suggestedWorkShards.length > 0
-        ? '<section class="wide"><h3>Candidate WorkShards</h3>' + renderList(suggestedWorkShards.map(function (shard) {
+        ? '<section class="wide"><h3>候选 WorkShards / Candidate WorkShards</h3>' + renderList(suggestedWorkShards.map(function (shard) {
             return {
               title: shard.shardId + " / " + shard.ownerAgentRole,
-              detail: "candidate shard, not assigned, " + shard.riskLevel + ", modelRoute: " + shard.modelRoute + ", verify: " +
+              detail: "候选 shard，未分派 / candidate shard, not assigned, " + shard.riskLevel + ", modelRoute: " + shard.modelRoute + ", verify: " +
                 shard.validationCommands.join(" / ") + ", writeSet: " + (shard.writeSet.length > 0 ? shard.writeSet.join(", ") : "read-only")
             };
           }), "title") + '</section>'
         : '') +
-      '<section class="wide"><h3>Input Refs</h3>' + renderList(inputItems, "path") + '</section>' +
+      '<section class="wide"><h3>输入引用 / Input Refs</h3>' + renderList(inputItems, "path") + '</section>' +
       (evalSampleItem.length > 0
-        ? '<section><h3>Eval Sample Candidate</h3>' + renderList(evalSampleItem, "title") + '</section>'
+        ? '<section><h3>候选评测样本 / Eval Sample Candidate</h3>' + renderList(evalSampleItem, "title") + '</section>'
         : '') +
       (templateEvaluationSamples.length > 0
-        ? '<section class="wide"><h3>Template Evaluation Samples</h3>' + renderList(templateEvaluationSamples.map(function (sample) {
+        ? '<section class="wide"><h3>模板评测样本 / Template Evaluation Samples</h3>' + renderList(templateEvaluationSamples.map(function (sample) {
             return {
               title: sample.sampleId,
-              detail: sample.purpose + " Failure mode: " + sample.failureModeCovered
+              detail: sample.purpose + " 失败模式 / Failure mode: " + sample.failureModeCovered
             };
           }), "title") + '</section>'
         : '') +
-      '<section class="wide"><h3>Failure Path Sample</h3>' +
+      '<section class="wide"><h3>失败路径样本 / Failure Path Sample</h3>' +
         renderList([{ title: card.failureSample.failureType, detail: card.failureSample.recovery }], "title") +
       '</section>' +
     '</div>' +
     '<footer class="data-links">' +
-      '<a href="' + escapeHtml(card.jsonHref) + '">Open canonical JSON</a>' +
-      '<a href="' + escapeHtml(card.markdownHref) + '">Open Markdown render</a>' +
-      (card.answerCardHref ? '<a href="' + escapeHtml(card.answerCardHref) + '">Open AnswerCard JSON</a>' : '') +
-      (card.docChallengeDraftHref ? '<a href="' + escapeHtml(card.docChallengeDraftHref) + '">Open ChallengeDraft JSON</a>' : '') +
+      '<a href="' + escapeHtml(card.jsonHref) + '">打开 canonical JSON / Open canonical JSON</a>' +
+      '<a href="' + escapeHtml(card.markdownHref) + '">打开 Markdown 渲染 / Open Markdown render</a>' +
+      (card.answerCardHref ? '<a href="' + escapeHtml(card.answerCardHref) + '">打开 AnswerCard JSON / Open AnswerCard JSON</a>' : '') +
+      (card.docChallengeDraftHref ? '<a href="' + escapeHtml(card.docChallengeDraftHref) + '">打开 ChallengeDraft JSON / Open ChallengeDraft JSON</a>' : '') +
     '</footer>';
 
   document.getElementById("executionTrace").innerHTML = card.executionTrace.map(function (step) {
@@ -1499,8 +1504,8 @@ function renderKnowledgeExamples() {
       '<span>' + escapeHtml(sourceRef.path + ":L" + sourceRef.lineStart + "-L" + sourceRef.lineEnd) + '</span>' +
       '<span>' + escapeHtml(sourceRef.preview) + '</span>' +
       '<div class="source-actions">' +
-        '<button type="button" data-challenge-source="' + String(index) + '">Challenge this point</button>' +
-        '<a href="' + escapeHtml(example.docChallengeDraftHref) + '">Open draft</a>' +
+        '<button type="button" data-challenge-source="' + String(index) + '">挑战此点 / Challenge this point</button>' +
+        '<a href="' + escapeHtml(example.docChallengeDraftHref) + '">打开草稿 / Open draft</a>' +
       '</div>' +
     '</li>';
   }).join("");
@@ -1512,25 +1517,26 @@ function renderKnowledgeExamples() {
       '<p>' + escapeHtml(answerCard.answer) + '</p>' +
     '</header>' +
     '<dl class="meta-grid">' +
-      '<div><dt>Schema</dt><dd>' + escapeHtml(answerCard.schemaVersion) + '</dd></div>' +
-      '<div><dt>Confidence</dt><dd>' + escapeHtml(answerCard.confidence) + '</dd></div>' +
-      '<div><dt>Sources</dt><dd>' + String(example.sourceHitCount) + '</dd></div>' +
-      '<div><dt>Share</dt><dd>' + escapeHtml(answerCard.sharePermission) + '</dd></div>' +
+      '<div><dt>契约 / Schema</dt><dd>' + escapeHtml(answerCard.schemaVersion) + '</dd></div>' +
+      '<div><dt>置信度 / Confidence</dt><dd>' + escapeHtml(answerCard.confidence) + '</dd></div>' +
+      '<div><dt>来源 / Sources</dt><dd>' + String(example.sourceHitCount) + '</dd></div>' +
+      '<div><dt>共享 / Share</dt><dd>' + escapeHtml(answerCard.sharePermission) + '</dd></div>' +
     '</dl>' +
-    '<section><h3>Sources</h3><ul class="source-list">' + sourceItems + '</ul></section>' +
-    '<p class="challenge-status" id="challengeStatus">Challenge actions create draft review material only. No source document is modified.</p>' +
+    '<section><h3>来源 / Sources</h3><ul class="source-list">' + sourceItems + '</ul></section>' +
+    '<p class="challenge-status" id="challengeStatus">挑战动作只生成复核草稿，不修改来源文档。 / Challenge actions create draft review material only. No source document is modified.</p>' +
     '<footer class="data-links">' +
-      '<a href="' + escapeHtml(example.answerCardHref) + '">Open AnswerCard JSON</a>' +
-      '<a href="' + escapeHtml(example.docChallengeDraftHref) + '">Open ChallengeDraft JSON</a>' +
-      '<a href="' + escapeHtml(example.reportCardHref) + '">Open ReportCard JSON</a>' +
+      '<a href="' + escapeHtml(example.answerCardHref) + '">打开 AnswerCard JSON / Open AnswerCard JSON</a>' +
+      '<a href="' + escapeHtml(example.docChallengeDraftHref) + '">打开 ChallengeDraft JSON / Open ChallengeDraft JSON</a>' +
+      '<a href="' + escapeHtml(example.reportCardHref) + '">打开 ReportCard JSON / Open ReportCard JSON</a>' +
     '</footer>';
 
   document.querySelectorAll("[data-challenge-source]").forEach(function (button) {
     button.addEventListener("click", function () {
       const source = answerCard.sourceRefs[Number(button.dataset.challengeSource)];
       document.getElementById("challengeStatus").textContent =
-        "Draft challenge prepared for " + source.path + ":L" + source.lineStart +
-        ". Human review is required before any documentation change.";
+        "已为 " + source.path + ":L" + source.lineStart +
+        " 准备挑战草稿；任何文档修改前都需要人工复核。 / Draft challenge prepared for " + source.path + ":L" +
+        source.lineStart + ". Human review is required before any documentation change.";
     });
   });
 }
@@ -1538,12 +1544,12 @@ function renderKnowledgeExamples() {
 function renderTemplateBadges(card) {
   const route = card.modelRoute.mock ? "mock route" : card.modelRoute.actual;
   const badges = [
-    "Risk: " + card.riskLevel,
-    "Approval: " + card.approvalStatus,
-    "Route: " + route,
-    "Share: " + card.sharePermission
+    "风险 / Risk: " + card.riskLevel,
+    "审批 / Approval: " + card.approvalStatus,
+    "路由 / Route: " + route,
+    "共享 / Share: " + card.sharePermission
   ];
-  return '<div class="template-badges" aria-label="Template governance badges">' +
+  return '<div class="template-badges" aria-label="模板治理标记 / Template governance badges">' +
     badges.map(function (badge) {
       return '<span>' + escapeHtml(badge) + '</span>';
     }).join("") +
