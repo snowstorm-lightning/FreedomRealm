@@ -101,6 +101,33 @@ const proofStats = [
   }
 ];
 
+const reviewPrompts = [
+  {
+    label: "定位 / Positioning",
+    prompt:
+      "30 秒内是否能看出它不是传统 HRMS，也不是普通 agent framework？ / In 30 seconds, is it clear this is neither traditional HRMS nor a generic agent framework?",
+    focus: "FreedomRealm / AI-HRMS"
+  },
+  {
+    label: "治理 / Governance",
+    prompt:
+      "哪些位置还需要更清楚地显示 ApprovalGate、数据分级、审计或回滚？ / Where should ApprovalGate, data classification, audit, or rollback be clearer?",
+    focus: "ApprovalGate"
+  },
+  {
+    label: "下一步 / Next action",
+    prompt:
+      "Owner Decision Queue 是否清楚说明哪些事需要人决策，哪些只是候选建议？ / Does the Owner Decision Queue clearly separate human decisions from candidate suggestions?",
+    focus: "HumanActor"
+  },
+  {
+    label: "观感 / Visual load",
+    prompt:
+      "哪些信息太密、太轻、太隐蔽，影响你提出修改意见？ / Which information feels too dense, too light, or too hidden for useful feedback?",
+    focus: "Workbench"
+  }
+];
+
 function toWebHref(repoRelativePath) {
   const normalized = repoRelativePath.split(path.sep).join("/");
   const prefix = "dist/web/";
@@ -303,6 +330,14 @@ function buildHtml() {
           </div>
         </div>
         <div class="entry-actions" id="entryModes"></div>
+      </section>
+
+      <section class="review-prompts" aria-label="修改意见入口 / Review prompts">
+        <div class="section-heading">
+          <p class="eyebrow">修改意见入口 / Review Prompts</p>
+          <h2>让反馈直接落在定位、治理、下一步和页面负担上 / Keep feedback focused on positioning, governance, next actions, and visual load</h2>
+        </div>
+        <div class="review-prompt-grid" id="reviewPrompts"></div>
       </section>
 
       <section class="decision-strip" aria-label="推荐下一步 / Recommended next action">
@@ -669,6 +704,40 @@ h3 {
   border-color: var(--accent);
   background: var(--soft);
   color: var(--accent-strong);
+}
+.review-prompts {
+  display: grid;
+  gap: 12px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--line);
+}
+.review-prompt-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+.review-prompt-card {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  padding: 14px;
+}
+.review-prompt-card span {
+  display: block;
+  color: var(--accent-strong);
+  font-size: 12px;
+  font-weight: 760;
+  text-transform: uppercase;
+}
+.review-prompt-card strong {
+  display: block;
+  margin-top: 7px;
+}
+.review-prompt-card p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  line-height: 1.45;
 }
 .decision-strip {
   display: grid;
@@ -1413,6 +1482,9 @@ h3 {
   .workbench {
     grid-template-columns: 260px minmax(0, 1fr);
   }
+  .review-prompt-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
   .owner-decisions {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1426,7 +1498,7 @@ h3 {
 }
 @media (max-width: 840px) {
   .shell { padding: 24px 16px 32px; }
-  .command-board, .entry-strip, .decision-strip, .owner-decisions, .next-grid, .active-plan-strip, .workbench, .right-rail, .knowledge-layout, .roadmap-list {
+  .command-board, .entry-strip, .review-prompt-grid, .decision-strip, .owner-decisions, .next-grid, .active-plan-strip, .workbench, .right-rail, .knowledge-layout, .roadmap-list {
     grid-template-columns: 1fr;
   }
   h1 { font-size: 30px; }
@@ -1763,6 +1835,16 @@ function renderProofStats() {
   }).join("");
 }
 
+function renderReviewPrompts() {
+  document.getElementById("reviewPrompts").innerHTML = state.reviewPrompts.map(function (item) {
+    return '<article class="review-prompt-card">' +
+      '<span>' + escapeHtml(item.label) + '</span>' +
+      '<strong>' + escapeHtml(item.focus) + '</strong>' +
+      '<p>' + escapeHtml(item.prompt) + '</p>' +
+    '</article>';
+  }).join("");
+}
+
 function renderHumanDecisionCheckpoint(card, firstNextAction) {
   const reviewRequired = card.metrics.requiresHumanReview === true;
   const approvalNeeded = card.approvalStatus === "requires_human_review";
@@ -2066,6 +2148,7 @@ function renderRoadmap() {
 function renderAll() {
   const card = state.cards.find(function (candidate) { return candidate.templateId === selectedTemplateId; }) || state.cards[0];
   renderProofStats();
+  renderReviewPrompts();
   renderOperatingEntry();
   renderActivePlans();
   renderOwnerDecisionQueue();
@@ -2119,6 +2202,7 @@ const state = {
   entryModes,
   roadmap,
   proofStats,
+  reviewPrompts,
   cards: executions.map(toWorkbenchCard),
   knowledgeExamples: knowledgeExecutions.map(toKnowledgeExample)
 };
