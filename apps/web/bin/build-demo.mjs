@@ -128,6 +128,34 @@ const reviewPrompts = [
   }
 ];
 
+const modeCards = [
+  {
+    mode: "Tiny Mode",
+    audience: "低配设备与个人试用 / Low-resource devices and personal trials",
+    boundary: "文件或 SQLite、mock 或人工接管；适合 Windows 个人用户起步。 / File or SQLite storage with mock or human handoff; good for Windows personal starts."
+  },
+  {
+    mode: "Demo Mode",
+    audience: "首次体验 / First run",
+    boundary: "5-10 分钟跑通 mock 闭环，不需要模型 key、secret 或真实连接器。 / Runs the mock loop in 5-10 minutes with no model key, secret, or real connector."
+  },
+  {
+    mode: "Local Mode",
+    audience: "个人长期使用 / Long-term personal use",
+    boundary: "本地数据库、基础审计、本地或远程模型路由；仍不绕过 ApprovalGate。 / Local database, basic audit, local or remote ModelRoute; still cannot bypass ApprovalGate."
+  },
+  {
+    mode: "Community Mode",
+    audience: "多人协作实例 / Multi-person instances",
+    boundary: "角色权限、审批流、模板共享和可选 FederationLink；默认不共享私有数据。 / Roles, approval flows, shared templates, and optional FederationLink; private data is not shared by default."
+  },
+  {
+    mode: "Enterprise Mode",
+    audience: "强治理组织 / Strong-governance organizations",
+    boundary: "Keycloak、Temporal、PostgreSQL、LiteLLM Proxy 和完整可观测性。 / Keycloak, Temporal, PostgreSQL, LiteLLM Proxy, and full observability."
+  }
+];
+
 function toWebHref(repoRelativePath) {
   const normalized = repoRelativePath.split(path.sep).join("/");
   const prefix = "dist/web/";
@@ -338,6 +366,14 @@ function buildHtml() {
           <h2>让反馈直接落在定位、治理、下一步和页面负担上 / Keep feedback focused on positioning, governance, next actions, and visual load</h2>
         </div>
         <div class="review-prompt-grid" id="reviewPrompts"></div>
+      </section>
+
+      <section class="mode-fit" aria-label="运行档位适配 / Running mode fit">
+        <div class="section-heading">
+          <p class="eyebrow">运行档位 / Running Modes</p>
+          <h2>从 Windows 个人试用到强治理组织，档位变了，治理不降级。 / From Windows personal trials to strong-governance organizations, modes change but governance does not downgrade.</h2>
+        </div>
+        <div class="mode-grid" id="modeCards"></div>
       </section>
 
       <section class="decision-strip" aria-label="推荐下一步 / Recommended next action">
@@ -738,6 +774,41 @@ h3 {
   margin: 8px 0 0;
   color: var(--muted);
   line-height: 1.45;
+}
+.mode-fit {
+  display: grid;
+  gap: 12px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--line);
+}
+.mode-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+}
+.mode-card {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  padding: 14px;
+}
+.mode-card span {
+  display: block;
+  color: var(--accent-strong);
+  font-size: 12px;
+  font-weight: 760;
+}
+.mode-card strong {
+  display: block;
+  margin-top: 6px;
+  overflow-wrap: anywhere;
+}
+.mode-card p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  line-height: 1.42;
+  font-size: 13px;
 }
 .decision-strip {
   display: grid;
@@ -1485,6 +1556,9 @@ h3 {
   .review-prompt-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+  .mode-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
   .owner-decisions {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1498,7 +1572,7 @@ h3 {
 }
 @media (max-width: 840px) {
   .shell { padding: 24px 16px 32px; }
-  .command-board, .entry-strip, .review-prompt-grid, .decision-strip, .owner-decisions, .next-grid, .active-plan-strip, .workbench, .right-rail, .knowledge-layout, .roadmap-list {
+  .command-board, .entry-strip, .review-prompt-grid, .mode-grid, .decision-strip, .owner-decisions, .next-grid, .active-plan-strip, .workbench, .right-rail, .knowledge-layout, .roadmap-list {
     grid-template-columns: 1fr;
   }
   h1 { font-size: 30px; }
@@ -1845,6 +1919,16 @@ function renderReviewPrompts() {
   }).join("");
 }
 
+function renderModeCards() {
+  document.getElementById("modeCards").innerHTML = state.modeCards.map(function (item) {
+    return '<article class="mode-card">' +
+      '<span>' + escapeHtml(item.audience) + '</span>' +
+      '<strong>' + escapeHtml(item.mode) + '</strong>' +
+      '<p>' + escapeHtml(item.boundary) + '</p>' +
+    '</article>';
+  }).join("");
+}
+
 function renderHumanDecisionCheckpoint(card, firstNextAction) {
   const reviewRequired = card.metrics.requiresHumanReview === true;
   const approvalNeeded = card.approvalStatus === "requires_human_review";
@@ -2149,6 +2233,7 @@ function renderAll() {
   const card = state.cards.find(function (candidate) { return candidate.templateId === selectedTemplateId; }) || state.cards[0];
   renderProofStats();
   renderReviewPrompts();
+  renderModeCards();
   renderOperatingEntry();
   renderActivePlans();
   renderOwnerDecisionQueue();
@@ -2203,6 +2288,7 @@ const state = {
   roadmap,
   proofStats,
   reviewPrompts,
+  modeCards,
   cards: executions.map(toWorkbenchCard),
   knowledgeExamples: knowledgeExecutions.map(toKnowledgeExample)
 };

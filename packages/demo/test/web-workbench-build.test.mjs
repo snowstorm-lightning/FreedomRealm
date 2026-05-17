@@ -160,6 +160,13 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   assert.match(state.reviewPrompts[1].prompt, /ApprovalGate.+data classification/u);
   assert.match(state.reviewPrompts[2].prompt, /Owner Decision Queue/u);
   assert.match(state.reviewPrompts[3].prompt, /too dense.+too hidden/u);
+  assert.equal(state.modeCards.length, 5);
+  assert.deepEqual(
+    state.modeCards.map((modeCard) => modeCard.mode),
+    ["Tiny Mode", "Demo Mode", "Local Mode", "Community Mode", "Enterprise Mode"]
+  );
+  assert.match(state.modeCards[0].boundary, /Windows personal starts/u);
+  assert.match(state.modeCards[2].boundary, /cannot bypass ApprovalGate/u);
   assert.equal(state.proofStats[0].label, "理解 / Understand");
   assert.equal(state.proofStats[1].value, "5-10 分钟 / 5-10 min");
   assert.equal(state.roadmap[0].horizon, "当前 / Now");
@@ -229,6 +236,10 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   assert.match(html, /修改意见入口 \/ Review Prompts/u);
   assert.match(html, /Keep feedback focused on positioning, governance, next actions, and visual load/u);
   assert.match(html, /让反馈直接落在定位、治理、下一步和页面负担上/u);
+  assert.match(html, /Running Modes/u);
+  assert.match(html, /运行档位 \/ Running Modes/u);
+  assert.match(html, /From Windows personal trials to strong-governance organizations/u);
+  assert.match(html, /从 Windows 个人试用到强治理组织/u);
   assert.match(html, /Next Workbench/u);
   assert.match(html, /下一步工作台 \/ Next Workbench/u);
   assert.match(app, /Plan entry/u);
@@ -238,6 +249,14 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   assert.match(app, /Where should ApprovalGate, data classification, audit, or rollback be clearer/u);
   assert.match(app, /Does the Owner Decision Queue clearly separate human decisions from candidate suggestions/u);
   assert.match(app, /Which information feels too dense, too light, or too hidden for useful feedback/u);
+  assert.match(app, /Tiny Mode/u);
+  assert.match(app, /Demo Mode/u);
+  assert.match(app, /Local Mode/u);
+  assert.match(app, /Community Mode/u);
+  assert.match(app, /Enterprise Mode/u);
+  assert.match(app, /Windows personal starts/u);
+  assert.match(app, /still cannot bypass ApprovalGate/u);
+  assert.match(app, /private data is not shared by default/u);
   assert.match(app, /Human decisions/u);
   assert.match(app, /决策点 \/ Human decisions/u);
   assert.match(app, /Read-only plan entry, not automatic implementation authorization/u);
