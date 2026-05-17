@@ -673,7 +673,10 @@
 - OpenClaw、Hermes Agent 和类似运行时不引入新的 actor 类型；它们是 `ExternalConnector` 的 provider profile。
 - 外部 agent 的入站结果默认不可信，只能作为候选输入进入本地 `WorkItem`、`Observation` 或 `ExecutionReportCard`。
 - 真实 CLI 或 gateway 调用默认关闭。启用前必须有 connector profile、`ToolContract`、策略评估、预算、数据分级、审批和审计。
+- 当前 checked-in mock connector profile 只覆盖 `dev` / `ci`、`public` / `internal`、`low` / `medium` 场景；`prod`、`restricted` / `sensitive`、`high` / `critical` 或 non-mock 执行只能出现在显式 policy stress test、候选计划或未来经批准的 live connector 路径中。
 - `restricted` 与 `sensitive` 数据默认不得外发；确需外发时必须脱敏、摘要化或进入 `ApprovalGate`。
+- 当 `ExternalAgentRunRequest.dataClassification` 为 `restricted` 或 `sensitive` 时，`inputRefs` 必须指向已经脱敏、摘要化或可审计引用的材料；不得把敏感原文直接嵌入 request payload、connector profile、auditTags 或 `extensions`。
+- `external_agent_to_ai_hrms` 入站结果如果携带 `restricted` / `sensitive` 数据、要求副作用、或试图写入事实源，必须停留为候选材料并触发 `ApprovalGate` 或策略拒绝，不能因为来自外部 agent 就被自动采信。
 - 高风险动作必须回到本地 `ApprovalGate`，外部 agent 不能替代本地 human owner、审批链、审计和回滚。
 - connector profile 只能保存 secret 引用或 secret path，不得保存明文 token、API key、密码或消息账号凭据。
 - `extensions` 必须使用 namespaced key，不能覆盖标准字段语义。

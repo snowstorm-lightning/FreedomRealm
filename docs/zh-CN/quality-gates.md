@@ -281,6 +281,7 @@ MVP 不再只以“命令能跑通”为完成标准。进入 Phase 0.6 验收�
 - 是否把外部 runtime 登记为 `ExternalConnector` profile，而不是新增未登记 actor 类型。
 - 是否声明 `ExternalAgentConnectorProfile` 的 schemaVersion、provider、mode、方向、环境、数据分级、风险等级、ToolContract、secretRefPolicy 和 auditTags。
 - 是否默认 mock-only，真实 CLI、gateway、消息通道、skills、MCP server、browser、cron 和 memory 访问是否显式关闭。
+- checked-in mock connector profile 是否保持在 `dev` / `ci`、`public` / `internal`、`low` / `medium` 范围内；`prod`、`restricted` / `sensitive`、`high` / `critical` 或 non-mock 场景是否只通过显式 stress test、候选计划或批准后的 live connector 路径表达。
 - 是否禁止 connector profile 保存明文 token、API key、密码、消息账号凭据或本地 agent 配置。
 - 是否让每个 `ExternalAgentRunRequest` 绑定 env、actor、ProjectInstance、WorkItem、AgentRun、风险等级、数据分级和输入引用。
 - 是否让每个 `ExternalAgentRunResult` 只作为候选输入，不能直接修改生产事实、创建 PR、评论 issue、发送外部通知或公开发布。

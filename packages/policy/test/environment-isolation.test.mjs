@@ -1,5 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import {
   evaluateExternalAgentRun,
   evaluateToolExecution,
@@ -7,6 +10,8 @@ import {
   validatePromotionPath,
   validateToolContract
 } from "../src/index.mjs";
+
+const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
 
 const baseConfig = {
   env: "staging",
@@ -67,10 +72,13 @@ const externalAgentProfile = {
   provider: "openclaw",
   mode: "mock",
   supportedDirections: ["ai_hrms_to_external_agent", "external_agent_to_ai_hrms"],
-  allowedEnvironments: ["dev", "ci", "prod"],
-  dataClassificationAllowed: ["public", "internal", "restricted"],
-  riskLevelAllowed: ["low", "medium", "high"],
-  toolContractRefs: ["tool-contract://external-agent.openclaw.mock.request.v1"],
+  allowedEnvironments: ["dev", "ci"],
+  dataClassificationAllowed: ["public", "internal"],
+  riskLevelAllowed: ["low", "medium"],
+  toolContractRefs: [
+    "tool-contract://external-agent.openclaw.mock.request.v1",
+    "tool-contract://external-agent.openclaw.mock.result.v1"
+  ],
   approvalRequiredByDefault: false,
   secretRefPolicy: {
     allowsPlaintext: false,
@@ -84,6 +92,13 @@ const externalAgentProfile = {
     }
   }
 };
+
+function externalAgentStressProfile(overrides = {}) {
+  return {
+    ...externalAgentProfile,
+    ...overrides
+  };
+}
 
 function externalAgentRequest(overrides = {}) {
   return {
@@ -183,6 +198,43 @@ test("allows a low-risk mock external agent run", () => {
   assert.equal(result.decision, "allow");
 });
 
+test("allows checked-in mock connector profiles only inside their declared boundary", async () => {
+  const profilePaths = [
+    "config/connectors/openclaw.mock.json",
+    "config/connectors/hermes-agent.mock.json"
+  ];
+
+  for (const profilePath of profilePaths) {
+    const profile = JSON.parse(await readFile(path.join(repoRoot, profilePath), "utf8"));
+
+    const allowed = evaluateExternalAgentRun({
+      connectorProfile: profile,
+      request: externalAgentRequest({ connectorId: profile.connectorId }),
+      env: "dev"
+    });
+    assert.equal(allowed.decision, "allow", profilePath);
+
+    const prod = evaluateExternalAgentRun({
+      connectorProfile: profile,
+      request: externalAgentRequest({ connectorId: profile.connectorId, env: "prod" }),
+      env: "prod"
+    });
+    assert.equal(prod.decision, "deny", profilePath);
+    assert.equal(prod.reason, "environment_not_allowed", profilePath);
+
+    const restricted = evaluateExternalAgentRun({
+      connectorProfile: profile,
+      request: externalAgentRequest({
+        connectorId: profile.connectorId,
+        dataClassification: "restricted"
+      }),
+      env: "dev"
+    });
+    assert.equal(restricted.decision, "deny", profilePath);
+    assert.equal(restricted.reason, "data_classification_not_allowed", profilePath);
+  }
+});
+
 test("requires approval for medium and high risk external agent runs", () => {
   const medium = evaluateExternalAgentRun({
     connectorProfile: externalAgentProfile,
@@ -193,7 +245,7 @@ test("requires approval for medium and high risk external agent runs", () => {
   assert.equal(medium.reason, "approval_required");
 
   const high = evaluateExternalAgentRun({
-    connectorProfile: externalAgentProfile,
+    connectorProfile: externalAgentStressProfile({ riskLevelAllowed: ["low", "medium", "high"] }),
     request: externalAgentRequest({ riskLevel: "high" }),
     env: "dev"
   });
@@ -203,12 +255,69 @@ test("requires approval for medium and high risk external agent runs", () => {
 
 test("requires approval before sending restricted data to an external agent", () => {
   const result = evaluateExternalAgentRun({
-    connectorProfile: externalAgentProfile,
+    connectorProfile: externalAgentStressProfile({
+      dataClassificationAllowed: ["public", "internal", "restricted"]
+    }),
     request: externalAgentRequest({ dataClassification: "restricted" }),
     env: "dev"
   });
   assert.equal(result.decision, "require_approval");
   assert.equal(result.reason, "data_classification_approval_required");
+});
+
+test("requires approval before sending sensitive data to an external agent", () => {
+  const result = evaluateExternalAgentRun({
+    connectorProfile: externalAgentStressProfile({
+      dataClassificationAllowed: ["public", "internal", "restricted", "sensitive"]
+    }),
+    request: externalAgentRequest({ dataClassification: "sensitive" }),
+    env: "dev"
+  });
+  assert.equal(result.decision, "require_approval");
+  assert.equal(result.reason, "data_classification_approval_required");
+});
+
+test("rejects external agent data classifications outside the connector profile", () => {
+  const result = evaluateExternalAgentRun({
+    connectorProfile: externalAgentProfile,
+    request: externalAgentRequest({ dataClassification: "restricted" }),
+    env: "dev"
+  });
+  assert.equal(result.decision, "deny");
+  assert.equal(result.reason, "data_classification_not_allowed");
+});
+
+test("rejects external agent environments outside the connector profile", () => {
+  const result = evaluateExternalAgentRun({
+    connectorProfile: externalAgentProfile,
+    request: externalAgentRequest({ env: "prod" }),
+    env: "prod"
+  });
+  assert.equal(result.decision, "deny");
+  assert.equal(result.reason, "environment_not_allowed");
+});
+
+test("rejects external agent directions outside the connector profile", () => {
+  const result = evaluateExternalAgentRun({
+    connectorProfile: externalAgentStressProfile({
+      supportedDirections: ["ai_hrms_to_external_agent"]
+    }),
+    request: externalAgentRequest({ direction: "external_agent_to_ai_hrms" }),
+    env: "dev"
+  });
+  assert.equal(result.decision, "deny");
+  assert.equal(result.reason, "direction_not_allowed");
+});
+
+test("requires approval when a connector profile opts into default approval", () => {
+  const result = evaluateExternalAgentRun({
+    connectorProfile: externalAgentStressProfile({ approvalRequiredByDefault: true }),
+    request: externalAgentRequest(),
+    env: "dev"
+  });
+  assert.equal(result.decision, "require_approval");
+  assert.equal(result.reason, "connector_requires_approval_by_default");
+  assert.equal(result.auditTags.includes("ApprovalGate"), true);
 });
 
 test("rejects real external agent execution unless explicitly enabled", () => {
@@ -226,7 +335,10 @@ test("rejects real external agent execution unless explicitly enabled", () => {
 
 test("rejects high-risk production external agent auto-execution", () => {
   const result = evaluateExternalAgentRun({
-    connectorProfile: externalAgentProfile,
+    connectorProfile: externalAgentStressProfile({
+      allowedEnvironments: ["dev", "ci", "prod"],
+      riskLevelAllowed: ["low", "medium", "high"]
+    }),
     request: externalAgentRequest({ env: "prod", riskLevel: "high" }),
     env: "prod",
     hasApproval: true,

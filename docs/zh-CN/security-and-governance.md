@@ -51,8 +51,10 @@ OpenClaw、Hermes Agent 和类似项目可以提高 AI-HRMS 的生态关注度�
 
 - 默认只允许 mock connector profile；真实 CLI、gateway、消息通道、skills、MCP server、browser、cron 和持久记忆访问默认关闭。
 - 每个外部 agent provider 必须有 `ExternalAgentConnectorProfile`，声明 `provider`、`mode`、支持方向、环境、数据分级、风险等级、ToolContract、secret 引用策略和审计标签。
+- checked-in mock connector profile 默认只允许 `dev` / `ci`、`public` / `internal`、`low` / `medium`；任何 `prod`、`restricted` / `sensitive`、`high` / `critical` 或 non-mock 场景都必须作为受控 stress test、候选计划或经批准的 live connector 路径处理。
 - 外部 agent 的输出默认是不可信候选，只能进入 `ExecutionReportCard`、`Observation`、`DocChallengeDraft` 或后续 `WorkItem` 草稿，不能直接修改生产事实。
 - `restricted` 和 `sensitive` 数据默认不得发送给外部 agent；如果需要，必须先脱敏、摘要化并通过 `ApprovalGate`。
+- 外部 agent 入站结果如果携带 `restricted` / `sensitive` 数据、提出发布/通知/写入/权限变更等副作用，或要求写入核心事实源，必须保持候选状态并触发 `ApprovalGate` 或策略拒绝。
 - 高风险动作、发布、外部通知、任务强制分派、权限变更、预算变更和数据共享必须回到本地 `ApprovalGate`。
 - connector profile 不得保存明文 token、API key、消息账号凭据或本地 agent 配置内容，只能保存 secret ref 或 secret path。
 - OpenClaw / Hermes Agent 的本地配置、消息账号、聊天记录、skills、memory、MCP 配置和执行轨迹不得被 Demo Mode 自动读取。
