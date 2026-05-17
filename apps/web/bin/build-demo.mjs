@@ -1842,10 +1842,11 @@ function renderOperatingEntry() {
       '<strong>' + escapeHtml(activeTask.taskId) + '</strong>' +
       '<p>' + escapeHtml(activeTask.title) + '</p>' +
       '<div class="chip-row">' +
-        (activeTask.outputs || []).slice(0, 4).map(function (output) {
+        (activeTask.outputs || []).slice(0, 8).map(function (output) {
           return '<span>' + escapeHtml(output) + '</span>';
         }).join("") +
       '</div>' +
+      renderTaskMetaList("验收 / Acceptance", activeTask.acceptanceCriteria, 6) +
     '</section>' : '') +
     '<div class="task-list">' + taskGroups.map(function (group) {
       return '<section class="task-lane" aria-label="' + escapeHtml(group.priority) + ' 任务 / tasks">' +

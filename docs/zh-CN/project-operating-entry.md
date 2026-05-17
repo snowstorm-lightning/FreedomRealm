@@ -26,7 +26,7 @@ P0 是当前打开仓库后默认优先级。除非用户明确改变方向，ag
 
 | 优先级 | 任务 | 建议 owner | 产出 | 验收 |
 | --- | --- | --- | --- | --- |
-| P0 | Web Workbench 第一屏继续收敛为“下一步工作台” | HumanActor + AgentActor | 三类入口、推荐下一步、报告卡预览、当前计划入口 | `pnpm web:demo` 和 `pnpm check` 通过 |
+| P0 | Web Workbench 第一屏继续收敛为“下一步工作台” | HumanActor + AgentActor | 三类入口、推荐下一步、报告卡预览、当前计划入口、Review Prompts、Running Modes、Owner Decision Queue、active plan 状态提示、人工复核 decay prevention backlog | `pnpm web:demo` 和 `pnpm check` 通过 |
 | P0 | 把项目运行入口提升为可校验 manifest | AgentActor | `project-operating-entry.v1` manifest、validator、根命令 | `pnpm validate:operating-entry` 和 `pnpm check` 通过 |
 | P0 | 建立多 agent 防冲突最小规则 | HumanActor + AgentActor | `AgentWorkLease` 模板、`writeSet` 冲突规则、`MergeGate` 检查清单 | 质量门禁和执行计划同步 |
 | P1 | 同步外部 agent connector 治理文档与测试 | HumanActor + AgentActor | `ExternalConnector` 治理文档同步说明、`ApprovalGate` 与数据分级一致性检查、相关策略测试更新 | `pnpm check` 通过；不启用真实 connector；保留 `candidate-work-item-001` 来源和 `user-approved-continuation-20260517` 人工批准记录 |

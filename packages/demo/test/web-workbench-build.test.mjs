@@ -117,6 +117,12 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   assert.ok(currentWorkbenchTask);
   assert.equal(currentWorkbenchTask.priority, "P0");
   assert.deepEqual(currentWorkbenchTask.verificationCommands, ["pnpm web:demo", "pnpm check"]);
+  assert.equal(currentWorkbenchTask.outputs.includes("Owner Decision Queue"), true);
+  assert.equal(currentWorkbenchTask.outputs.includes("Running Modes 适配说明"), true);
+  assert.equal(
+    currentWorkbenchTask.acceptanceCriteria.some((criterion) => /active execution plans.+推断 active/u.test(criterion)),
+    true
+  );
   assert.deepEqual(currentWorkbenchTask.suggestedWriteSet, [
     "apps/web/bin/build-demo.mjs",
     "packages/demo/test/web-workbench-build.test.mjs"
@@ -301,6 +307,8 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   assert.match(app, /当前任务队列 \/ Current task queue/u);
   assert.match(app, /Active P0 WorkItem/u);
   assert.match(app, /当前 P0 WorkItem \/ Active P0 WorkItem/u);
+  assert.match(app, /activeTask\.outputs \|\| \[\]\)\.slice\(0, 8\)/u);
+  assert.match(app, /renderTaskMetaList\("验收 \/ Acceptance", activeTask\.acceptanceCriteria, 6\)/u);
   assert.match(app, /验收 \/ Acceptance/u);
   assert.match(app, /来源 \/ Sources/u);
   assert.match(app, /候选来源 \/ Candidate origin/u);
