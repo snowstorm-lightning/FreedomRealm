@@ -264,6 +264,9 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   assert.match(app, /候选评测样本 \/ Eval Sample Candidate/u);
   assert.match(app, /Template Evaluation Samples/u);
   assert.match(app, /模板评测样本 \/ Template Evaluation Samples/u);
+  assert.match(app, /评测证据 \/ Eval evidence/u);
+  assert.match(app, /评测 \/ Eval: /u);
+  assert.match(app, /失败路径 \/ failure: /u);
   assert.match(app, /candidate-work-item-001/u);
   assert.match(app, /repo-work-item-001/u);
   assert.match(app, /repo-shard-product/u);

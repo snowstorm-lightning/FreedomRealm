@@ -829,6 +829,16 @@ h3 {
   font-size: 13px;
   line-height: 1.35;
 }
+.template-proof {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+.template-proof b {
+  color: var(--ink);
+}
 .template-badges {
   display: flex;
   flex-wrap: wrap;
@@ -1635,9 +1645,14 @@ function renderTemplateBadges(card) {
 function renderTemplates() {
   document.getElementById("templateList").innerHTML = state.cards.map(function (card) {
     const current = card.templateId === selectedTemplateId;
+    const firstEvalSample = card.templateEvaluationSamples?.samples?.[0];
+    const proofLine = firstEvalSample
+      ? "评测 / Eval: " + firstEvalSample.sampleId + "; 失败路径 / failure: " + card.failureSample.failureType
+      : "评测 / Eval: missing; 失败路径 / failure: " + card.failureSample.failureType;
     return '<button type="button" class="template-button" data-template="' + escapeHtml(card.templateId) + '" aria-current="' + String(current) + '">' +
       '<strong>' + escapeHtml(card.displayName) + '</strong>' +
       '<span>' + escapeHtml(card.taskGoal) + '</span>' +
+      '<span class="template-proof"><b>评测证据 / Eval evidence</b> ' + escapeHtml(proofLine) + '</span>' +
       renderTemplateBadges(card) +
     '</button>';
   }).join("");
