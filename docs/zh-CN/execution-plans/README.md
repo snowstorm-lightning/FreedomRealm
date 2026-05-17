@@ -7,6 +7,7 @@
 - [active/phase-0-doc-foundation.md](active/phase-0-doc-foundation.md)
 - [active/phase-0-5-ai-hrms-repositioning.md](active/phase-0-5-ai-hrms-repositioning.md)
 - [active/phase-1-environment-isolation-guard.md](active/phase-1-environment-isolation-guard.md)
+- [active/phase-1-go-control-plane-skeleton.md](active/phase-1-go-control-plane-skeleton.md)
 
 ## Completed
 
