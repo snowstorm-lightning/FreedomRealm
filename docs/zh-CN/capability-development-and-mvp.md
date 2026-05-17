@@ -90,6 +90,14 @@ MVP 标准需要从“能跑通最小闭环”抬高到“能被真实用户评�
 - 每个用户可见模板都要说明输入、输出、风险、审批点、失败路径和报告卡价值，不能只作为 mock 展示。
 - `pnpm self-review` 的输出应能形成候选 `WorkItem`，但不得自动修改仓库。
 
+MVP 可评价验收证据分为 5 层：
+
+1. `understanding`：首屏或 README 在 30 秒内说明 AI-HRMS 不是传统 HRMS，也不是泛 agent framework，并能看到 `WorkItem -> AgentActor -> ToolContract -> ApprovalGate -> Observation -> ExecutionReportCard`。
+2. `runnable`：`pnpm demo`、`pnpm web:demo` 和 `pnpm check` 在 mock mode 下通过，不需要真实模型 key、真实外部连接器、生产数据或 secret。
+3. `workProof`：至少一个模板生成 JSON-first `ExecutionReportCard`，并能渲染 Markdown 或 Web 预览；`repo_understanding_and_work_plan` 必须输出候选 `WorkItem` 和 `WorkShard` 建议。
+4. `governed`：报告卡、Web Workbench 或运行入口必须显示 `ApprovalGate`、`AgentWorkLease`、`writeSet`、`ChangePacket`、`MergeGate`、数据分级和人工复核要求。
+5. `continuable`：用户或 agent 能从 `project-operating-entry` 找到当前 P0/P1/P2、验证命令、停止条件和下一步候选，不需要依赖聊天记录记忆。
+
 建议首个 MVP 模板优先选择“文档摘要与改进建议”，原因是它可以直接使用仓库文档，不依赖外部连接器，不需要真实 HR 敏感数据，也能展示报告卡、失败复盘和模板复用。GitHub issue 分流、政策问答和社区 onboarding 可以作为下一批模板。
 
 在首版 CLI 闭环稳定后，MVP 的传播目标应升级为“能力证明型 Workbench”：帮助用户在 30 分钟内完成一次可展示、可复盘、可继续发展的 AI-assisted work proof。这个 proof 不要求用户先确定职业身份，可以从固定身份入口、目标入口或自由探索入口开始。

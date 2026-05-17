@@ -137,6 +137,16 @@ pnpm check
 - `project-operating-entry.md` 能作为下一轮任务选择和 agent 分派入口。
 - `config/project-operating-entry.json` 通过 `validateProjectOperatingEntry`，并被 Web Workbench 读取展示。
 
+Phase 0.6 完成度不只看 smoke test，还必须满足可评价证据：
+
+- 首屏证据：Web Workbench 第一屏能看到 FreedomRealm / AI-HRMS 双名定位、Demo Mode、mock route、JSON source、三类入口、推荐下一步和无 live side effects。
+- 运行证据：`pnpm demo`、`pnpm demo -- --template repo_understanding_and_work_plan`、`pnpm web:demo` 和 `pnpm check` 都能在无模型 key、无真实连接器、无生产数据条件下通过。
+- 报告卡证据：Web 和 Markdown 都只渲染 JSON `ExecutionReportCard`；页面必须提供 canonical JSON 链接。
+- 工作计划证据：`repo_understanding_and_work_plan` 必须在 `extensions["ai-hrms.workPlan"]` 中生成候选 `WorkItem` 和建议 `WorkShard`，并标记为需要 human review 的候选材料。
+- 治理证据：Web Workbench 必须展示 `AgentWorkLease` 字段、`writeSet` policy、`MergeGate`、停止条件、P2 live connector 的 human owner / ApprovalGate 边界。
+- 交互证据：entry mode 选择应更新推荐模板，Knowledge Challenge 交互只能生成 draft review 提示，不得修改文档。
+- 浏览器证据：本地浏览器检查应确认无 console error、无横向溢出、关键入口和候选任务可见。
+
 ## 后续迭代
 
 1. 把静态 Web 原型迁移为真正的前端应用，但仍读取同一数据契约。

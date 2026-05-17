@@ -165,6 +165,15 @@
 - 是否能保存带 schemaVersion 的 JSON ExecutionReportCard，并从 JSON 渲染 Markdown 或 HTML。
 - 是否明确该能力进入 MVP 会挤占哪个其他范围，避免范围持续膨胀。
 
+MVP 不再只以“命令能跑通”为完成标准。进入 Phase 0.6 验收时，还必须提供以下证据：
+
+- `understandingEvidence`：首屏、README 或 Web Workbench 能在 30 秒内表达 AI-HRMS / FreedomRealm 定位和治理链路。
+- `runnableEvidence`：`pnpm demo`、`pnpm web:demo`、`pnpm check` 在 mock mode 下通过，不依赖 live model、真实连接器、secret 或生产数据。
+- `workProofEvidence`：至少一个 `ExecutionReportCard` JSON 可被打开、复盘、渲染为 Markdown/Web，并包含候选 nextActions。
+- `workPlanEvidence`：`repo_understanding_and_work_plan` 输出候选 `WorkItem`、建议 `WorkShard`、风险、验证命令和来源引用，且全部是 review material。
+- `governanceEvidence`：Web 或报告卡可见 `ApprovalGate`、`AgentWorkLease`、`writeSet`、`ChangePacket`、`MergeGate`、数据分级、分享许可和人工复核状态。
+- `continuationEvidence`：`config/project-operating-entry.json` 和 `project-operating-entry.md` 能告诉下一个 agent 当前 P0/P1/P2、验证命令、停止条件和候选后续工作。
+
 ## Capability Development Gate
 
 涉及能力发现、教材、学习路径、教学策略、成长型任务或能力证据的能力必须回答：
