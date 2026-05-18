@@ -55,7 +55,8 @@ function printHelp() {
   console.log(`Usage: pnpm knowledge:demo [--query "${DEFAULT_KNOWLEDGE_QUERY}"] [--model mock|live] [--input path] [--out dist/knowledge-demo]
 
 Knowledge Demo writes JSON AnswerCard, DocChallengeDraft, and ExecutionReportCard outputs.
-The default search mode is local-mock-semantic. It does not need embeddings, model keys, external connectors, or real HR data.`);
+The default search mode is local-mock-semantic. It does not need embeddings, model keys, external connectors, or real HR data.
+The live route is optional and falls back to mock unless AI_HRMS_LIVE_MODEL_ENABLED=true.`);
 }
 
 async function main() {

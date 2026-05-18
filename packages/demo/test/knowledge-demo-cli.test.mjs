@@ -100,6 +100,18 @@ test("Knowledge Demo CLI falls back to mock when live model is not enabled", asy
   assert.equal(reportCard.extensions["ai-hrms.knowledge"].searchMode, "local-mock-semantic");
 });
 
+test("Knowledge Demo CLI help documents live fallback", () => {
+  const result = spawnSync(process.execPath, ["scripts/run-knowledge-demo.mjs", "--help"], {
+    cwd: repoRoot,
+    encoding: "utf8",
+    shell: false
+  });
+
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /local-mock-semantic/u);
+  assert.match(result.stdout, /falls back to mock unless AI_HRMS_LIVE_MODEL_ENABLED=true/u);
+});
+
 test("Knowledge Demo CLI rejects invalid option values", () => {
   for (const [argv, expectedError] of [
     [["--query"], /--query requires a value/u],
