@@ -119,7 +119,8 @@ test("Knowledge Demo CLI rejects invalid option values", () => {
     [["--out", "--input"], /--out requires a value/u],
     [["--input", "../outside-knowledge-input"], /Input path must stay inside the workspace/u],
     [["--out", "../outside-knowledge-demo"], /Output path must stay inside the workspace/u],
-    [["--model", "real"], /--model must be mock or live/u]
+    [["--model", "real"], /--model must be mock or live/u],
+    [["--unknown"], /Unknown argument: --unknown/u]
   ]) {
     const result = spawnSync(process.execPath, ["scripts/run-knowledge-demo.mjs", ...argv], {
       cwd: repoRoot,
