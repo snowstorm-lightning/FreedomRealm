@@ -68,6 +68,7 @@ test("Demo Mode CLI rejects missing option values", () => {
     [["--input"], /--input requires a value/u],
     [["--out", "--model"], /--out requires a value/u],
     [["--template", "-h"], /--template requires a value/u],
+    [["--input", "../outside-demo-input"], /Input path must stay inside the workspace/u],
     [["--out", "../outside-demo"], /Output path must stay inside the workspace/u]
   ]) {
     const result = runDemo(argv);

@@ -354,6 +354,7 @@ test("self-review CLI rejects option-shaped values", () => {
   for (const [argv, expectedError] of [
     [["--input", "--out"], /--input requires a value/u],
     [["--out", "-h"], /--out requires a value/u],
+    [["--input", "../outside-self-review-input"], /Input path must stay inside the workspace/u],
     [["--out", "../outside-self-review"], /Output path must stay inside the workspace/u],
     [["--unknown"], /Unknown argument: --unknown/u]
   ]) {
