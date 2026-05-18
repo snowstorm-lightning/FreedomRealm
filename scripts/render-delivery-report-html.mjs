@@ -8,6 +8,7 @@ import {
 import { renderDeliveryReportHtml } from "../packages/demo/src/index.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const defaultInputs = ["dist/demo-mode", "dist/self-review", "dist/web/data"];
 
 function resolveWorkspacePath(value, label) {
   const absolutePath = path.resolve(repoRoot, value);
@@ -28,7 +29,7 @@ function readOptionValue(argv, index, optionName) {
 
 function parseArgs(argv) {
   const options = {
-    inputs: ["dist/demo-mode", "dist/self-review", "dist/web/data"],
+    inputs: [],
     out: "dist/reports/delivery-report.html",
     title: "AI-HRMS Delivery Report"
   };
@@ -51,6 +52,10 @@ function parseArgs(argv) {
     }
   }
 
+  if (options.inputs.length === 0) {
+    options.inputs = defaultInputs;
+  }
+
   return options;
 }
 
@@ -58,7 +63,9 @@ function printHelp() {
   console.log(`Usage: pnpm report:html [--input dir-or-json] [--out dist/reports/delivery-report.html] [--title text]
 
 The HTML render is for delivery-level presentation only.
-ExecutionReportCard JSON remains canonical, and Markdown remains the default per-run render.`);
+ExecutionReportCard JSON remains canonical, and Markdown remains the default per-run render.
+Without --input, the default inputs are dist/demo-mode, dist/self-review, and dist/web/data.
+When --input is provided, only the explicit input paths are collected.`);
 }
 
 async function collectJsonFiles(inputPath) {
