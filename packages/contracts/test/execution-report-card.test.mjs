@@ -76,3 +76,23 @@ test("renders Markdown from the JSON report card", () => {
   assert.match(markdown, /docs_review_and_improvement@0\.1\.0/u);
   assert.match(markdown, /mock/u);
 });
+
+test("renders governed failure sample evidence in Markdown", () => {
+  const card = validCard();
+  card.failure = {
+    sample: {
+      failureType: "sample_failure",
+      simulated: true,
+      statusIfTriggered: "blocked",
+      expectedBlockingPoint: "Block before unsafe side effects.",
+      humanReviewStatus: "requires_human_owner_review",
+      reproducibleInputRefs: ["README.md", "docs/zh-CN/quality-gates.md"],
+      recovery: "Keep the report card in review."
+    }
+  };
+
+  const markdown = renderExecutionReportCardMarkdown(card);
+  assert.match(markdown, /Expected blocking point: Block before unsafe side effects\./u);
+  assert.match(markdown, /Human review: requires_human_owner_review/u);
+  assert.match(markdown, /Reproducible input refs: README\.md, docs\/zh-CN\/quality-gates\.md/u);
+});

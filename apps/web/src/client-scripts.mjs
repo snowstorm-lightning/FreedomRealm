@@ -559,6 +559,9 @@ function renderReport(card) {
   const suggestedWorkShards = card.workPlan?.suggestedWorkShards || [];
   const templateEvaluationSamples = card.templateEvaluationSamples?.samples || [];
   const firstTemplateEvaluationSample = templateEvaluationSamples[0];
+  const failureInputRefs = Array.isArray(card.failureSample.reproducibleInputRefs)
+    ? card.failureSample.reproducibleInputRefs.join(", ")
+    : "";
   const evalSampleItem = card.evalSample
     ? [
         {
@@ -602,7 +605,7 @@ function renderReport(card) {
         '</p></article>' +
       '<article class="evidence-card"><span>失败路径 / Failure path</span><strong>' +
         escapeHtml(card.failureSample.failureType) + '</strong><p>' +
-        escapeHtml(card.failureSample.statusIfTriggered) + '</p></article>' +
+        escapeHtml(card.failureSample.humanReviewStatus || card.failureSample.statusIfTriggered) + '</p></article>' +
       '<article class="evidence-card"><span>审批 / 数据边界 / Approval / data boundary</span><strong>' +
         escapeHtml(card.approvalStatus) + '</strong><p>' +
         escapeHtml(card.dataClassification + ", " + card.redactionStatus + ", " + card.sharePermission) +
@@ -646,12 +649,25 @@ function renderReport(card) {
         ? '<section class="wide"><h3>模板评测样本 / Template Evaluation Samples</h3>' + renderList(templateEvaluationSamples.map(function (sample) {
             return {
               title: sample.sampleId,
-              detail: sample.purpose + " 失败模式 / Failure mode: " + sample.failureModeCovered
+              detail:
+                sample.purpose +
+                " 失败模式 / Failure mode: " + sample.failureModeCovered +
+                ", data=" + sample.dataClassification +
+                ", retention=" + sample.retention
             };
           }), "title") + '</section>'
         : '') +
       '<section class="wide"><h3>失败路径样本 / Failure Path Sample</h3>' +
-        renderList([{ title: card.failureSample.failureType, detail: card.failureSample.recovery }], "title") +
+        renderList([
+          {
+            title: card.failureSample.failureType,
+            detail:
+              "阻断点 / block: " + (card.failureSample.expectedBlockingPoint || "missing") +
+              "; review=" + (card.failureSample.humanReviewStatus || "missing") +
+              "; inputs=" + (failureInputRefs || "missing") +
+              "; recovery=" + card.failureSample.recovery
+          }
+        ], "title") +
       '</section>' +
     '</div>' +
     '<footer class="data-links">' +
@@ -885,4 +901,3 @@ renderAll();
 bindWorkbenchViewSwitch();
 `;
 }
-

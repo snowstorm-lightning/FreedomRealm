@@ -992,6 +992,9 @@ export function renderDeliveryReportHtml({
         );
         const templateEvaluationSamples = card.extensions["ai-hrms.demo"]?.templateEvaluationSamples?.samples ?? [];
         const failureSample = card.failure?.sample;
+        const failureInputRefs = Array.isArray(failureSample?.reproducibleInputRefs)
+          ? failureSample.reproducibleInputRefs.join(", ")
+          : "missing";
         return `<article class="card">
         <header>
           <p class="eyebrow">${escapeHtml(card.templateId)}@${escapeHtml(card.templateVersion)}</p>
@@ -1009,6 +1012,17 @@ export function renderDeliveryReportHtml({
           <div><span>Eval samples</span><strong>${escapeHtml(card.metrics?.candidateEvalSampleCount ?? 0)}</strong></div>
           <div><span>Failure path</span><strong>${escapeHtml(failureSample?.failureType ?? "none")}</strong></div>
           <div><span>Data boundary</span><strong>${escapeHtml(`${card.dataClassification} / ${card.redactionStatus}`)}</strong></div>
+        </section>
+        <section>
+          <h3>Failure Path Sample</h3>
+          <ul>${renderHtmlList([
+            {
+              title: failureSample?.failureType ?? "none",
+              detail: failureSample
+                ? `block=${failureSample.expectedBlockingPoint ?? "missing"}; review=${failureSample.humanReviewStatus ?? "missing"}; inputs=${failureInputRefs}; recovery=${failureSample.recovery ?? "missing"}`
+                : "No failure sample"
+            }
+          ])}</ul>
         </section>
         ${renderHumanDecisionHtml(card)}
         <section>

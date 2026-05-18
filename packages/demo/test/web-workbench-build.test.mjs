@@ -331,6 +331,9 @@ test("web demo builds a multi-template static workbench from shared demo data", 
     assert.equal(card.templateEvaluationSamples.samples.length >= 1, true);
     assert.ok(card.templateEvaluationSamples.samples[0].sampleId);
     assert.ok(card.failureSample.failureType);
+    assert.ok(card.failureSample.expectedBlockingPoint);
+    assert.equal(card.failureSample.humanReviewStatus, "requires_human_owner_review");
+    assert.ok(card.failureSample.reproducibleInputRefs.length > 0);
     assert.ok(card.failureSample.recovery);
     assert.ok(card.dataClassification);
     assert.ok(card.redactionStatus);
@@ -553,6 +556,8 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   assert.match(app, /候选评测样本 \/ Eval Sample Candidate/u);
   assert.match(app, /Template Evaluation Samples/u);
   assert.match(app, /模板评测样本 \/ Template Evaluation Samples/u);
+  assert.match(app, /阻断点 \/ block:/u);
+  assert.match(app, /requires_human_owner_review/u);
   assert.match(app, /评测证据 \/ Eval evidence/u);
   assert.match(app, /评测 \/ Eval: /u);
   assert.match(app, /失败路径 \/ failure: /u);

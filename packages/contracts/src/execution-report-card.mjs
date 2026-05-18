@@ -158,6 +158,35 @@ function renderList(items, fallback = "None") {
     .join("\n");
 }
 
+function renderFailureSampleMarkdown(failureSample) {
+  if (!failureSample) {
+    return "- None";
+  }
+
+  const lines = [
+    `- Type: ${failureSample.failureType}`,
+    `- Simulated: ${failureSample.simulated === true ? "yes" : "no"}`
+  ];
+
+  if (failureSample.statusIfTriggered) {
+    lines.push(`- Status if triggered: ${failureSample.statusIfTriggered}`);
+  }
+  if (failureSample.expectedBlockingPoint) {
+    lines.push(`- Expected blocking point: ${failureSample.expectedBlockingPoint}`);
+  }
+  if (failureSample.humanReviewStatus) {
+    lines.push(`- Human review: ${failureSample.humanReviewStatus}`);
+  }
+  if (Array.isArray(failureSample.reproducibleInputRefs) && failureSample.reproducibleInputRefs.length > 0) {
+    lines.push(`- Reproducible input refs: ${failureSample.reproducibleInputRefs.join(", ")}`);
+  }
+  if (failureSample.recovery) {
+    lines.push(`- Recovery: ${failureSample.recovery}`);
+  }
+
+  return lines.join("\n");
+}
+
 export function renderExecutionReportCardMarkdown(card) {
   const validation = validateExecutionReportCard(card);
   if (!validation.ok) {
@@ -206,9 +235,7 @@ ${renderList(card.nextActions)}
 
 ## Failure Path Sample
 
-${failureSample ? `- Type: ${failureSample.failureType}
-- Simulated: ${failureSample.simulated === true ? "yes" : "no"}
-- Recovery: ${failureSample.recovery}` : "- None"}
+${renderFailureSampleMarkdown(failureSample)}
 
 ## Reusable Assets
 
