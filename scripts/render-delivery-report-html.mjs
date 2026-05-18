@@ -109,13 +109,18 @@ async function readReportCards(inputs, options) {
   const cards = [];
 
   for (const file of files) {
-    const parsed = JSON.parse(await readFile(file, "utf8"));
+    const relativePath = path.relative(repoRoot, file).split(path.sep).join("/");
+    let parsed;
+    try {
+      parsed = JSON.parse(await readFile(file, "utf8"));
+    } catch (error) {
+      throw new Error(`${relativePath} is not parseable JSON: ${error.message}`);
+    }
     if (parsed.schemaVersion !== EXECUTION_REPORT_CARD_SCHEMA_VERSION) {
       continue;
     }
     const validation = validateExecutionReportCard(parsed);
     if (!validation.ok) {
-      const relativePath = path.relative(repoRoot, file).split(path.sep).join("/");
       const details = validation.errors.map((error) => `${error.path}: ${error.code}`).join(", ");
       throw new Error(`${relativePath} is not a valid ExecutionReportCard: ${details}`);
     }
