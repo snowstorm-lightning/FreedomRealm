@@ -171,3 +171,24 @@ test("validate-templates rejects unsafe evaluation sample sources", async () => 
   assert.match(result.stderr, /unsafe_evaluation_sample_source/u);
   assert.match(result.stderr, /missing_prohibited_data_source/u);
 });
+
+test("validate-templates rejects unsafe Demo Mode tool contracts", async () => {
+  const templateDir = path.join("dist", "test-template-validator", "unsafe-tool-contract");
+  await mkdir(path.join(repoRoot, templateDir), { recursive: true });
+  const template = validTemplate("unsafe_tool_contract");
+  template.toolContracts[0].riskLevel = "medium";
+  template.toolContracts[0].autoExecute = true;
+  template.toolContracts[0].allowedEnvironments = ["dev", "prod"];
+  template.toolContracts[0].budgetLimit.amount = 0;
+  await writeFile(
+    path.join(repoRoot, templateDir, "unsafe_tool_contract.json"),
+    `${JSON.stringify(template, null, 2)}\n`,
+    "utf8"
+  );
+
+  const result = runTemplateValidator(templateDir);
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /unsafe_tool_contract_auto_execute/u);
+  assert.match(result.stderr, /unsafe_tool_contract_environment/u);
+  assert.match(result.stderr, /budgetLimit\.amount must be a positive number/u);
+});

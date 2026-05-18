@@ -62,6 +62,92 @@ function containsAny(values, candidates) {
   return candidates.some((candidate) => normalized.has(normalizeToken(candidate)));
 }
 
+function validateToolContracts(errors, template, file) {
+  if (!Array.isArray(template.toolContracts) || template.toolContracts.length === 0) {
+    return;
+  }
+
+  const requiredFields = [
+    "toolName",
+    "description",
+    "inputSchemaRef",
+    "outputSchemaRef",
+    "requiredPermissions",
+    "riskLevel",
+    "allowedActorTypes",
+    "allowedEnvironments",
+    "autoExecute",
+    "budgetLimit",
+    "auditTags"
+  ];
+
+  for (const [index, contract] of template.toolContracts.entries()) {
+    if (!isPlainObject(contract)) {
+      addIssue(errors, "invalid_tool_contract", `toolContracts.${index} must be an object.`, file);
+      continue;
+    }
+
+    for (const field of requiredFields) {
+      if (!(field in contract)) {
+        addIssue(errors, "invalid_tool_contract", `toolContracts.${index}.${field} is required.`, file);
+      }
+    }
+
+    validateNonEmptyString(errors, contract.toolName, `toolContracts.${index}.toolName`, file);
+    validateNonEmptyString(errors, contract.description, `toolContracts.${index}.description`, file);
+    validateNonEmptyString(errors, contract.inputSchemaRef, `toolContracts.${index}.inputSchemaRef`, file);
+    validateNonEmptyString(errors, contract.outputSchemaRef, `toolContracts.${index}.outputSchemaRef`, file);
+    validateNonEmptyString(errors, contract.riskLevel, `toolContracts.${index}.riskLevel`, file);
+    validateNonEmptyArray(errors, contract.requiredPermissions, `toolContracts.${index}.requiredPermissions`, file);
+    validateNonEmptyArray(errors, contract.allowedActorTypes, `toolContracts.${index}.allowedActorTypes`, file);
+    validateNonEmptyArray(errors, contract.allowedEnvironments, `toolContracts.${index}.allowedEnvironments`, file);
+    validateNonEmptyArray(errors, contract.auditTags, `toolContracts.${index}.auditTags`, file);
+
+    if (!["low", "medium", "high"].includes(contract.riskLevel)) {
+      addIssue(errors, "invalid_tool_contract_risk", `toolContracts.${index}.riskLevel is invalid.`, file);
+    }
+
+    if (contract.autoExecute !== true && contract.autoExecute !== false) {
+      addIssue(errors, "invalid_tool_contract_auto_execute", `toolContracts.${index}.autoExecute must be boolean.`, file);
+    }
+
+    if (["medium", "high"].includes(contract.riskLevel) && contract.autoExecute !== false) {
+      addIssue(
+        errors,
+        "unsafe_tool_contract_auto_execute",
+        `toolContracts.${index} medium/high risk tools must not autoExecute in Demo Mode templates.`,
+        file
+      );
+    }
+
+    if (
+      containsAny(contract.allowedEnvironments, [
+        "prod",
+        "production",
+        "enterprise",
+        "live",
+        "real_connector"
+      ])
+    ) {
+      addIssue(
+        errors,
+        "unsafe_tool_contract_environment",
+        `toolContracts.${index}.allowedEnvironments must stay within dev/ci for Demo Mode templates.`,
+        file
+      );
+    }
+
+    if (!isPlainObject(contract.budgetLimit)) {
+      addIssue(errors, "invalid_tool_contract_budget", `toolContracts.${index}.budgetLimit must be an object.`, file);
+    } else {
+      validateNonEmptyString(errors, contract.budgetLimit.currency, `toolContracts.${index}.budgetLimit.currency`, file);
+      if (typeof contract.budgetLimit.amount !== "number" || !Number.isFinite(contract.budgetLimit.amount) || contract.budgetLimit.amount <= 0) {
+        addIssue(errors, "invalid_tool_contract_budget", `toolContracts.${index}.budgetLimit.amount must be a positive number.`, file);
+      }
+    }
+  }
+}
+
 function validateFailureSample(errors, template, file) {
   if (!isPlainObject(template.failureSample)) {
     addIssue(errors, "missing_failure_sample", "failureSample must be an object.", file);
@@ -237,6 +323,7 @@ function validateTemplate(errors, template, file) {
   validateNonEmptyString(errors, template.riskLevel, "riskLevel", file);
   validateNonEmptyArray(errors, template.skillRefs, "skillRefs", file);
   validateNonEmptyArray(errors, template.toolContracts, "toolContracts", file);
+  validateToolContracts(errors, template, file);
 
   if (template.runtimeMode !== "Demo Mode") {
     addIssue(errors, "invalid_template_runtime", "runtimeMode must be Demo Mode for checked-in templates.", file);
