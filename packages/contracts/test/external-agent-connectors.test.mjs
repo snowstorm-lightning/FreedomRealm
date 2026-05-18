@@ -122,6 +122,36 @@ test("rejects non-namespaced connector profile extensions", () => {
   assert.equal(result.errors.some((error) => error.code === "invalid_extension_namespace"), true);
 });
 
+test("rejects non-namespaced external agent run extensions", () => {
+  const request = validRunRequest();
+  request.extensions.openclaw = {};
+  const requestResult = validateExternalAgentRunRequest(request);
+  assert.equal(requestResult.ok, false);
+  assert.equal(requestResult.errors.some((error) => error.code === "invalid_extension_namespace"), true);
+
+  const runResult = validateExternalAgentRunResult({
+    resultId: "external-agent-result-001",
+    schemaVersion: EXTERNAL_AGENT_RUN_RESULT_SCHEMA_VERSION,
+    connectorId: "external-agent.openclaw.mock",
+    direction: "external_agent_to_ai_hrms",
+    env: "dev",
+    agentRunId: "run-demo-001",
+    status: "needs_review",
+    outputRefs: [],
+    summary: "Mock external agent output was captured as a candidate.",
+    findings: [],
+    recommendations: [],
+    auditRefs: [],
+    dataClassification: "internal",
+    redactionStatus: "redacted",
+    extensions: {
+      openclaw: {}
+    }
+  });
+  assert.equal(runResult.ok, false);
+  assert.equal(runResult.errors.some((error) => error.code === "invalid_extension_namespace"), true);
+});
+
 test("validates ExternalAgentRunRequest and ExternalAgentRunResult v1", () => {
   const requestResult = validateExternalAgentRunRequest(validRunRequest());
   assert.equal(requestResult.ok, true);
