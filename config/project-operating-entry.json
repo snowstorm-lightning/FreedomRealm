@@ -583,6 +583,67 @@
           "verificationCommands": [
             "pnpm check"
           ]
+        },
+        {
+          "commitRef": "dcb2103",
+          "scope": "Delivery report HTML explicit JSON boundary help text",
+          "writeSet": [
+            "scripts/render-delivery-report-html.mjs",
+            "packages/demo/test/demo-engine.test.mjs"
+          ],
+          "verificationCommands": [
+            "pnpm check"
+          ]
+        },
+        {
+          "commitRef": "32dd847",
+          "scope": "Demo CLI invalid option coverage",
+          "writeSet": [
+            "packages/contracts/test/demo-mode-cli.test.mjs"
+          ],
+          "verificationCommands": [
+            "pnpm check"
+          ]
+        },
+        {
+          "commitRef": "171be83",
+          "scope": "Knowledge CLI unknown option coverage",
+          "writeSet": [
+            "packages/demo/test/knowledge-demo-cli.test.mjs"
+          ],
+          "verificationCommands": [
+            "pnpm check"
+          ]
+        },
+        {
+          "commitRef": "4dfceaa",
+          "scope": "External agent run extension namespace coverage",
+          "writeSet": [
+            "packages/contracts/test/external-agent-connectors.test.mjs"
+          ],
+          "verificationCommands": [
+            "pnpm check"
+          ]
+        },
+        {
+          "commitRef": "2e0ac87",
+          "scope": "Sensitive external agent sanitized input reference coverage",
+          "writeSet": [
+            "packages/policy/test/environment-isolation.test.mjs"
+          ],
+          "verificationCommands": [
+            "pnpm check"
+          ]
+        },
+        {
+          "commitRef": "166884d",
+          "scope": "External agent request routing guard coverage",
+          "writeSet": [
+            "packages/policy/test/environment-isolation.test.mjs"
+          ],
+          "verificationCommands": [
+            "pnpm check"
+          ]
         }
       ]
     },
