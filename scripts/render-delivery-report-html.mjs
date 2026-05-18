@@ -106,6 +106,11 @@ async function collectJsonFiles(inputPath, { allowMissing }) {
 
 async function readReportCards(inputs, options) {
   const files = [...new Set((await Promise.all(inputs.map((input) => collectJsonFiles(input, options)))).flat())].sort();
+  const explicitJsonInputs = new Set(
+    options.explicitInputs
+      ? inputs.filter((input) => input.endsWith(".json")).map((input) => resolveWorkspacePath(input, "Input path"))
+      : []
+  );
   const cards = [];
 
   for (const file of files) {
@@ -117,6 +122,9 @@ async function readReportCards(inputs, options) {
       throw new Error(`${relativePath} is not parseable JSON: ${error.message}`);
     }
     if (parsed.schemaVersion !== EXECUTION_REPORT_CARD_SCHEMA_VERSION) {
+      if (explicitJsonInputs.has(file)) {
+        throw new Error(`${relativePath} is not an ExecutionReportCard JSON file.`);
+      }
       continue;
     }
     const validation = validateExecutionReportCard(parsed);
@@ -137,7 +145,10 @@ async function main() {
     return;
   }
 
-  const reportCards = await readReportCards(options.inputs, { allowMissing: !options.explicitInputs });
+  const reportCards = await readReportCards(options.inputs, {
+    allowMissing: !options.explicitInputs,
+    explicitInputs: options.explicitInputs
+  });
   const html = renderDeliveryReportHtml({
     reportCards,
     title: options.title

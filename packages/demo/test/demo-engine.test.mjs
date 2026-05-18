@@ -383,6 +383,21 @@ test("report HTML CLI identifies malformed explicit JSON input", async () => {
   assert.match(result.stderr, /bad-card\.json is not parseable JSON/u);
 });
 
+test("report HTML CLI rejects explicit JSON files that are not report cards", async () => {
+  const inputPath = path.join("dist", "test-delivery-report-wrong-json", randomUUID(), "not-a-card.json");
+  await mkdir(path.dirname(path.join(repoRoot, inputPath)), { recursive: true });
+  await writeFile(path.join(repoRoot, inputPath), `${JSON.stringify({ schemaVersion: "other.v1" })}\n`, "utf8");
+
+  const result = spawnSync(process.execPath, ["scripts/render-delivery-report-html.mjs", "--input", inputPath], {
+    cwd: repoRoot,
+    encoding: "utf8",
+    shell: false
+  });
+
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /not-a-card\.json is not an ExecutionReportCard JSON file/u);
+});
+
 test("report HTML CLI help documents explicit input behavior", () => {
   const result = spawnSync(process.execPath, ["scripts/render-delivery-report-html.mjs", "--help"], {
     cwd: repoRoot,
