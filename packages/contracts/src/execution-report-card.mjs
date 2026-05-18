@@ -1,5 +1,6 @@
 import {
   APPROVAL_STATUSES,
+  DATA_CLASSIFICATIONS,
   EXECUTION_REPORT_CARD_REQUIRED_FIELDS,
   EXECUTION_REPORT_CARD_SCHEMA_VERSION,
   REPORT_CARD_STATUSES,
@@ -110,6 +111,16 @@ export function validateExecutionReportCard(card) {
 
   if ("approvalStatus" in card && !APPROVAL_STATUSES.includes(card.approvalStatus)) {
     errors.push(issue("invalid_approval_status", "approvalStatus is invalid.", "approvalStatus"));
+  }
+
+  if ("dataClassification" in card && !DATA_CLASSIFICATIONS.includes(card.dataClassification)) {
+    errors.push(
+      issue(
+        "invalid_data_classification",
+        "dataClassification is invalid.",
+        "dataClassification"
+      )
+    );
   }
 
   if ("status" in card && !REPORT_CARD_STATUSES.includes(card.status)) {

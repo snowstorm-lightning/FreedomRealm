@@ -70,6 +70,14 @@ test("rejects non-namespaced extension keys", () => {
   assert.equal(result.errors.some((error) => error.code === "invalid_extension_namespace"), true);
 });
 
+test("rejects invalid report-card data classification", () => {
+  const card = validCard();
+  card.dataClassification = "secret";
+  const result = validateExecutionReportCard(card);
+  assert.equal(result.ok, false);
+  assert.equal(result.errors.some((error) => error.code === "invalid_data_classification"), true);
+});
+
 test("renders Markdown from the JSON report card", () => {
   const markdown = renderExecutionReportCardMarkdown(validCard());
   assert.match(markdown, /# ExecutionReportCard/u);
