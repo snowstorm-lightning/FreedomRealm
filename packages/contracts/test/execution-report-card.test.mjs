@@ -78,6 +78,21 @@ test("rejects invalid report-card data classification", () => {
   assert.equal(result.errors.some((error) => error.code === "invalid_data_classification"), true);
 });
 
+test("rejects invalid report-card timestamp, risk, approval, and status", () => {
+  const card = validCard();
+  card.generatedAt = "not-a-date";
+  card.riskLevel = "severe";
+  card.approvalStatus = "auto_approved";
+  card.status = "published";
+
+  const result = validateExecutionReportCard(card);
+  assert.equal(result.ok, false);
+  assert.equal(result.errors.some((error) => error.path === "generatedAt"), true);
+  assert.equal(result.errors.some((error) => error.code === "invalid_risk_level"), true);
+  assert.equal(result.errors.some((error) => error.code === "invalid_approval_status"), true);
+  assert.equal(result.errors.some((error) => error.code === "invalid_report_status"), true);
+});
+
 test("renders Markdown from the JSON report card", () => {
   const markdown = renderExecutionReportCardMarkdown(validCard());
   assert.match(markdown, /# ExecutionReportCard/u);
