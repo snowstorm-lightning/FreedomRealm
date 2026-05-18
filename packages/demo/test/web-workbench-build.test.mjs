@@ -168,6 +168,8 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   );
   assert.ok(currentWorkbenchTask);
   assert.equal(currentWorkbenchTask.priority, "P0");
+  assert.equal(currentWorkbenchTask.status, "implemented-in-repo");
+  assert.deepEqual(currentWorkbenchTask.implementationRefs, ["0e0733e"]);
   assert.equal(currentWorkbenchTask.title, "项目学习系统首页与 Web Workbench 拆页落地");
   assert.deepEqual(currentWorkbenchTask.verificationCommands, ["pnpm web:demo", "pnpm check"]);
   assert.equal(currentWorkbenchTask.outputs.includes("项目学习首页"), true);
@@ -299,6 +301,8 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   const promotedConnectorTask = state.operatingEntry.currentTasks.find((task) =>
     task.taskId === "p1-connector-governance-sync"
   );
+  assert.equal(promotedConnectorTask?.status, "implemented-in-repo");
+  assert.deepEqual(promotedConnectorTask?.implementationRefs, ["f6c3cb7", "59d2adb"]);
   assert.equal(promotedConnectorTask?.candidateOrigin?.candidateWorkItemId, "candidate-work-item-001");
   assert.deepEqual(promotedConnectorTask?.candidateOrigin?.sourceFindingIds, ["finding-001"]);
   assert.equal(
@@ -474,8 +478,10 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   assert.match(css, /\.proof-stat p \{\n  margin: 6px 0 0;\n  color: var\(--muted\);\n  line-height: 1\.35;\n  font-size: 12px;/u);
   assert.match(app, /Current task queue/u);
   assert.match(app, /当前任务队列 \/ Current task queue/u);
-  assert.match(app, /Active P0 WorkItem/u);
-  assert.match(app, /当前 P0 WorkItem \/ Active P0 WorkItem/u);
+  assert.match(app, /P0 WorkItem snapshot/u);
+  assert.match(app, /P0 WorkItem 快照 \/ P0 WorkItem snapshot/u);
+  assert.match(app, /implemented-in-repo/u);
+  assert.match(app, /implementationRefs/u);
   assert.match(app, /activeTask\.outputs \|\| \[\]\)\.slice\(0, 8\)/u);
   assert.match(app, /renderTaskMetaList\("验收 \/ Acceptance", activeTask\.acceptanceCriteria, 6\)/u);
   assert.match(app, /验收 \/ Acceptance/u);

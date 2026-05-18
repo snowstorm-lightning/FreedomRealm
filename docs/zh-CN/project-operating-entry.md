@@ -24,15 +24,15 @@ pnpm self-review
 
 P0 是当前打开仓库后默认优先级。除非用户明确改变方向，agent 应优先从 P0 中选择最小可验证任务。
 
-| 优先级 | 任务 | 建议 owner | 产出 | 验收 |
-| --- | --- | --- | --- | --- |
-| P0 | 项目学习系统首页与 Web Workbench 拆页落地 | HumanActor + AgentActor | 项目学习首页、多页面导航、任务化学习路径、完整工作台独立页面、三类入口、推荐下一步、报告卡预览、当前计划入口、Review Prompts、Running Modes、Owner Decision Queue、active plan 状态提示、人工复核 decay prevention backlog | `pnpm web:demo` 和 `pnpm check` 通过 |
-| P0 | 把项目运行入口提升为可校验 manifest | AgentActor | `project-operating-entry.v1` manifest、validator、根命令 | `pnpm validate:operating-entry` 和 `pnpm check` 通过 |
-| P0 | 建立多 agent 防冲突最小规则 | HumanActor + AgentActor | `AgentWorkLease` 模板、`writeSet` 冲突规则、`MergeGate` 检查清单 | 每个 `WorkShard` 都能声明 `readSet`、`writeSet`、验证命令和回滚说明；并行 `writeSet` 默认 non-overlapping；高风险动作不能因拆分绕过 `ApprovalGate` |
-| P1 | 同步外部 agent connector 治理文档与测试 | HumanActor + AgentActor | `ExternalConnector` 治理文档同步说明、`ApprovalGate` 与数据分级一致性检查、相关策略测试更新 | `pnpm check` 通过；不启用真实 connector；保留 `candidate-work-item-001` 来源和 `user-approved-continuation-20260517` 人工批准记录 |
-| P1 | 建立人工复核的衰减预防 backlog | HumanActor | human-reviewed decay prevention backlog、正式 `WorkItem` 记录、来源追踪 | `pnpm self-review` 和 `pnpm check` 通过；保留 `candidate-work-item-002` 来源和 `user-approved-continuation-20260517` 人工批准记录 |
-| P1 | 为首批用户可见模板补评测样本 | AgentActor | template manifest、失败样本、`evaluationSamples`、报告卡案例 | `pnpm validate:templates` 和 `pnpm check` 通过，样本可引用且不依赖真实连接器；失败样本保留 `expectedBlockingPoint`、`humanReviewStatus` 和 `reproducibleInputRefs`；`evaluationSamples` 保留输入引用、数据分级、用途限定、保留期和数据来源边界 |
-| P2 | 真实连接器和 live model 增强 | HumanActor 审批后 | 受控增强路径 | 不改变 MVP 通过标准，不绕过 `ApprovalGate` |
+| 优先级 | 状态 | 任务 | 建议 owner | 产出 | 验收 |
+| --- | --- | --- | --- | --- | --- |
+| P0 | implemented-in-repo (`0e0733e`) | 项目学习系统首页与 Web Workbench 拆页落地 | HumanActor + AgentActor | 项目学习首页、多页面导航、任务化学习路径、完整工作台独立页面、三类入口、推荐下一步、报告卡预览、当前计划入口、Review Prompts、Running Modes、Owner Decision Queue、active plan 状态提示、人工复核 decay prevention backlog | `pnpm web:demo` 和 `pnpm check` 通过 |
+| P0 | implemented-in-repo (`81ce7ab`, `0532341`) | 把项目运行入口提升为可校验 manifest | AgentActor | `project-operating-entry.v1` manifest、validator、根命令 | `pnpm validate:operating-entry` 和 `pnpm check` 通过 |
+| P0 | implemented-in-repo (`365bb77`) | 建立多 agent 防冲突最小规则 | HumanActor + AgentActor | `AgentWorkLease` 模板、`writeSet` 冲突规则、`MergeGate` 检查清单 | 每个 `WorkShard` 都能声明 `readSet`、`writeSet`、验证命令和回滚说明；并行 `writeSet` 默认 non-overlapping；高风险动作不能因拆分绕过 `ApprovalGate` |
+| P1 | implemented-in-repo (`f6c3cb7`, `59d2adb`) | 同步外部 agent connector 治理文档与测试 | HumanActor + AgentActor | `ExternalConnector` 治理文档同步说明、`ApprovalGate` 与数据分级一致性检查、相关策略测试更新 | `pnpm check` 通过；不启用真实 connector；保留 `candidate-work-item-001` 来源和 `user-approved-continuation-20260517` 人工批准记录 |
+| P1 | needs-human-owner-review | 建立人工复核的衰减预防 backlog | HumanActor | human-reviewed decay prevention backlog、正式 `WorkItem` 记录、来源追踪 | `pnpm self-review` 和 `pnpm check` 通过；保留 `candidate-work-item-002` 来源和 `user-approved-continuation-20260517` 人工批准记录 |
+| P1 | implemented-in-repo (`578b08f`, `bae8140`) | 为首批用户可见模板补评测样本 | AgentActor | template manifest、失败样本、`evaluationSamples`、报告卡案例 | `pnpm validate:templates` 和 `pnpm check` 通过，样本可引用且不依赖真实连接器；失败样本保留 `expectedBlockingPoint`、`humanReviewStatus` 和 `reproducibleInputRefs`；`evaluationSamples` 保留输入引用、数据分级、用途限定、保留期和数据来源边界 |
+| P2 | blocked-needs-human-owner | 真实连接器和 live model 增强 | HumanActor 审批后 | 受控增强路径 | 不改变 MVP 通过标准，不绕过 `ApprovalGate` |
 
 自我审查晋升记录：`dist/self-review/report-02cd1888-6f32-495e-b171-da73d311a116.json` 中的 `candidate-work-item-001` 和 `candidate-work-item-002` 已经由 `user-approved-continuation-20260517` 批准，从候选材料晋升为正式 P1 任务。该批准不授权执行 P2 live connectors、创建外部 issue / PR、访问 secret 或扩大数据分级边界。
 

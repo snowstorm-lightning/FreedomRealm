@@ -81,9 +81,11 @@ function renderOperatingSnapshot() {
 
   const cards = [
     {
-      label: "当前 P0 / Active P0",
+      label: "P0 快照 / P0 snapshot",
       title: activeTask ? activeTask.title : "暂无任务 / No task",
-      detail: activeTask ? activeTask.taskId + "; verify: " + activeTask.verificationCommands.join(" / ") : ""
+      detail: activeTask
+        ? activeTask.taskId + "; status=" + (activeTask.status || "untracked") + "; verify: " + activeTask.verificationCommands.join(" / ")
+        : ""
     },
     {
       label: "待决策 / Decisions",
@@ -377,8 +379,9 @@ function renderOperatingEntry() {
       '<p>默认下一条命令 / Default next command: <strong>' + escapeHtml(startupCommand) + '</strong></p>' +
     '</div>' +
     (activeTask ? '<section class="active-task">' +
-      '<span>当前 P0 WorkItem / Active P0 WorkItem</span>' +
+      '<span>P0 WorkItem 快照 / P0 WorkItem snapshot</span>' +
       '<strong>' + escapeHtml(activeTask.taskId) + '</strong>' +
+      '<p>状态 / Status: ' + escapeHtml(activeTask.status || "untracked") + '</p>' +
       '<p>' + escapeHtml(activeTask.title) + '</p>' +
       '<div class="chip-row">' +
         (activeTask.outputs || []).slice(0, 8).map(function (output) {
@@ -395,9 +398,11 @@ function renderOperatingEntry() {
             '<header><strong>' + escapeHtml(task.title) + '</strong><span class="priority-pill">' +
               escapeHtml(task.priority) + '</span></header>' +
             '<p>任务 ID / TaskId: ' + escapeHtml(task.taskId) + '</p>' +
+            '<p>状态 / Status: ' + escapeHtml(task.status || "untracked") + '</p>' +
             '<p>负责人 / Owner: ' + escapeHtml(task.ownerActorTypes.join(" + ")) + '</p>' +
             '<p>风险 / Risk: ' + escapeHtml(task.riskLevel) + '; 验证 / verify: ' +
               escapeHtml(task.verificationCommands.join(" / ")) + '</p>' +
+            '<p>implementationRefs: ' + escapeHtml(compactJoin(task.implementationRefs, "none")) + '</p>' +
             '<p>writeSet: ' + escapeHtml(task.suggestedWriteSet.join(", ")) + '</p>' +
             renderTaskMetaList("验收 / Acceptance", task.acceptanceCriteria, 2) +
             renderTaskMetaList("来源 / Sources", task.sourceRefs, 2) +

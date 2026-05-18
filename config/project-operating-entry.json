@@ -16,6 +16,7 @@
     {
       "taskId": "p0-next-workbench-entry",
       "priority": "P0",
+      "status": "implemented-in-repo",
       "title": "项目学习系统首页与 Web Workbench 拆页落地",
       "ownerActorTypes": [
         "HumanActor",
@@ -65,11 +66,15 @@
       "sourceRefs": [
         "docs/zh-CN/project-operating-entry.md",
         "docs/zh-CN/execution-plans/completed/phase-0-6-web-workbench-mvp.md"
+      ],
+      "implementationRefs": [
+        "0e0733e"
       ]
     },
     {
       "taskId": "p0-operating-entry-manifest",
       "priority": "P0",
+      "status": "implemented-in-repo",
       "title": "把项目运行入口提升为可校验 manifest",
       "ownerActorTypes": [
         "AgentActor"
@@ -98,11 +103,16 @@
       "sourceRefs": [
         "docs/zh-CN/project-operating-entry.md",
         "docs/zh-CN/quality-gates.md"
+      ],
+      "implementationRefs": [
+        "81ce7ab",
+        "0532341"
       ]
     },
     {
       "taskId": "p0-multi-agent-conflict-guard",
       "priority": "P0",
+      "status": "implemented-in-repo",
       "title": "建立多 agent 防冲突最小规则",
       "ownerActorTypes": [
         "HumanActor",
@@ -131,11 +141,15 @@
       "sourceRefs": [
         "docs/zh-CN/harness-engineering.md",
         "docs/zh-CN/quality-gates.md"
+      ],
+      "implementationRefs": [
+        "365bb77"
       ]
     },
     {
       "taskId": "p1-connector-governance-sync",
       "priority": "P1",
+      "status": "implemented-in-repo",
       "title": "同步外部 agent connector 治理文档与测试",
       "ownerActorTypes": [
         "HumanActor",
@@ -178,11 +192,16 @@
         "docs/zh-CN/api-contracts.md",
         "docs/zh-CN/security-and-governance.md",
         "docs/zh-CN/quality-gates.md"
+      ],
+      "implementationRefs": [
+        "f6c3cb7",
+        "59d2adb"
       ]
     },
     {
       "taskId": "p1-decay-prevention-backlog",
       "priority": "P1",
+      "status": "needs-human-owner-review",
       "title": "建立人工复核的衰减预防 backlog",
       "ownerActorTypes": [
         "HumanActor"
@@ -230,6 +249,7 @@
     {
       "taskId": "p1-template-evaluation-samples",
       "priority": "P1",
+      "status": "implemented-in-repo",
       "title": "为首批用户可见模板补评测样本",
       "ownerActorTypes": [
         "AgentActor"
@@ -263,11 +283,16 @@
       "sourceRefs": [
         "docs/zh-CN/project-operating-entry.md",
         "docs/zh-CN/quality-gates.md"
+      ],
+      "implementationRefs": [
+        "578b08f",
+        "bae8140"
       ]
     },
     {
       "taskId": "p2-live-connectors",
       "priority": "P2",
+      "status": "blocked-needs-human-owner",
       "title": "真实连接器和 live model 增强",
       "ownerActorTypes": [
         "HumanActor"
