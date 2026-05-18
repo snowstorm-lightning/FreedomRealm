@@ -332,6 +332,42 @@ test("report HTML CLI renders generated JSON report cards", async () => {
   assert.match(html, /requires_human_owner_review/u);
 });
 
+test("report HTML CLI accepts an explicit JSON report-card input", async () => {
+  const outputRoot = path.join("dist", "test-delivery-report-json-cli", randomUUID());
+  const cardDir = path.join(outputRoot, "cards");
+  const htmlPath = path.join(outputRoot, "delivery.html");
+  const execution = await runDemoMode({
+    repoRoot,
+    templateId: "docs_review_and_improvement",
+    model: "mock",
+    outputDir: cardDir
+  });
+
+  const result = spawnSync(
+    process.execPath,
+    [
+      "scripts/render-delivery-report-html.mjs",
+      "--input",
+      execution.output.jsonRelativePath,
+      "--out",
+      htmlPath,
+      "--title",
+      "Single JSON Report"
+    ],
+    {
+      cwd: repoRoot,
+      encoding: "utf8",
+      shell: false
+    }
+  );
+
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /\[report:html\] Report cards: 1/u);
+  const html = await readFile(path.join(repoRoot, htmlPath), "utf8");
+  assert.match(html, /Single JSON Report/u);
+  assert.match(html, /JSON ExecutionReportCard/u);
+});
+
 test("report HTML CLI help documents explicit input behavior", () => {
   const result = spawnSync(process.execPath, ["scripts/render-delivery-report-html.mjs", "--help"], {
     cwd: repoRoot,
