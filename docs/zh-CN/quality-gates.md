@@ -72,6 +72,7 @@
 - 是否至少保留一个 P0 任务，并为每个任务声明 owner、产出、验收、验证命令、风险等级和建议 `writeSet`。
 - startup / verification 命令是否只引用根 `package.json` 中存在的 `pnpm` scripts。
 - `leaseTemplate.requiredFields` 是否覆盖完整 `AgentWorkLease` 字段，并至少包含 `readSet`、`writeSet`、`verificationCommands` 和 `rollbackPlan`。
+- Markdown 文档中的 `AgentWorkLease` 字段名是否与 manifest 完全一致；验证命令字段使用 `verificationCommands`，不得混写为 `validationCommands`。
 - `conflictRules.defaultWriteSetPolicy` 是否保持 `non-overlapping`。
 - `conflictRules.rules` 是否声明 subagent 不得自行扩大 `writeSet`、冲突时等待或缩小范围、以及无法裁决时回到 human owner。
 - `continuationRules.allowStopWhen` 是否包含 `ApprovalGate` 和 `dataClassification` 触发条件。

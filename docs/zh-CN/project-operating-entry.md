@@ -28,7 +28,7 @@ P0 是当前打开仓库后默认优先级。除非用户明确改变方向，ag
 | --- | --- | --- | --- | --- |
 | P0 | 项目学习系统首页与 Web Workbench 拆页落地 | HumanActor + AgentActor | 项目学习首页、多页面导航、任务化学习路径、完整工作台独立页面、三类入口、推荐下一步、报告卡预览、当前计划入口、Review Prompts、Running Modes、Owner Decision Queue、active plan 状态提示、人工复核 decay prevention backlog | `pnpm web:demo` 和 `pnpm check` 通过 |
 | P0 | 把项目运行入口提升为可校验 manifest | AgentActor | `project-operating-entry.v1` manifest、validator、根命令 | `pnpm validate:operating-entry` 和 `pnpm check` 通过 |
-| P0 | 建立多 agent 防冲突最小规则 | HumanActor + AgentActor | `AgentWorkLease` 模板、`writeSet` 冲突规则、`MergeGate` 检查清单 | 质量门禁和执行计划同步 |
+| P0 | 建立多 agent 防冲突最小规则 | HumanActor + AgentActor | `AgentWorkLease` 模板、`writeSet` 冲突规则、`MergeGate` 检查清单 | 每个 `WorkShard` 都能声明 `readSet`、`writeSet`、验证命令和回滚说明；并行 `writeSet` 默认 non-overlapping；高风险动作不能因拆分绕过 `ApprovalGate` |
 | P1 | 同步外部 agent connector 治理文档与测试 | HumanActor + AgentActor | `ExternalConnector` 治理文档同步说明、`ApprovalGate` 与数据分级一致性检查、相关策略测试更新 | `pnpm check` 通过；不启用真实 connector；保留 `candidate-work-item-001` 来源和 `user-approved-continuation-20260517` 人工批准记录 |
 | P1 | 建立人工复核的衰减预防 backlog | HumanActor | human-reviewed decay prevention backlog、正式 `WorkItem` 记录、来源追踪 | `pnpm self-review` 和 `pnpm check` 通过；保留 `candidate-work-item-002` 来源和 `user-approved-continuation-20260517` 人工批准记录 |
 | P1 | 为首批用户可见模板补评测样本 | AgentActor | template manifest、失败样本、`evaluationSamples`、报告卡案例 | `pnpm validate:templates` 和 `pnpm check` 通过，样本可引用且不依赖真实连接器 |
@@ -88,8 +88,36 @@ Active execution plans 的状态清理也需要 human owner 复核：
 - `writeSet`：允许修改的文件、目录、接口、schema 或文档范围。
 - `allowedToolContracts`、`forbiddenActions`，禁止动作必须覆盖真实外部连接器、生产数据、secret、公开分享和未授权高风险写入。
 - `dataClassification`、`riskLevel`、`modelRoute`。
-- `expectedOutputSchema`、`checkpointPolicy`、`validationCommands`。
+- `expectedOutputSchema`、`checkpointPolicy`、`verificationCommands`。
 - `deliverables`、`rollbackPlan`、`mergeGateRequirements`、`stopConditions`。
+
+最小 `AgentWorkLease` 模板如下。字段名必须与 `config/project-operating-entry.json` 的 `leaseTemplate.requiredFields` 保持一致；执行者可以缩小值域，但不能省略 `readSet`、`writeSet`、`verificationCommands` 或 `rollbackPlan`：
+
+```json
+{
+  "leaseId": "lease-YYYYMMDD-short-id",
+  "workItemId": "p0-multi-agent-conflict-guard",
+  "shardId": "docs-conflict-rules",
+  "parentShardId": null,
+  "ownerAgentRole": "AgentActor",
+  "objective": "在授权范围内完成一个可验证子任务",
+  "nonGoals": ["不启用真实 connector", "不访问 secret 或生产数据"],
+  "readSet": ["config/project-operating-entry.json", "docs/zh-CN/project-operating-entry.md"],
+  "writeSet": ["docs/zh-CN/project-operating-entry.md"],
+  "allowedToolContracts": ["repo.read", "repo.write.docs", "test.local"],
+  "forbiddenActions": ["live connector execution", "secret access", "production data access", "ApprovalGate bypass"],
+  "dataClassification": "public-docs-only",
+  "riskLevel": "low",
+  "modelRoute": "local-analysis",
+  "expectedOutputSchema": "ShardResult",
+  "checkpointPolicy": "完成同范围改动后输出 ChangePacket 并运行验证命令",
+  "verificationCommands": ["pnpm validate:operating-entry", "pnpm check"],
+  "deliverables": ["更新后的文档或测试"],
+  "rollbackPlan": "回退本 shard 涉及的提交或恢复 writeSet 中列出的文件",
+  "mergeGateRequirements": ["writeSet non-overlap", "docs and manifest field names match"],
+  "stopConditions": ["需要扩大 writeSet", "触发 ApprovalGate", "触发 dataClassification 限制"]
+}
+```
 
 没有 `AgentWorkLease` 的 subagent 不得修改文件、配置、代码、schema 或长期文档。subagent 也不得自行扩大 `writeSet`；需要扩大时必须回到主 agent 或 human owner。
 
@@ -119,6 +147,15 @@ Active execution plans 的状态清理也需要 human owner 复核：
 - `MergeGate` 必须检查契约、文档一致性、测试、数据分级、成员权利、模型路由和审批要求。
 - 高风险动作仍必须回到 `ApprovalGate`，不能因为拆成多个 agent 而降低风险等级。
 - 连续两个 shard 输出互相矛盾且无法裁决时必须停止，并请求 human owner 决策。
+
+冲突处理默认表：
+
+| 冲突信号 | 默认处理 | 可覆盖条件 |
+| --- | --- | --- |
+| 两个 shard 声明同一路径、schema、接口或命令入口的 `writeSet` | 后启动 shard 等待、缩小范围或转为只读探索 | human owner 指定统一 owner，并在 `MergeGate` 人工复核 |
+| 低风险 shard 顺带修改 `ApprovalGate`、`ToolContract`、`DataClassification`、`ExecutionReportCard`、`ModelRoute` 或 `FederationMessage` | 阻断合并，并把该影响拆成独立高风险候选 | human owner 重新授权新的 `AgentWorkLease` 和验证命令 |
+| shard 需要读取 secret、生产数据、真实 connector 凭证或未授权 MCP 配置 | 立即停止该 shard | 只有显式审批、数据分级和审计设计齐备后才能重开 |
+| 两个 `ShardResult` 对事实、接口或治理边界给出互相矛盾结论 | 不选择任一结论并生成待决问题 | human owner 裁决，或补充只读调查 shard |
 
 ## ChangePacket 和 MergeGate
 

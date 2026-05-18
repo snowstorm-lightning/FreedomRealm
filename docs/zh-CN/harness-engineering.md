@@ -85,7 +85,7 @@ riskLevel
 modelRoute
 expectedOutputSchema
 checkpointPolicy
-validationCommands
+verificationCommands
 deliverables
 rollbackPlan
 mergeGateRequirements
