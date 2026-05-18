@@ -212,3 +212,9 @@ test("validate-templates rejects unsafe Demo Mode tool contracts", async () => {
   assert.match(result.stderr, /unsafe_tool_contract_environment/u);
   assert.match(result.stderr, /budgetLimit\.amount must be a positive number/u);
 });
+
+test("validate-templates keeps template directory override inside the workspace", () => {
+  const result = runTemplateValidator("../outside-template-dir");
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /Template path must stay inside the workspace/u);
+});
