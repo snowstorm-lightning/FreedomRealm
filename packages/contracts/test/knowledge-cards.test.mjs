@@ -140,3 +140,22 @@ test("rejects submitted challenge with invalid approval status", () => {
   assert.equal(result.ok, false);
   assert.equal(result.errors.some((error) => error.code === "invalid_approval_status"), true);
 });
+
+test("rejects challenge drafts with invalid status and source range", () => {
+  const draft = {
+    challengeId: "challenge-demo",
+    schemaVersion: DOC_CHALLENGE_DRAFT_SCHEMA_VERSION,
+    sourceRef: { ...sourceRef(), lineStart: 8, lineEnd: 2 },
+    objection: "Please review this point.",
+    evidenceRefs: [],
+    proposedReviewAction: "create_follow_up_doc_review_work_item",
+    status: "published",
+    humanOwnerId: "human-demo-owner",
+    approvalStatus: "requires_human_review"
+  };
+
+  const result = validateDocChallengeDraft(draft);
+  assert.equal(result.ok, false);
+  assert.equal(result.errors.some((error) => error.code === "invalid_doc_challenge_status"), true);
+  assert.equal(result.errors.some((error) => error.code === "invalid_source_ref_range"), true);
+});
