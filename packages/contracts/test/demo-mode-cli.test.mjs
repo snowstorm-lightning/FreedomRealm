@@ -63,6 +63,14 @@ test("Demo Mode CLI generates a valid report card with reusable asset candidates
   assert.ok(card.outputRefs.some((outputRef) => outputRef.canonical === true && outputRef.path === jsonPath));
 });
 
+test("Demo Mode CLI help documents live fallback", () => {
+  const result = runDemo(["--help"]);
+
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /default model route is mock/u);
+  assert.match(result.stdout, /falls back to mock unless AI_HRMS_LIVE_MODEL_ENABLED=true/u);
+});
+
 test("Demo Mode CLI rejects missing option values", () => {
   for (const [argv, expectedError] of [
     [["--input"], /--input requires a value/u],
