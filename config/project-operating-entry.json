@@ -519,6 +519,70 @@
             "pnpm test",
             "pnpm check"
           ]
+        },
+        {
+          "commitRef": "ba50b1a",
+          "scope": "Delivery report HTML explicit JSON input coverage",
+          "writeSet": [
+            "packages/demo/test/demo-engine.test.mjs"
+          ],
+          "verificationCommands": [
+            "pnpm check"
+          ]
+        },
+        {
+          "commitRef": "fd6e684",
+          "scope": "Delivery report HTML malformed JSON input diagnostics",
+          "writeSet": [
+            "scripts/render-delivery-report-html.mjs",
+            "packages/demo/test/demo-engine.test.mjs"
+          ],
+          "verificationCommands": [
+            "pnpm check"
+          ]
+        },
+        {
+          "commitRef": "89adb57",
+          "scope": "Delivery report HTML explicit non-report JSON rejection",
+          "writeSet": [
+            "scripts/render-delivery-report-html.mjs",
+            "packages/demo/test/demo-engine.test.mjs"
+          ],
+          "verificationCommands": [
+            "pnpm check"
+          ]
+        },
+        {
+          "commitRef": "7bc13da",
+          "scope": "Template manifest malformed JSON validation coverage",
+          "writeSet": [
+            "packages/contracts/test/template-manifest-cli.test.mjs"
+          ],
+          "verificationCommands": [
+            "pnpm check"
+          ]
+        },
+        {
+          "commitRef": "022b850",
+          "scope": "Environment config malformed JSON diagnostics",
+          "writeSet": [
+            "packages/policy/bin/validate-environment.mjs",
+            "packages/policy/test/environment-isolation.test.mjs"
+          ],
+          "verificationCommands": [
+            "pnpm check"
+          ]
+        },
+        {
+          "commitRef": "7612ab1",
+          "scope": "Operating entry malformed JSON diagnostics",
+          "writeSet": [
+            "scripts/validate-operating-entry.mjs",
+            "packages/contracts/test/project-operating-entry.test.mjs"
+          ],
+          "verificationCommands": [
+            "pnpm check"
+          ]
         }
       ]
     },
