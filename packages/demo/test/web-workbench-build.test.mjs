@@ -363,8 +363,8 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   assert.match(learningHtml, /页面拆分与导航 \/ Page Split and Navigation/u);
   assert.match(learningHtml, /按需展开 \/ Open only when needed/u);
   assert.match(learningHtml, /<details class="learning-disclosure">/u);
-  assert.match(learningHtml, /workbench\.html#next-workbench/u);
-  assert.match(learningHtml, /workbench\.html#report-workbench/u);
+  assert.match(learningHtml, /workbench\.html#tasks/u);
+  assert.match(learningHtml, /workbench\.html#reports/u);
   assert.match(learningApp, /renderLearningTasks/u);
   assert.match(learningApp, /renderProjectStructureMap/u);
   assert.match(learningApp, /renderOperatingSnapshot/u);
@@ -385,6 +385,7 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   assert.match(html, /data-workbench-panel="reports"/u);
   for (const view of ["tasks", "reports", "docs", "decisions"]) {
     assert.match(html, new RegExp(`data-workbench-view="${view}"`, "u"));
+    assert.match(html, new RegExp(`id="${view}"[\\s\\S]*?data-workbench-view="${view}"`, "u"));
   }
   for (const [panelId, panelView] of [
     ["next-workbench", "tasks"],
@@ -397,10 +398,10 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   assert.match(app, /selectedWorkbenchView/u);
   assert.match(app, /renderWorkbenchView/u);
   assert.match(app, /hashForWorkbenchView/u);
-  assert.match(app, /if \(hash === "#report-workbench"\) \{\n    return "reports";\n  \}/u);
-  assert.match(app, /if \(hash === "#knowledge-demo"\) \{\n    return "docs";\n  \}/u);
-  assert.match(app, /if \(hash === "#ownerDecisionQueue"\) \{\n    return "decisions";\n  \}/u);
-  assert.match(app, /return "#next-workbench";/u);
+  assert.match(app, /hash === "#reports" \|\| hash === "#report-workbench"/u);
+  assert.match(app, /hash === "#docs" \|\| hash === "#knowledge-demo"/u);
+  assert.match(app, /hash === "#decisions" \|\| hash === "#ownerDecisionQueue"/u);
+  assert.match(app, /return "#tasks";/u);
   assert.match(app, /panel\.hidden = panel\.dataset\.workbenchPanel !== selectedWorkbenchView/u);
   assert.match(app, /button\.setAttribute\("aria-pressed", String\(button\.dataset\.workbenchView === selectedWorkbenchView\)\)/u);
   assert.match(app, /window\.history\.pushState/u);

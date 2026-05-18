@@ -209,7 +209,7 @@ const learningTasks = [
       "看 project-operating-entry 和 active execution plans，确认当前下一步。",
       "进入 Web Workbench 和报告卡，理解 Demo Mode 的闭环数据从哪里来。"
     ],
-    primaryHref: "./workbench.html#next-workbench",
+    primaryHref: "./workbench.html#tasks",
     primaryAction: "打开当前任务 / Open current tasks"
   },
   {
@@ -223,7 +223,7 @@ const learningTasks = [
       "确认 ApprovalGate、dataClassification 和 sharePermission 出现在报告卡中。",
       "再打开 canonical JSON，理解审计、评测和复核字段。"
     ],
-    primaryHref: "./workbench.html#report-workbench",
+    primaryHref: "./workbench.html#reports",
     primaryAction: "查看报告卡 / View report cards"
   },
   {
@@ -237,7 +237,7 @@ const learningTasks = [
       "live connector、secret、生产数据和高风险动作仍停在 ApprovalGate。",
       "Go 控制面 skeleton 需要 human owner 先确认技术边界。"
     ],
-    primaryHref: "./workbench.html#ownerDecisionQueue",
+    primaryHref: "./workbench.html#decisions",
     primaryAction: "查看决策队列 / View decisions"
   }
 ];
@@ -259,7 +259,7 @@ const projectStructureModules = [
     detail:
       "project-operating-entry.v1 是当前任务、分派规则、停止条件和防冲突规则的事实源。 / project-operating-entry.v1 is the source for tasks, assignment rules, stop conditions, and conflict guards.",
     files: ["config/project-operating-entry.json", "docs/zh-CN/project-operating-entry.md", "docs/zh-CN/execution-plans/active/"],
-    href: "./workbench.html#next-workbench"
+    href: "./workbench.html#tasks"
   },
   {
     id: "demo-engine",
@@ -268,7 +268,7 @@ const projectStructureModules = [
     detail:
       "packages/demo 生成 ExecutionReportCard；Web 只做可复核渲染。 / packages/demo generates ExecutionReportCard; Web only renders it for review.",
     files: ["packages/demo/src/", "config/templates/", "dist/web/data/"],
-    href: "./workbench.html#report-workbench"
+    href: "./workbench.html#reports"
   },
   {
     id: "web",
@@ -304,12 +304,12 @@ const learningPages = [
   {
     title: "当前任务 / Current tasks",
     detail: "直接跳到 P0/P1/P2、AgentWorkLease、MergeGate 和 backlog。 / Jump to P0/P1/P2, AgentWorkLease, MergeGate, and backlog.",
-    href: "./workbench.html#next-workbench"
+    href: "./workbench.html#tasks"
   },
   {
     title: "知识问答 / Ask maintained docs",
     detail: "用带来源的 AnswerCard 和 DocChallenge 理解文档。 / Use source-backed AnswerCard and DocChallenge to learn docs.",
-    href: "./workbench.html#knowledge-demo"
+    href: "./workbench.html#docs"
   }
 ];
 

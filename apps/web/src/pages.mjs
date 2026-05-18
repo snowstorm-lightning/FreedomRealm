@@ -17,8 +17,8 @@ export function buildLearningHtml() {
         <nav class="nav-links">
           <a href="./index.html">学习首页 / Learning</a>
           <a href="./workbench.html">工作台 / Workbench</a>
-          <a href="./workbench.html#next-workbench">当前任务 / Tasks</a>
-          <a href="./workbench.html#knowledge-demo">知识问答 / Docs Q&A</a>
+          <a href="./workbench.html#tasks">当前任务 / Tasks</a>
+          <a href="./workbench.html#docs">知识问答 / Docs Q&A</a>
         </nav>
       </header>
 
@@ -28,8 +28,8 @@ export function buildLearningHtml() {
           <h1>先理解项目结构，再进入治理工作台。 / Learn the project structure before entering the governed workbench.</h1>
           <p class="lead">这个首页把仓库入口、当前任务、Demo 闭环和治理边界拆成可点击学习路径；完整报告卡和密集信息保留在独立工作台页面。 / This page turns repo entry points, current tasks, the Demo loop, and governance boundaries into clickable learning paths; dense report-card detail stays on a separate workbench page.</p>
           <div class="hero-actions">
-            <a class="primary-action" href="./workbench.html#next-workbench">查看当前任务 / View current tasks</a>
-            <a class="secondary-action" href="./workbench.html#report-workbench">进入报告卡 / Open report cards</a>
+            <a class="primary-action" href="./workbench.html#tasks">查看当前任务 / View current tasks</a>
+            <a class="secondary-action" href="./workbench.html#reports">进入报告卡 / Open report cards</a>
           </div>
         </div>
         <aside class="learning-status" aria-label="学习系统状态 / Learning system status">
@@ -97,8 +97,8 @@ export function buildHtml(languageBoundaryNotice) {
         <nav class="nav-links">
           <a href="./index.html">学习首页 / Learning</a>
           <a href="./workbench.html" aria-current="page">工作台 / Workbench</a>
-          <a href="#next-workbench">当前任务 / Tasks</a>
-          <a href="#knowledge-demo">知识问答 / Docs Q&A</a>
+          <a href="#tasks">当前任务 / Tasks</a>
+          <a href="#docs">知识问答 / Docs Q&A</a>
         </nav>
       </header>
 
@@ -151,10 +151,10 @@ export function buildHtml(languageBoundaryNotice) {
           <h2>一次只看一个任务视图 / Show one task view at a time</h2>
         </div>
         <div class="view-actions">
-          <button type="button" data-workbench-view="tasks" aria-pressed="true">当前任务 / Tasks</button>
-          <button type="button" data-workbench-view="reports" aria-pressed="false">报告卡 / Report Cards</button>
-          <button type="button" data-workbench-view="docs" aria-pressed="false">知识问答 / Docs Q&A</button>
-          <button type="button" data-workbench-view="decisions" aria-pressed="false">Owner 决策 / Owner Decisions</button>
+          <button type="button" id="tasks" data-workbench-view="tasks" aria-pressed="true">当前任务 / Tasks</button>
+          <button type="button" id="reports" data-workbench-view="reports" aria-pressed="false">报告卡 / Report Cards</button>
+          <button type="button" id="docs" data-workbench-view="docs" aria-pressed="false">知识问答 / Docs Q&A</button>
+          <button type="button" id="decisions" data-workbench-view="decisions" aria-pressed="false">Owner 决策 / Owner Decisions</button>
         </div>
       </section>
 

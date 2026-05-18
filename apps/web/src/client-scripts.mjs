@@ -119,7 +119,7 @@ function renderTemplatePreview() {
       '<span>' + escapeHtml(card.riskLevel + " / " + card.approvalStatus) + '</span>' +
       '<strong>' + escapeHtml(card.displayName) + '</strong>' +
       '<p>' + escapeHtml(card.taskGoal) + '</p>' +
-      '<a href="./workbench.html#report-workbench">在工作台查看 / View in workbench</a>' +
+      '<a href="./workbench.html#reports">在工作台查看 / View in workbench</a>' +
     '</article>';
   }).join("");
 }
@@ -824,13 +824,13 @@ function renderRoadmap() {
 }
 
 function viewFromHash(hash) {
-  if (hash === "#report-workbench") {
+  if (hash === "#reports" || hash === "#report-workbench") {
     return "reports";
   }
-  if (hash === "#knowledge-demo") {
+  if (hash === "#docs" || hash === "#knowledge-demo") {
     return "docs";
   }
-  if (hash === "#ownerDecisionQueue") {
+  if (hash === "#decisions" || hash === "#ownerDecisionQueue") {
     return "decisions";
   }
   return "tasks";
@@ -838,15 +838,15 @@ function viewFromHash(hash) {
 
 function hashForWorkbenchView(view) {
   if (view === "reports") {
-    return "#report-workbench";
+    return "#reports";
   }
   if (view === "docs") {
-    return "#knowledge-demo";
+    return "#docs";
   }
   if (view === "decisions") {
-    return "#ownerDecisionQueue";
+    return "#decisions";
   }
-  return "#next-workbench";
+  return "#tasks";
 }
 
 function renderWorkbenchView() {
