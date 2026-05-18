@@ -7,6 +7,12 @@ import {
 
 const namespacedKeyPattern = /^[A-Za-z0-9][A-Za-z0-9-]*(?:\.[A-Za-z0-9][A-Za-z0-9-]*)+$/u;
 const priorities = Object.freeze(["P0", "P1", "P2"]);
+const taskStatuses = Object.freeze([
+  "active",
+  "implemented-in-repo",
+  "needs-human-owner-review",
+  "blocked-needs-human-owner"
+]);
 
 function issue(code, message, path = "$") {
   return { code, message, path };
@@ -37,6 +43,23 @@ function validateStringField(errors, object, field, path = field) {
 function validateStringArray(errors, object, field, path = field) {
   if (!Array.isArray(object[field]) || object[field].length === 0) {
     errors.push(issue("validation_failed", `${path} must be a non-empty array.`, path));
+    return;
+  }
+
+  object[field].forEach((value, index) => {
+    if (!hasText(value)) {
+      errors.push(issue("validation_failed", `${path} values must be non-empty strings.`, `${path}.${index}`));
+    }
+  });
+}
+
+function validateOptionalStringArray(errors, object, field, path = field, options = {}) {
+  if (!(field in object)) {
+    return;
+  }
+
+  if (!Array.isArray(object[field]) || (!options.allowEmpty && object[field].length === 0)) {
+    errors.push(issue("validation_failed", `${path} must be an array of strings.`, path));
     return;
   }
 
@@ -93,6 +116,7 @@ function validateCurrentTask(errors, task, index) {
   for (const field of [
     "taskId",
     "priority",
+    "status",
     "title",
     "ownerActorTypes",
     "outputs",
@@ -111,6 +135,10 @@ function validateCurrentTask(errors, task, index) {
 
   if (!priorities.includes(task.priority)) {
     errors.push(issue("invalid_priority", `${path}.priority must be P0, P1, or P2.`, `${path}.priority`));
+  }
+
+  if (!taskStatuses.includes(task.status)) {
+    errors.push(issue("invalid_task_status", `${path}.status is invalid.`, `${path}.status`));
   }
 
   if (!RISK_LEVELS.includes(task.riskLevel)) {
@@ -133,6 +161,12 @@ function validateCurrentTask(errors, task, index) {
     });
   }
 
+  if (task.status === "implemented-in-repo") {
+    validateStringArray(errors, task, "implementationRefs", `${path}.implementationRefs`);
+  } else {
+    validateOptionalStringArray(errors, task, "implementationRefs", `${path}.implementationRefs`, { allowEmpty: true });
+  }
+
   if ("sourceRefs" in task) {
     validateStringArray(errors, task, "sourceRefs", `${path}.sourceRefs`);
   }
@@ -140,6 +174,118 @@ function validateCurrentTask(errors, task, index) {
 
 function hasRequiredStopCondition(rules, token) {
   return Array.isArray(rules.allowStopWhen) && rules.allowStopWhen.some((rule) => hasText(rule) && rule.includes(token));
+}
+
+function validateBacklogItem(errors, item, index, currentTasksById) {
+  const path = `extensions.ai-hrms.decayPreventionBacklog.items.${index}`;
+  if (!isPlainObject(item)) {
+    errors.push(issue("validation_failed", "decayPreventionBacklog.items values must be objects.", path));
+    return;
+  }
+
+  for (const field of [
+    "candidateWorkItemId",
+    "formalTaskId",
+    "status",
+    "priority",
+    "riskLevel",
+    "ownerActorTypes",
+    "sourceFindingIds",
+    "sourceRecommendationIds",
+    "readSet",
+    "writeSet",
+    "verificationCommands",
+    "implementationRefs"
+  ]) {
+    if (!(field in item)) {
+      errors.push(issue("missing_required_field", `${path}.${field} is required.`, `${path}.${field}`));
+    }
+  }
+
+  validateStringField(errors, item, "candidateWorkItemId", `${path}.candidateWorkItemId`);
+  validateStringField(errors, item, "formalTaskId", `${path}.formalTaskId`);
+
+  if (!taskStatuses.includes(item.status)) {
+    errors.push(issue("invalid_task_status", `${path}.status is invalid.`, `${path}.status`));
+  }
+  if (!priorities.includes(item.priority)) {
+    errors.push(issue("invalid_priority", `${path}.priority must be P0, P1, or P2.`, `${path}.priority`));
+  }
+  if (!RISK_LEVELS.includes(item.riskLevel)) {
+    errors.push(issue("invalid_risk_level", `${path}.riskLevel is invalid.`, `${path}.riskLevel`));
+  }
+
+  validateStringArray(errors, item, "ownerActorTypes", `${path}.ownerActorTypes`);
+  if (Array.isArray(item.ownerActorTypes)) {
+    item.ownerActorTypes.forEach((actorType, actorIndex) => {
+      if (!ACTOR_TYPES.includes(actorType)) {
+        errors.push(
+          issue("invalid_actor_type", `${path}.ownerActorTypes contains an invalid actor type.`, `${path}.ownerActorTypes.${actorIndex}`)
+        );
+      }
+    });
+  }
+  validateStringArray(errors, item, "sourceFindingIds", `${path}.sourceFindingIds`);
+  validateStringArray(errors, item, "sourceRecommendationIds", `${path}.sourceRecommendationIds`);
+  validateStringArray(errors, item, "readSet", `${path}.readSet`);
+  validateStringArray(errors, item, "writeSet", `${path}.writeSet`);
+  validateCommandList(errors, item, "verificationCommands", `${path}.verificationCommands`);
+  validateOptionalStringArray(errors, item, "implementationRefs", `${path}.implementationRefs`, { allowEmpty: true });
+
+  if (item.status === "implemented-in-repo" && (!Array.isArray(item.implementationRefs) || item.implementationRefs.length === 0)) {
+    errors.push(
+      issue("missing_implementation_refs", `${path}.implementationRefs must be non-empty when status is implemented-in-repo.`, `${path}.implementationRefs`)
+    );
+  }
+
+  const formalTask = currentTasksById.get(item.formalTaskId);
+  if (
+    formalTask?.status === "implemented-in-repo" &&
+    item.status === "implemented-in-repo" &&
+    Array.isArray(formalTask.implementationRefs) &&
+    Array.isArray(item.implementationRefs)
+  ) {
+    const formalRefs = [...formalTask.implementationRefs].sort();
+    const backlogRefs = [...item.implementationRefs].sort();
+    if (formalRefs.join("\n") !== backlogRefs.join("\n")) {
+      errors.push(
+        issue(
+          "implementation_refs_drift",
+          `${path}.implementationRefs must match currentTasks implementationRefs for ${item.formalTaskId}.`,
+          `${path}.implementationRefs`
+        )
+      );
+    }
+  }
+}
+
+function validateDecayPreventionBacklog(errors, entry) {
+  const backlog = entry.extensions?.["ai-hrms.decayPreventionBacklog"];
+  if (backlog === undefined) {
+    return;
+  }
+
+  const path = "extensions.ai-hrms.decayPreventionBacklog";
+  if (!isPlainObject(backlog)) {
+    errors.push(issue("validation_failed", "ai-hrms.decayPreventionBacklog must be an object.", path));
+    return;
+  }
+
+  validateStringField(errors, backlog, "sourceReportPath", `${path}.sourceReportPath`);
+  validateStringField(errors, backlog, "humanApprovalRef", `${path}.humanApprovalRef`);
+  validateStringField(errors, backlog, "promotionPolicy", `${path}.promotionPolicy`);
+
+  if (backlog.autoCreateExternalIssues !== false) {
+    errors.push(issue("invalid_backlog_policy", `${path}.autoCreateExternalIssues must be false.`, `${path}.autoCreateExternalIssues`));
+  }
+
+  if (!Array.isArray(backlog.items) || backlog.items.length === 0) {
+    errors.push(issue("validation_failed", `${path}.items must be a non-empty array.`, `${path}.items`));
+    return;
+  }
+
+  const currentTasksById = new Map((entry.currentTasks ?? []).map((task) => [task?.taskId, task]));
+  backlog.items.forEach((item, index) => validateBacklogItem(errors, item, index, currentTasksById));
 }
 
 export function validateProjectOperatingEntry(entry) {
@@ -226,6 +372,9 @@ export function validateProjectOperatingEntry(entry) {
 
   validateStringArray(errors, entry, "harnessPrinciples");
   validateNamespacedExtensions(errors, entry.extensions);
+  if (isPlainObject(entry.extensions)) {
+    validateDecayPreventionBacklog(errors, entry);
+  }
 
   return { ok: errors.length === 0, errors };
 }

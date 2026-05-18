@@ -27,6 +27,7 @@ function validEntry() {
       {
         taskId: "p0-demo",
         priority: "P0",
+        status: "implemented-in-repo",
         title: "Demo task",
         ownerActorTypes: ["AgentActor"],
         outputs: ["Manifest"],
@@ -34,7 +35,8 @@ function validEntry() {
         verificationCommands: ["pnpm check"],
         riskLevel: "low",
         suggestedWriteSet: ["config/project-operating-entry.json"],
-        sourceRefs: ["docs/zh-CN/project-operating-entry.md"]
+        sourceRefs: ["docs/zh-CN/project-operating-entry.md"],
+        implementationRefs: ["abc1234"]
       }
     ],
     assignmentRules: {
@@ -114,12 +116,58 @@ test("rejects tasks without verification commands or writeSet", () => {
   assert.equal(result.errors.some((error) => error.path === "currentTasks.0.suggestedWriteSet"), true);
 });
 
+test("rejects implemented tasks without implementation refs", () => {
+  const entry = validEntry();
+  delete entry.currentTasks[0].implementationRefs;
+  const result = validateProjectOperatingEntry(entry);
+  assert.equal(result.ok, false);
+  assert.equal(result.errors.some((error) => error.path === "currentTasks.0.implementationRefs"), true);
+});
+
+test("rejects invalid task status", () => {
+  const entry = validEntry();
+  entry.currentTasks[0].status = "done";
+  const result = validateProjectOperatingEntry(entry);
+  assert.equal(result.ok, false);
+  assert.equal(result.errors.some((error) => error.code === "invalid_task_status"), true);
+});
+
 test("rejects non-namespaced project operating entry extensions", () => {
   const entry = validEntry();
   entry.extensions.harness = {};
   const result = validateProjectOperatingEntry(entry);
   assert.equal(result.ok, false);
   assert.equal(result.errors.some((error) => error.code === "invalid_extension_namespace"), true);
+});
+
+test("rejects implemented backlog items that drift from formal task implementation refs", () => {
+  const entry = validEntry();
+  entry.extensions["ai-hrms.decayPreventionBacklog"] = {
+    sourceReportPath: "dist/self-review/report-demo.json",
+    humanApprovalRef: "human-approved-demo",
+    promotionPolicy: "human_owner_review_required",
+    autoCreateExternalIssues: false,
+    items: [
+      {
+        candidateWorkItemId: "candidate-work-item-001",
+        formalTaskId: "p0-demo",
+        status: "implemented-in-repo",
+        priority: "P0",
+        riskLevel: "low",
+        ownerActorTypes: ["AgentActor"],
+        sourceFindingIds: ["finding-001"],
+        sourceRecommendationIds: ["recommendation-001"],
+        readSet: ["README.md"],
+        writeSet: ["config/project-operating-entry.json"],
+        verificationCommands: ["pnpm check"],
+        implementationRefs: ["different-ref"]
+      }
+    ]
+  };
+
+  const result = validateProjectOperatingEntry(entry);
+  assert.equal(result.ok, false);
+  assert.equal(result.errors.some((error) => error.code === "implementation_refs_drift"), true);
 });
 
 test("validate-operating-entry script rejects unknown pnpm scripts", async () => {

@@ -42,8 +42,9 @@ P0 是当前打开仓库后默认优先级。除非用户明确改变方向，ag
 
 当前记录：
 
-- `candidate-work-item-001` 已映射到 `p1-connector-governance-sync`，状态为 `implemented-in-repo`，实现引用为 `f6c3cb7`。
+- `candidate-work-item-001` 已映射到 `p1-connector-governance-sync`，状态为 `implemented-in-repo`，实现引用为 `f6c3cb7` 和 `59d2adb`。
 - `candidate-work-item-002` 已映射到 `p1-decay-prevention-backlog`，状态为 `active`，继续要求 human owner 复核。
+`pnpm validate:operating-entry` 会校验任务状态、已实现任务的 `implementationRefs`，并检查 backlog 中已实现候选与正式任务实现引用是否漂移。
 
 ### 当前 Human Owner 决策点
 
