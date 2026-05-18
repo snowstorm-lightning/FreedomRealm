@@ -85,6 +85,29 @@ test("rejects AnswerCard with invalid confidence or data classification", () => 
   assert.equal(result.errors.some((error) => error.code === "invalid_data_classification"), true);
 });
 
+test("rejects AnswerCard with non-namespaced extensions", () => {
+  const card = {
+    answerCardId: "answer-demo",
+    schemaVersion: ANSWER_CARD_SCHEMA_VERSION,
+    question: "What next?",
+    answer: "Use sourced docs.",
+    sourceRefs: [sourceRef()],
+    confidence: "medium",
+    limitations: [],
+    nextActions: [],
+    dataClassification: "internal",
+    redactionStatus: "redacted",
+    sharePermission: "private",
+    extensions: {
+      knowledge: {}
+    }
+  };
+
+  const result = validateAnswerCard(card);
+  assert.equal(result.ok, false);
+  assert.equal(result.errors.some((error) => error.code === "invalid_extension_namespace"), true);
+});
+
 test("rejects source refs with invalid line ranges", () => {
   const card = {
     answerCardId: "answer-demo",
