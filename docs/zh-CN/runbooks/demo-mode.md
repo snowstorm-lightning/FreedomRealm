@@ -49,7 +49,7 @@ CLI 会生成两类文件：
 
 Markdown 只是渲染物。后续 Web UI 必须读取同一份 JSON，不能复制业务逻辑或另建报告卡事实结构。
 
-## Web Workbench
+## Web 学习系统与 Workbench
 
 从仓库根目录执行：
 
@@ -59,15 +59,17 @@ pnpm web:demo
 
 默认输出：
 
-- `dist/web/index.html`：静态 Web Workbench。
+- `dist/web/index.html`：项目学习系统首页，聚焦项目结构、学习任务、页面入口和当前运行快照。
+- `dist/web/workbench.html`：完整静态 Web Workbench，承载报告卡、模板、当前任务、owner 决策、active plans 和知识问答案例。
 - `dist/web/data/*.json`：Web 预览使用的 JSON `ExecutionReportCard`。
 - `dist/web/data/*.md`：从同一 JSON 渲染出的 Markdown。
 
-Web Workbench 当前是静态 demo build：
+Web 学习系统和 Workbench 当前是静态 demo build：
 
 - 默认展示 7 个内置模板：`repo_understanding_and_work_plan`、`knowledge_navigation_and_challenge`、`external_agent_connector_safety_demo`、`issue_pr_triage_and_review`、`personal_work_proof`、`project_self_review_and_decay_prevention` 和 `docs_review_and_improvement`。
-- 首屏会展示 `Feedback Targets`，把评审者的修改意见引导到定位清晰度、治理边界、下一步清晰度和视觉负担；这些只是反馈入口，不创建新的事实源。
-- 首屏会保持 mock-only 安全边界可见：无真实连接器、无生产数据、无 secret，且不绕过 `ApprovalGate`。
+- `dist/web/index.html` 的首屏先展示学习路径、项目结构入口和当前状态，避免把报告卡、治理队列和知识问答堆在单页。
+- `dist/web/workbench.html` 通过视图切换展示 `Feedback Targets`、`Review Prompts`、`Running Modes`、`Owner Decision Queue`、`Next Workbench`、报告卡和知识问答；这些只是反馈和复核入口，不创建新的事实源。
+- Workbench 仍保持 mock-only 安全边界可见：无真实连接器、无生产数据、无 secret，且不绕过 `ApprovalGate`。
 - 页面文字采用中英双语并优先服务快速反馈；`Review Prompts` 会引导评审者围绕定位、治理边界、下一步决策和页面信息负担提出修改意见。
 - 中英双语只属于页面框架、导航、控制和反馈提示；报告卡正文仍按 canonical `ExecutionReportCard` JSON 原文渲染，不自动翻译、摘要或改写事实。若需要补充中文或英文事实源，应转成候选 `WorkItem` 并由 human owner 复核。
 - `Running Modes` 会展示 `Tiny Mode`、`Demo Mode`、`Local Mode`、`Community Mode` 和 `Enterprise Mode` 的适用对象与治理边界，说明 Windows 个人试用、mock 闭环、本地长期使用、社区实例和强治理组织的差异；档位降级不降低 `ApprovalGate`、审计、数据分级或隐私边界。

@@ -93,13 +93,13 @@ pnpm report:html
 
 该命令从有效 JSON `ExecutionReportCard` 汇总生成 `dist/reports/delivery-report.html`。HTML 只用于整体交付展示；单次报告卡仍默认 JSON + Markdown，长期维护文档仍以 Markdown 为主。
 
-静态 Web Workbench 可通过同一 Demo engine 生成：
+静态项目学习系统与 Web Workbench 可通过同一 Demo engine 生成：
 
 ```text
 pnpm web:demo
 ```
 
-默认输出写入 `dist/web/index.html`，展示 `repo_understanding_and_work_plan`、`knowledge_navigation_and_challenge`、`external_agent_connector_safety_demo`、`issue_pr_triage_and_review`、`personal_work_proof`、`project_self_review_and_decay_prevention` 和 `docs_review_and_improvement`，并包含 3 个内置知识问答样例。Workbench 首屏还会显示中英双语 `Review Prompts`、`Running Modes`、`Owner Decision Queue`、`Next Workbench`、active execution plans、人工复核的 decay prevention backlog、报告卡预览和 human decision checkpoint；这些面板只读取本地 mock/demo 数据、manifest 和 Markdown 计划，不授权真实 connector、secret、生产数据、外部 issue / PR、Commons 发布或自动分派。
+默认输出包含两个静态入口：`dist/web/index.html` 是项目学习系统首页，优先展示项目结构、学习任务、页面入口和当前运行快照；`dist/web/workbench.html` 是完整治理工作台，展示 `repo_understanding_and_work_plan`、`knowledge_navigation_and_challenge`、`external_agent_connector_safety_demo`、`issue_pr_triage_and_review`、`personal_work_proof`、`project_self_review_and_decay_prevention` 和 `docs_review_and_improvement`，并包含 3 个内置知识问答样例。Workbench 通过视图切换进入 `Review Prompts`、`Running Modes`、`Owner Decision Queue`、`Next Workbench`、active execution plans、人工复核的 decay prevention backlog、报告卡预览和 human decision checkpoint；这些面板只读取本地 mock/demo 数据、manifest 和 Markdown 计划，不授权真实 connector、secret、生产数据、外部 issue / PR、Commons 发布或自动分派。
 
 知识导航与异议闭环可单独运行：
 

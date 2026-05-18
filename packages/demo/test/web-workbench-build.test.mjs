@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { access, readFile } from "node:fs/promises";
 import { spawnSync } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -12,6 +12,48 @@ import {
 } from "../../contracts/src/index.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
+
+async function pathExists(filePath) {
+  try {
+    await access(filePath);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function extractLocalHrefs(html) {
+  return [...html.matchAll(/href="([^"]+)"/gu)]
+    .map((match) => match[1])
+    .filter((href) => !href.startsWith("http") && !href.startsWith("mailto:"));
+}
+
+async function assertLocalHrefTargetsExist(html, htmlRelativePath) {
+  const checked = new Set();
+  for (const href of extractLocalHrefs(html)) {
+    const key = `${htmlRelativePath}:${href}`;
+    if (checked.has(key)) {
+      continue;
+    }
+    checked.add(key);
+    await assertHrefTargetExists(href, htmlRelativePath);
+  }
+}
+
+async function assertHrefTargetExists(href, htmlRelativePath) {
+  const htmlPath = path.join(repoRoot, htmlRelativePath);
+  const htmlDir = path.dirname(htmlPath);
+  const [targetPathPart, hash] = href.split("#");
+  const targetPath = targetPathPart
+    ? path.resolve(htmlDir, targetPathPart)
+    : htmlPath;
+  assert.equal(await pathExists(targetPath), true, `Missing href target ${href} from ${htmlRelativePath}`);
+  if (hash) {
+    const targetHtml = await readFile(targetPath, "utf8");
+    const escapedHash = hash.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&");
+    assert.match(targetHtml, new RegExp(`id="${escapedHash}"`, "u"), `Missing anchor ${hash} in ${targetPath}`);
+  }
+}
 
 test("web demo builds a multi-template static workbench from shared demo data", async () => {
   const result = spawnSync(process.execPath, ["apps/web/bin/build-demo.mjs"], {
@@ -68,8 +110,10 @@ test("web demo builds a multi-template static workbench from shared demo data", 
     assert.equal(validateDocChallengeDraft(challengeDraft).ok, true);
   }
 
-  const html = await readFile(path.join(repoRoot, "dist/web/index.html"), "utf8");
+  const learningHtml = await readFile(path.join(repoRoot, "dist/web/index.html"), "utf8");
+  const html = await readFile(path.join(repoRoot, "dist/web/workbench.html"), "utf8");
   const app = await readFile(path.join(repoRoot, "dist/web/app.js"), "utf8");
+  const learningApp = await readFile(path.join(repoRoot, "dist/web/learning.js"), "utf8");
   const css = await readFile(path.join(repoRoot, "dist/web/styles.css"), "utf8");
   const operatingEntry = JSON.parse(await readFile(path.join(repoRoot, "config/project-operating-entry.json"), "utf8"));
   const operatingEntryValidation = validateProjectOperatingEntry(operatingEntry);
@@ -119,15 +163,37 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   );
   assert.ok(currentWorkbenchTask);
   assert.equal(currentWorkbenchTask.priority, "P0");
+  assert.equal(currentWorkbenchTask.title, "项目学习系统首页与 Web Workbench 拆页落地");
   assert.deepEqual(currentWorkbenchTask.verificationCommands, ["pnpm web:demo", "pnpm check"]);
+  assert.equal(currentWorkbenchTask.outputs.includes("项目学习首页"), true);
+  assert.equal(currentWorkbenchTask.outputs.includes("多页面导航"), true);
+  assert.equal(currentWorkbenchTask.outputs.includes("任务化学习路径"), true);
+  assert.equal(currentWorkbenchTask.outputs.includes("完整工作台独立页面"), true);
   assert.equal(currentWorkbenchTask.outputs.includes("Owner Decision Queue"), true);
   assert.equal(currentWorkbenchTask.outputs.includes("Running Modes 适配说明"), true);
+  assert.equal(
+    currentWorkbenchTask.acceptanceCriteria.some((criterion) => /dist\/web\/index\.html.+项目学习系统首页/u.test(criterion)),
+    true
+  );
+  assert.equal(
+    currentWorkbenchTask.acceptanceCriteria.some((criterion) => /dist\/web\/workbench\.html.+完整 Web Workbench/u.test(criterion)),
+    true
+  );
+  assert.equal(
+    currentWorkbenchTask.acceptanceCriteria.some((criterion) => /清晰导航、按钮层级和页面跳转/u.test(criterion)),
+    true
+  );
   assert.equal(
     currentWorkbenchTask.acceptanceCriteria.some((criterion) => /active execution plans.+推断 active/u.test(criterion)),
     true
   );
   assert.deepEqual(currentWorkbenchTask.suggestedWriteSet, [
+    "config/project-operating-entry.json",
     "apps/web/bin/build-demo.mjs",
+    "apps/web/README.md",
+    "README.md",
+    "docs/zh-CN/project-operating-entry.md",
+    "docs/zh-CN/runbooks/demo-mode.md",
     "packages/demo/test/web-workbench-build.test.mjs"
   ]);
   for (const field of [
@@ -202,6 +268,25 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   assert.equal(state.proofStats[0].label, "理解 / Understand");
   assert.equal(state.proofStats[1].value, "5-10 分钟 / 5-10 min");
   assert.equal(state.roadmap[0].horizon, "当前 / Now");
+  assert.equal(state.learningTasks.length, 3);
+  assert.equal(state.learningTasks[0].id, "structure");
+  assert.match(state.learningTasks[0].title, /仓库骨架/u);
+  assert.equal(state.projectStructureModules.length, 5);
+  assert.equal(state.projectStructureModules[0].id, "entry-docs");
+  assert.match(state.projectStructureModules[1].files.join(" "), /project-operating-entry/u);
+  assert.equal(state.learningPages.length, 4);
+  assert.match(state.learningPages[1].href, /workbench\.html/u);
+  await assertLocalHrefTargetsExist(learningHtml, "dist/web/index.html");
+  await assertLocalHrefTargetsExist(html, "dist/web/workbench.html");
+  for (const module of state.projectStructureModules) {
+    await assertHrefTargetExists(module.href, "dist/web/index.html");
+  }
+  for (const page of state.learningPages) {
+    await assertHrefTargetExists(page.href, "dist/web/index.html");
+  }
+  for (const plan of state.activePlans) {
+    await assertHrefTargetExists(plan.href, "dist/web/workbench.html");
+  }
   assert.equal(new Set(state.cards.map((card) => card.jsonHref)).size, state.cards.length);
   const repoWorkbenchCard = state.cards.find((card) => card.templateId === "repo_understanding_and_work_plan");
   assert.ok(repoWorkbenchCard?.workPlan);
@@ -250,8 +335,35 @@ test("web demo builds a multi-template static workbench from shared demo data", 
     assert.match(example.answerCardHref, /^\.\/data\/.+\.json$/u);
     assert.match(example.docChallengeDraftHref, /^\.\/data\/.+\.json$/u);
   }
+  assert.match(learningHtml, /AI-HRMS Project Learning System/u);
+  assert.match(learningHtml, /项目学习系统 \/ Project Learning/u);
+  assert.match(learningHtml, /先理解项目结构，再进入治理工作台/u);
+  assert.match(learningHtml, /Learn the project structure before entering the governed workbench/u);
+  assert.match(learningHtml, /学习任务 \/ Learning Tasks/u);
+  assert.match(learningHtml, /先选一个目标，只看当前需要的路径/u);
+  assert.match(learningHtml, /项目结构地图 \/ Project Map/u);
+  assert.match(learningHtml, /页面拆分与导航 \/ Page Split and Navigation/u);
+  assert.match(learningHtml, /按需展开 \/ Open only when needed/u);
+  assert.match(learningHtml, /<details class="learning-disclosure">/u);
+  assert.match(learningHtml, /workbench\.html#next-workbench/u);
+  assert.match(learningHtml, /workbench\.html#report-workbench/u);
+  assert.match(learningApp, /renderLearningTasks/u);
+  assert.match(learningApp, /renderProjectStructureMap/u);
+  assert.match(learningApp, /renderOperatingSnapshot/u);
+  assert.match(learningApp, /selectedLearningTaskId/u);
+  assert.match(learningApp, /structure/u);
+  assert.match(learningApp, /projectStructureModules/u);
   assert.match(html, /AI-HRMS Workbench/u);
   assert.match(html, /AI-HRMS Workbench \/ AI-HRMS 工作台/u);
+  assert.match(html, /视图切换 \/ View Switch/u);
+  assert.match(html, /data-workbench-view="tasks"/u);
+  assert.match(html, /data-workbench-panel="reports"/u);
+  assert.match(app, /selectedWorkbenchView/u);
+  assert.match(app, /renderWorkbenchView/u);
+  assert.match(app, /hashForWorkbenchView/u);
+  assert.match(app, /window\.history\.pushState/u);
+  assert.match(app, /popstate/u);
+  assert.match(app, /scrollIntoView/u);
   assert.match(html, /FreedomRealm \/ AI-HRMS/u);
   assert.match(html, /治理工作台 \/ Governed workbench/u);
   assert.match(html, /No live side effects/u);

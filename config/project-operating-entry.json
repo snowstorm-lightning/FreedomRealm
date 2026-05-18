@@ -16,12 +16,16 @@
     {
       "taskId": "p0-next-workbench-entry",
       "priority": "P0",
-      "title": "Web Workbench 第一屏继续收敛为下一步工作台",
+      "title": "项目学习系统首页与 Web Workbench 拆页落地",
       "ownerActorTypes": [
         "HumanActor",
         "AgentActor"
       ],
       "outputs": [
+        "项目学习首页",
+        "多页面导航",
+        "任务化学习路径",
+        "完整工作台独立页面",
         "三类入口",
         "推荐下一步",
         "报告卡预览",
@@ -33,8 +37,10 @@
         "人工复核 decay prevention backlog"
       ],
       "acceptanceCriteria": [
-        "Web Workbench 展示 project-operating-entry.v1 的当前任务清单",
+        "dist/web/index.html 作为项目学习系统首页，优先展示项目结构、学习任务、页面入口和当前运行快照",
+        "dist/web/workbench.html 作为完整 Web Workbench，继续展示 project-operating-entry.v1 的当前任务清单",
         "Web Workbench 展示 AgentWorkLease、writeSet、MergeGate 和停止条件",
+        "学习首页和 Web Workbench 提供清晰导航、按钮层级和页面跳转，避免把所有信息堆在单页",
         "Web Workbench 展示中英双语 Review Prompts 和 Running Modes，帮助个人 Windows 用户、社区和强治理组织快速判断适配路径",
         "Owner Decision Queue 把 human owner 决策、P2 live connector 候选和 self-review backlog 复核与自动分派区分开",
         "active execution plans 以只读入口展示；缺少显式状态的计划必须标注为推断 active，而不是自动归档或自动推进",
@@ -47,7 +53,12 @@
       ],
       "riskLevel": "medium",
       "suggestedWriteSet": [
+        "config/project-operating-entry.json",
         "apps/web/bin/build-demo.mjs",
+        "apps/web/README.md",
+        "README.md",
+        "docs/zh-CN/project-operating-entry.md",
+        "docs/zh-CN/runbooks/demo-mode.md",
         "packages/demo/test/web-workbench-build.test.mjs"
       ],
       "sourceRefs": [

@@ -207,10 +207,126 @@ const modeCards = [
   }
 ];
 
+const learningTasks = [
+  {
+    id: "structure",
+    label: "先看结构 / Structure first",
+    title: "10 分钟理解仓库骨架 / Understand the repo shape in 10 minutes",
+    summary:
+      "从入口文档、执行计划、Demo engine、Web Workbench 和策略校验五条线建立项目地图。 / Build a project map through entry docs, execution plans, the demo engine, Web Workbench, and policy checks.",
+    steps: [
+      "读 README、ARCHITECTURE 和 docs/zh-CN/README，确认项目定位。",
+      "看 project-operating-entry 和 active execution plans，确认当前下一步。",
+      "进入 Web Workbench 和报告卡，理解 Demo Mode 的闭环数据从哪里来。"
+    ],
+    primaryHref: "./workbench.html#next-workbench",
+    primaryAction: "打开当前任务 / Open current tasks"
+  },
+  {
+    id: "loop",
+    label: "跑通闭环 / Run the loop",
+    title: "从 WorkItem 到 ReportCard / From WorkItem to ReportCard",
+    summary:
+      "沿着 WorkItem、AgentActor、ToolContract、ApprovalGate、Observation 和 ExecutionReportCard 看一遍 mock 执行链。 / Follow WorkItem, AgentActor, ToolContract, ApprovalGate, Observation, and ExecutionReportCard through the mock chain.",
+    steps: [
+      "先查看模板报告卡，不把渲染页面当事实源。",
+      "确认 ApprovalGate、dataClassification 和 sharePermission 出现在报告卡中。",
+      "再打开 canonical JSON，理解审计、评测和复核字段。"
+    ],
+    primaryHref: "./workbench.html#report-workbench",
+    primaryAction: "查看报告卡 / View report cards"
+  },
+  {
+    id: "governance",
+    label: "理解治理 / Governance",
+    title: "知道哪些事不能自动做 / Know what cannot be automated",
+    summary:
+      "把 owner 决策、P2 live connector、self-review backlog 和 Go 控制面决策点分开看。 / Separate owner decisions, P2 live connectors, self-review backlog, and Go control-plane decisions.",
+    steps: [
+      "Owner Decision Queue 是候选决策，不是自动分派。",
+      "live connector、secret、生产数据和高风险动作仍停在 ApprovalGate。",
+      "Go 控制面 skeleton 需要 human owner 先确认技术边界。"
+    ],
+    primaryHref: "./workbench.html#ownerDecisionQueue",
+    primaryAction: "查看决策队列 / View decisions"
+  }
+];
+
+const projectStructureModules = [
+  {
+    id: "entry-docs",
+    layer: "入口层 / Entry",
+    title: "项目入口与导航 / Project entry and navigation",
+    detail:
+      "AGENTS、README、ARCHITECTURE 和中文索引定义 agent 读仓库的起点。 / AGENTS, README, ARCHITECTURE, and the Chinese index define the starting path.",
+    files: ["AGENTS.md", "README.md", "ARCHITECTURE.md", "docs/zh-CN/README.md"],
+    href: toWebHref("docs/zh-CN/README.md")
+  },
+  {
+    id: "operating",
+    layer: "运行层 / Operating",
+    title: "当前任务与执行计划 / Current tasks and execution plans",
+    detail:
+      "project-operating-entry.v1 是当前任务、分派规则、停止条件和防冲突规则的事实源。 / project-operating-entry.v1 is the source for tasks, assignment rules, stop conditions, and conflict guards.",
+    files: ["config/project-operating-entry.json", "docs/zh-CN/project-operating-entry.md", "docs/zh-CN/execution-plans/active/"],
+    href: "./workbench.html#next-workbench"
+  },
+  {
+    id: "demo-engine",
+    layer: "Demo 层 / Demo",
+    title: "Demo Mode 和报告卡 / Demo Mode and report cards",
+    detail:
+      "packages/demo 生成 ExecutionReportCard；Web 只做可复核渲染。 / packages/demo generates ExecutionReportCard; Web only renders it for review.",
+    files: ["packages/demo/src/", "config/templates/", "dist/web/data/"],
+    href: "./workbench.html#report-workbench"
+  },
+  {
+    id: "web",
+    layer: "可视层 / Visual",
+    title: "Web 学习系统与工作台 / Web learning system and workbench",
+    detail:
+      "默认首页解释项目结构；Workbench 承载模板、报告卡、知识问答和 owner 队列。 / The default page explains structure; Workbench carries templates, report cards, knowledge Q&A, and the owner queue.",
+    files: ["apps/web/bin/build-demo.mjs", "dist/web/index.html", "dist/web/workbench.html"],
+    href: "./workbench.html"
+  },
+  {
+    id: "contracts-policy",
+    layer: "校验层 / Guard",
+    title: "契约与策略校验 / Contracts and policy checks",
+    detail:
+      "contracts 和 policy 把环境隔离、ToolContract 和 manifest 规则变成可测试门禁。 / contracts and policy turn environment isolation, ToolContract, and manifest rules into testable gates.",
+    files: ["packages/contracts/", "packages/policy/", "scripts/check.mjs"],
+    href: toWebHref("docs/zh-CN/quality-gates.md")
+  }
+];
+
+const learningPages = [
+  {
+    title: "项目学习首页 / Learning home",
+    detail: "先看结构、路径和当前任务，降低单页信息压力。 / Start with structure, paths, and current tasks to reduce information load.",
+    href: "./index.html"
+  },
+  {
+    title: "完整工作台 / Full workbench",
+    detail: "保留原报告卡、模板、知识问答和治理细节。 / Keeps report cards, templates, knowledge Q&A, and governance detail.",
+    href: "./workbench.html"
+  },
+  {
+    title: "当前任务 / Current tasks",
+    detail: "直接跳到 P0/P1/P2、AgentWorkLease、MergeGate 和 backlog。 / Jump to P0/P1/P2, AgentWorkLease, MergeGate, and backlog.",
+    href: "./workbench.html#next-workbench"
+  },
+  {
+    title: "知识问答 / Ask maintained docs",
+    detail: "用带来源的 AnswerCard 和 DocChallenge 理解文档。 / Use source-backed AnswerCard and DocChallenge to learn docs.",
+    href: "./workbench.html#knowledge-demo"
+  }
+];
+
 function toWebHref(repoRelativePath) {
   const normalized = repoRelativePath.split(path.sep).join("/");
   const prefix = "dist/web/";
-  return normalized.startsWith(prefix) ? `./${normalized.slice(prefix.length)}` : `../${normalized}`;
+  return normalized.startsWith(prefix) ? `./${normalized.slice(prefix.length)}` : `../../${normalized}`;
 }
 
 function toWorkbenchCard(execution, index) {
@@ -347,9 +463,89 @@ async function readActivePlans() {
         markdown.includes("不是本轮自动实现授权") ||
         markdown.includes("不在本计划创建") ||
         markdown.includes("不实现"),
-      href: "../" + repoRelativePath
+      href: toWebHref(repoRelativePath)
     };
   }));
+}
+
+function buildLearningHtml() {
+  return `<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AI-HRMS Project Learning System / 项目学习系统</title>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <main class="shell learning-shell">
+      <header class="page-nav" aria-label="页面导航 / Page navigation">
+        <a class="nav-brand" href="./index.html" aria-current="page">
+          <span class="brand-mark" aria-hidden="true">AI</span>
+          <strong>项目学习系统 / Project Learning</strong>
+        </a>
+        <nav class="nav-links">
+          <a href="./index.html">学习首页 / Learning</a>
+          <a href="./workbench.html">工作台 / Workbench</a>
+          <a href="./workbench.html#next-workbench">当前任务 / Tasks</a>
+          <a href="./workbench.html#knowledge-demo">知识问答 / Docs Q&A</a>
+        </nav>
+      </header>
+
+      <section class="learning-hero" aria-label="项目学习系统概览 / Project learning overview">
+        <div class="learning-hero-copy">
+          <p class="eyebrow">AI-HRMS 学习入口 / AI-HRMS learning entry</p>
+          <h1>先理解项目结构，再进入治理工作台。 / Learn the project structure before entering the governed workbench.</h1>
+          <p class="lead">这个首页把仓库入口、当前任务、Demo 闭环和治理边界拆成可点击学习路径；完整报告卡和密集信息保留在独立工作台页面。 / This page turns repo entry points, current tasks, the Demo loop, and governance boundaries into clickable learning paths; dense report-card detail stays on a separate workbench page.</p>
+          <div class="hero-actions">
+            <a class="primary-action" href="./workbench.html#next-workbench">查看当前任务 / View current tasks</a>
+            <a class="secondary-action" href="./workbench.html#report-workbench">进入报告卡 / Open report cards</a>
+          </div>
+        </div>
+        <aside class="learning-status" aria-label="学习系统状态 / Learning system status">
+          <span>默认首页 / Default page</span>
+          <strong>项目学习系统 / Project Learning System</strong>
+          <p>静态生成、mock 数据、无真实连接器、无模型 key、无生产数据。 / Static build, mock data, no real connector, no model key, no production data.</p>
+        </aside>
+      </section>
+
+      <section class="learning-focus" aria-label="学习任务选择 / Learning task choices">
+        <div class="section-heading">
+          <p class="eyebrow">学习任务 / Learning Tasks</p>
+          <h2>先选一个目标，只看当前需要的路径。 / Pick one goal first, then only read the path needed now.</h2>
+        </div>
+        <div class="learning-task-layout">
+          <div class="learning-task-buttons" id="learningTaskButtons"></div>
+          <article class="learning-task-detail" id="learningTaskDetail"></article>
+        </div>
+      </section>
+
+      <section class="learning-reference" aria-label="按需展开的学习参考 / On-demand learning reference">
+        <div class="section-heading">
+          <p class="eyebrow">按需展开 / Open only when needed</p>
+          <h2>结构、页面和报告卡入口默认收起，避免一开始就堆满信息。 / Structure, page, and report-card references stay collapsed by default.</h2>
+        </div>
+        <details class="learning-disclosure">
+          <summary>项目结构地图 / Project Map</summary>
+          <p>从入口文档到校验门禁的五层地图。 / Five layers from entry docs to quality gates.</p>
+          <div class="structure-map" id="projectStructureMap"></div>
+        </details>
+        <details class="learning-disclosure">
+          <summary>页面拆分与导航 / Page Split and Navigation</summary>
+          <p>首页只教你怎么理解项目；重信息放到专门页面。 / The home page teaches project understanding; dense details move to dedicated views.</p>
+          <div class="page-card-grid" id="learningPages"></div>
+        </details>
+        <details class="learning-disclosure">
+          <summary>运行快照与报告卡入口 / Operating Snapshot and Report Cards</summary>
+          <section class="operating-snapshot" id="operatingSnapshot" aria-label="当前运行快照 / Current operating snapshot"></section>
+          <div class="template-preview-grid" id="templatePreview"></div>
+        </details>
+      </section>
+    </main>
+    <script src="./learning.js"></script>
+  </body>
+</html>
+`;
 }
 
 function buildHtml() {
@@ -363,7 +559,20 @@ function buildHtml() {
   </head>
   <body>
     <main class="shell">
-      <section class="hero" aria-label="工作台概览 / Workbench overview">
+      <header class="page-nav" aria-label="页面导航 / Page navigation">
+        <a class="nav-brand" href="./index.html">
+          <span class="brand-mark" aria-hidden="true">AI</span>
+          <strong>项目学习系统 / Project Learning</strong>
+        </a>
+        <nav class="nav-links">
+          <a href="./index.html">学习首页 / Learning</a>
+          <a href="./workbench.html" aria-current="page">工作台 / Workbench</a>
+          <a href="#next-workbench">当前任务 / Tasks</a>
+          <a href="#knowledge-demo">知识问答 / Docs Q&A</a>
+        </nav>
+      </header>
+
+      <section class="hero" id="overview" aria-label="工作台概览 / Workbench overview">
         <div class="topbar">
           <div class="brand-lockup">
             <span class="brand-mark" aria-hidden="true">FR</span>
@@ -406,7 +615,20 @@ function buildHtml() {
         </div>
       </section>
 
-      <section class="entry-strip" aria-label="入口模式 / Entry modes">
+      <section class="workbench-view-switch" aria-label="工作台视图切换 / Workbench view switch">
+        <div>
+          <p class="eyebrow">视图切换 / View Switch</p>
+          <h2>一次只看一个任务视图 / Show one task view at a time</h2>
+        </div>
+        <div class="view-actions">
+          <button type="button" data-workbench-view="tasks" aria-pressed="true">当前任务 / Tasks</button>
+          <button type="button" data-workbench-view="reports" aria-pressed="false">报告卡 / Report Cards</button>
+          <button type="button" data-workbench-view="docs" aria-pressed="false">知识问答 / Docs Q&A</button>
+          <button type="button" data-workbench-view="decisions" aria-pressed="false">Owner 决策 / Owner Decisions</button>
+        </div>
+      </section>
+
+      <section class="entry-strip" data-workbench-panel="tasks" aria-label="入口模式 / Entry modes">
         <div class="entry-copy">
           <h2>选择开始方式 / Choose how to start</h2>
           <p id="entryNote">从任务目标开始，选择治理模板，生成可复核工作凭证。 / Start from a task goal, select a governed template, and generate a reviewable work proof.</p>
@@ -419,7 +641,7 @@ function buildHtml() {
         <div class="entry-actions" id="entryModes"></div>
       </section>
 
-      <section class="review-prompts" aria-label="修改意见入口 / Review prompts">
+      <section class="review-prompts" data-workbench-panel="decisions" aria-label="修改意见入口 / Review prompts">
         <div class="section-heading">
           <p class="eyebrow">修改意见入口 / Review Prompts</p>
           <h2>让反馈直接落在定位、治理、下一步和页面负担上 / Keep feedback focused on positioning, governance, next actions, and visual load</h2>
@@ -427,7 +649,7 @@ function buildHtml() {
         <div class="review-prompt-grid" id="reviewPrompts"></div>
       </section>
 
-      <section class="mode-fit" aria-label="运行档位适配 / Running mode fit">
+      <section class="mode-fit" data-workbench-panel="decisions" aria-label="运行档位适配 / Running mode fit">
         <div class="section-heading">
           <p class="eyebrow">运行档位 / Running Modes</p>
           <h2>从 Windows 个人试用到强治理组织，档位变了，治理不降级。 / From Windows personal trials to strong-governance organizations, modes change but governance does not downgrade.</h2>
@@ -435,7 +657,7 @@ function buildHtml() {
         <div class="mode-grid" id="modeCards"></div>
       </section>
 
-      <section class="decision-strip" aria-label="推荐下一步 / Recommended next action">
+      <section class="decision-strip" data-workbench-panel="tasks" aria-label="推荐下一步 / Recommended next action">
         <div>
           <p class="eyebrow">推荐下一步 / Recommended Next Action</p>
           <h2 id="entryActionTitle">起草有边界的 WorkItem / Draft a bounded WorkItem</h2>
@@ -447,9 +669,9 @@ function buildHtml() {
         </div>
       </section>
 
-      <section class="owner-decisions" id="ownerDecisionQueue" aria-label="需要 owner 决策 / Owner decision queue"></section>
+      <section class="owner-decisions" id="ownerDecisionQueue" data-workbench-panel="decisions" aria-label="需要 owner 决策 / Owner decision queue"></section>
 
-      <section class="next-workbench" aria-label="下一步工作台 / Next Workbench">
+      <section class="next-workbench" id="next-workbench" data-workbench-panel="tasks" aria-label="下一步工作台 / Next Workbench">
         <div class="section-heading">
           <p class="eyebrow">下一步工作台 / Next Workbench</p>
           <h2>任务、租约、冲突防护与停止规则 / Tasks, leases, conflict guards, and stopping rules</h2>
@@ -462,7 +684,7 @@ function buildHtml() {
         <div class="active-plan-strip" id="activePlans"></div>
       </section>
 
-      <section class="workbench" aria-label="工作台 / Workbench">
+      <section class="workbench" id="report-workbench" data-workbench-panel="reports" aria-label="工作台 / Workbench">
         <aside class="template-rail" aria-label="模板列表 / Template list">
           <div class="section-heading">
             <p class="eyebrow">模板 / Templates</p>
@@ -499,7 +721,7 @@ function buildHtml() {
         </aside>
       </section>
 
-      <section class="knowledge-demo" aria-label="询问维护文档 / Ask maintained docs">
+      <section class="knowledge-demo" id="knowledge-demo" data-workbench-panel="docs" aria-label="询问维护文档 / Ask maintained docs">
         <div class="section-heading">
           <p class="eyebrow">询问维护文档 / Ask Maintained Docs</p>
           <h2>有来源的回答与可复核挑战 / Source-backed answers and reviewable challenges</h2>
@@ -510,7 +732,7 @@ function buildHtml() {
         </div>
       </section>
 
-      <section class="roadmap" aria-label="路线图 / Roadmap">
+      <section class="roadmap" id="roadmap" data-workbench-panel="tasks" aria-label="路线图 / Roadmap">
         <div class="section-heading">
           <p class="eyebrow">执行计划 / Execution Plan</p>
           <h2>从可见 MVP 到长期系统 / From visible MVP to longer-term system</h2>
@@ -542,19 +764,333 @@ const css = `:root {
 }
 
 * { box-sizing: border-box; }
-html { overflow-x: hidden; }
+html { max-width: 100%; }
 body {
   margin: 0;
   background: var(--bg);
   color: var(--ink);
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  overflow-x: hidden;
+  max-width: 100%;
 }
 button, a { font: inherit; }
+button, a, code, summary, .status-pill, .priority-pill, .template-badges span, .safety-badges span {
+  overflow-wrap: anywhere;
+}
+[hidden] {
+  display: none !important;
+}
 .shell {
   width: min(1440px, 100%);
   margin: 0 auto;
   padding: 28px 24px 40px;
+}
+.learning-shell {
+  max-width: 1240px;
+}
+.page-nav {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 58px;
+  margin: -28px -24px 18px;
+  border-bottom: 1px solid var(--line);
+  background: rgba(246, 248, 251, 0.94);
+  padding: 10px 24px;
+  backdrop-filter: blur(12px);
+}
+.nav-brand {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink);
+  text-decoration: none;
+}
+.nav-brand strong {
+  overflow-wrap: anywhere;
+}
+.nav-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+.nav-links a,
+.hero-actions a,
+.primary-action,
+.secondary-action {
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fff;
+  color: var(--ink);
+  padding: 8px 12px;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 740;
+  line-height: 1.2;
+}
+.nav-links a[aria-current="page"],
+.primary-action {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+.secondary-action {
+  color: var(--accent-strong);
+}
+.learning-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 16px;
+  align-items: stretch;
+  padding: 8px 0 22px;
+  border-bottom: 1px solid var(--line);
+}
+.learning-hero-copy,
+.learning-status {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  padding: 22px;
+}
+.learning-status {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  background: #fbfcfa;
+}
+.learning-status span {
+  color: var(--accent-strong);
+  font-size: 12px;
+  font-weight: 760;
+  text-transform: uppercase;
+}
+.learning-status strong {
+  font-size: 20px;
+  line-height: 1.2;
+}
+.learning-status p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.45;
+}
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+.learning-focus,
+.learning-reference {
+  padding: 20px 0;
+  border-bottom: 1px solid var(--line);
+}
+.learning-disclosure {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  margin-top: 12px;
+  padding: 0;
+}
+.learning-disclosure summary {
+  cursor: pointer;
+  min-height: 48px;
+  padding: 14px 16px;
+  color: var(--ink);
+  font-weight: 780;
+  line-height: 1.25;
+}
+.learning-disclosure > p {
+  margin: 0;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  padding: 0 16px 14px;
+  line-height: 1.45;
+}
+.learning-disclosure > div,
+.learning-disclosure > section {
+  margin: 0 16px 16px;
+}
+.learning-task-layout {
+  display: grid;
+  grid-template-columns: 340px minmax(0, 1fr);
+  gap: 14px;
+  margin-top: 14px;
+}
+.learning-task-buttons {
+  display: grid;
+  gap: 8px;
+}
+.learning-task-buttons button {
+  min-height: 56px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fff;
+  color: var(--ink);
+  padding: 12px;
+  text-align: left;
+  cursor: pointer;
+}
+.learning-task-buttons button[aria-pressed="true"] {
+  border-color: var(--accent);
+  background: var(--soft);
+  color: var(--accent-strong);
+}
+.learning-task-buttons strong,
+.learning-task-buttons span {
+  display: block;
+}
+.learning-task-buttons span {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+.learning-task-detail {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  padding: 18px;
+}
+.learning-task-detail p {
+  color: var(--muted);
+  line-height: 1.5;
+}
+.learning-task-detail ol {
+  display: grid;
+  gap: 8px;
+  margin: 14px 0 0;
+  padding-left: 22px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+.structure-map,
+.page-card-grid,
+.template-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+.structure-card,
+.page-card,
+.snapshot-card,
+.template-preview-card {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  padding: 16px;
+}
+.structure-card {
+  display: grid;
+  gap: 8px;
+}
+.structure-card span,
+.page-card span,
+.snapshot-card span,
+.template-preview-card span {
+  color: var(--accent-strong);
+  font-size: 12px;
+  font-weight: 760;
+  text-transform: uppercase;
+}
+.structure-card strong,
+.page-card strong,
+.snapshot-card strong,
+.template-preview-card strong {
+  display: block;
+  margin-top: 4px;
+  overflow-wrap: anywhere;
+}
+.structure-card p,
+.page-card p,
+.snapshot-card p,
+.template-preview-card p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  line-height: 1.45;
+}
+.structure-card ul {
+  display: grid;
+  gap: 5px;
+  margin: 4px 0 0;
+  padding-left: 18px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.35;
+}
+.structure-card a,
+.page-card a,
+.template-preview-card a,
+.learning-task-detail a {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 34px;
+  align-items: center;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  color: var(--accent-strong);
+  padding: 7px 10px;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 740;
+}
+.snapshot-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+.workbench-view-switch {
+  position: sticky;
+  top: 58px;
+  z-index: 9;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: var(--shadow);
+  margin: 0 0 16px;
+  padding: 12px;
+  backdrop-filter: blur(12px);
+}
+.view-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+.view-actions button {
+  min-height: 36px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fff;
+  color: var(--ink);
+  padding: 8px 10px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 740;
+  line-height: 1.2;
+}
+.view-actions button[aria-pressed="true"] {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
 }
 .hero {
   display: grid;
@@ -670,6 +1206,7 @@ h3 {
   line-height: 1.45;
 }
 .hero-status, .panel, .template-rail, .report-surface {
+  min-width: 0;
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -1030,8 +1567,16 @@ h3 {
 }
 .task-list {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 10px;
   margin-top: 12px;
+}
+.task-lane,
+.task-card,
+.task-meta,
+.task-meta ul,
+.task-meta li {
+  min-width: 0;
 }
 .active-task {
   display: grid;
@@ -1072,9 +1617,16 @@ h3 {
 }
 .task-card header {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   align-items: start;
   justify-content: space-between;
+}
+.task-card header strong,
+.backlog-item header strong,
+.plan-card header strong,
+.decision-queue-item strong {
+  min-width: 0;
 }
 .priority-pill {
   display: inline-flex;
@@ -1118,6 +1670,7 @@ h3 {
   padding-left: 10px;
   color: var(--muted);
   line-height: 1.4;
+  overflow-wrap: anywhere;
 }
 .task-origin strong {
   display: block;
@@ -1126,8 +1679,15 @@ h3 {
 }
 .backlog-panel {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   align-content: start;
   gap: 12px;
+}
+.backlog-panel > *,
+.backlog-list,
+.backlog-item,
+.backlog-summary {
+  min-width: 0;
 }
 .backlog-summary {
   display: grid;
@@ -1157,6 +1717,7 @@ h3 {
 }
 .backlog-item header {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   align-items: start;
   justify-content: space-between;
@@ -1181,6 +1742,13 @@ h3 {
 .backlog-meta span {
   overflow-wrap: anywhere;
 }
+.guard-block p,
+.backlog-summary p,
+.backlog-summary strong,
+.task-card p,
+.lease-preview dd {
+  overflow-wrap: anywhere;
+}
 .active-plan-strip {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1198,6 +1766,7 @@ h3 {
 }
 .plan-card header {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   align-items: start;
   justify-content: space-between;
@@ -1529,6 +2098,13 @@ h3 {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
 }
+.report-grid > section,
+.stack-list,
+.stack-list li,
+.stack-list strong,
+.stack-list span {
+  min-width: 0;
+}
 .wide { grid-column: 1 / -1; }
 .stack-list {
   display: grid;
@@ -1549,6 +2125,10 @@ h3 {
   display: block;
   color: var(--muted);
   line-height: 1.45;
+}
+.stack-list,
+.stack-list * {
+  overflow-wrap: anywhere;
 }
 .data-links {
   display: flex;
@@ -1692,6 +2272,17 @@ h3 {
   line-height: 1.45;
 }
 @media (max-width: 1120px) {
+  .learning-hero,
+  .learning-task-layout,
+  .workbench-view-switch {
+    grid-template-columns: 1fr;
+  }
+  .structure-map,
+  .page-card-grid,
+  .template-preview-grid,
+  .snapshot-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
   .workbench {
     grid-template-columns: 260px minmax(0, 1fr);
   }
@@ -1717,12 +2308,27 @@ h3 {
 }
 @media (max-width: 840px) {
   .shell { padding: 24px 16px 32px; }
+  .page-nav {
+    align-items: stretch;
+    display: grid;
+    margin: -24px -16px 16px;
+    padding: 10px 16px;
+  }
+  .nav-links {
+    justify-content: start;
+  }
+  .structure-map,
+  .page-card-grid,
+  .template-preview-grid,
+  .snapshot-grid {
+    grid-template-columns: 1fr;
+  }
   .command-board, .entry-strip, .feedback-targets, .review-prompt-grid, .mode-grid, .decision-strip, .owner-decisions, .next-grid, .active-plan-strip, .workbench, .right-rail, .knowledge-layout, .roadmap-list {
     grid-template-columns: 1fr;
   }
   h1 { font-size: 30px; }
   .entry-actions, .meta-grid, .report-grid, .report-digest, .guard-grid, .proof-stats, .flow-map {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .evidence-strip {
     grid-template-columns: 1fr;
@@ -1739,11 +2345,148 @@ h3 {
 }
 `;
 
+function buildLearningJs(state) {
+  return `const state = ${JSON.stringify(state, null, 2)};
+let selectedLearningTaskId = state.learningTasks[0].id;
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+}
+
+function renderLearningTasks() {
+  document.getElementById("learningTaskButtons").innerHTML = state.learningTasks.map(function (task) {
+    return '<button type="button" data-learning-task="' + escapeHtml(task.id) + '" aria-pressed="' +
+      String(task.id === selectedLearningTaskId) + '">' +
+      '<strong>' + escapeHtml(task.label) + '</strong>' +
+      '<span>' + escapeHtml(task.title) + '</span>' +
+    '</button>';
+  }).join("");
+
+  document.querySelectorAll("[data-learning-task]").forEach(function (button) {
+    button.addEventListener("click", function () {
+      selectedLearningTaskId = button.dataset.learningTask;
+      renderLearningTasks();
+    });
+  });
+
+  const task = state.learningTasks.find(function (candidate) {
+    return candidate.id === selectedLearningTaskId;
+  }) || state.learningTasks[0];
+
+  document.getElementById("learningTaskDetail").innerHTML =
+    '<p class="eyebrow">当前学习任务 / Current learning task</p>' +
+    '<h2>' + escapeHtml(task.title) + '</h2>' +
+    '<p>' + escapeHtml(task.summary) + '</p>' +
+    '<ol>' + task.steps.map(function (step) {
+      return '<li>' + escapeHtml(step) + '</li>';
+    }).join("") + '</ol>' +
+    '<div class="hero-actions"><a class="primary-action" href="' + escapeHtml(task.primaryHref) + '">' +
+      escapeHtml(task.primaryAction) + '</a></div>';
+}
+
+function renderProjectStructureMap() {
+  document.getElementById("projectStructureMap").innerHTML = state.projectStructureModules.map(function (module) {
+    return '<article class="structure-card">' +
+      '<span>' + escapeHtml(module.layer) + '</span>' +
+      '<strong>' + escapeHtml(module.title) + '</strong>' +
+      '<p>' + escapeHtml(module.detail) + '</p>' +
+      '<ul>' + module.files.map(function (file) {
+        return '<li>' + escapeHtml(file) + '</li>';
+      }).join("") + '</ul>' +
+      '<a href="' + escapeHtml(module.href) + '">打开入口 / Open entry</a>' +
+    '</article>';
+  }).join("");
+}
+
+function renderLearningPages() {
+  document.getElementById("learningPages").innerHTML = state.learningPages.map(function (page) {
+    return '<article class="page-card">' +
+      '<span>页面 / Page</span>' +
+      '<strong>' + escapeHtml(page.title) + '</strong>' +
+      '<p>' + escapeHtml(page.detail) + '</p>' +
+      '<a href="' + escapeHtml(page.href) + '">进入 / Open</a>' +
+    '</article>';
+  }).join("");
+}
+
+function renderOperatingSnapshot() {
+  const tasks = state.operatingEntry.currentTasks || [];
+  const p0Tasks = tasks.filter(function (task) { return task.priority === "P0"; });
+  const activeTask = tasks.find(function (task) { return task.taskId === "p0-next-workbench-entry"; }) ||
+    p0Tasks[0] ||
+    tasks[0];
+  const ownerDecisions = (state.activePlans || []).reduce(function (count, plan) {
+    return count + Number(plan.humanDecisionCount || 0);
+  }, 0);
+  const activeBacklog = state.operatingEntry.extensions?.["ai-hrms.decayPreventionBacklog"]?.items?.find(function (item) {
+    return item.status === "active";
+  });
+
+  const cards = [
+    {
+      label: "当前 P0 / Active P0",
+      title: activeTask ? activeTask.title : "暂无任务 / No task",
+      detail: activeTask ? activeTask.taskId + "; verify: " + activeTask.verificationCommands.join(" / ") : ""
+    },
+    {
+      label: "待决策 / Decisions",
+      title: String(ownerDecisions) + " human owner checkpoints",
+      detail: "Go 控制面和 live connector 仍需要人工确认。 / Go control plane and live connectors still need human confirmation."
+    },
+    {
+      label: "衰减预防 / Decay prevention",
+      title: activeBacklog ? activeBacklog.formalTaskId : "none",
+      detail: activeBacklog ? "status=" + activeBacklog.status + "; verify: " + activeBacklog.verificationCommands.join(" / ") : "No active backlog item."
+    }
+  ];
+
+  document.getElementById("operatingSnapshot").innerHTML =
+    '<div class="section-heading">' +
+      '<p class="eyebrow">运行快照 / Operating Snapshot</p>' +
+      '<h2>学习时先看当前项目状态 / Check current project state while learning</h2>' +
+    '</div>' +
+    '<div class="snapshot-grid">' + cards.map(function (card) {
+      return '<article class="snapshot-card">' +
+        '<span>' + escapeHtml(card.label) + '</span>' +
+        '<strong>' + escapeHtml(card.title) + '</strong>' +
+        '<p>' + escapeHtml(card.detail) + '</p>' +
+      '</article>';
+    }).join("") + '</div>';
+}
+
+function renderTemplatePreview() {
+  document.getElementById("templatePreview").innerHTML = state.cards.slice(0, 6).map(function (card) {
+    return '<article class="template-preview-card">' +
+      '<span>' + escapeHtml(card.riskLevel + " / " + card.approvalStatus) + '</span>' +
+      '<strong>' + escapeHtml(card.displayName) + '</strong>' +
+      '<p>' + escapeHtml(card.taskGoal) + '</p>' +
+      '<a href="./workbench.html#report-workbench">在工作台查看 / View in workbench</a>' +
+    '</article>';
+  }).join("");
+}
+
+function renderAll() {
+  renderLearningTasks();
+  renderProjectStructureMap();
+  renderLearningPages();
+  renderOperatingSnapshot();
+  renderTemplatePreview();
+}
+
+renderAll();
+`;
+}
+
 function buildJs(state) {
   return `const state = ${JSON.stringify(state, null, 2)};
 let selectedTemplateId = state.cards[0].templateId;
 let selectedEntryId = state.entryModes[0].id;
 let selectedKnowledgeIndex = 0;
+let selectedWorkbenchView = viewFromHash(window.location.hash);
 
 function escapeHtml(value) {
   return String(value ?? "")
@@ -2406,6 +3149,67 @@ function renderRoadmap() {
   }).join("");
 }
 
+function viewFromHash(hash) {
+  if (hash === "#report-workbench") {
+    return "reports";
+  }
+  if (hash === "#knowledge-demo") {
+    return "docs";
+  }
+  if (hash === "#ownerDecisionQueue") {
+    return "decisions";
+  }
+  return "tasks";
+}
+
+function hashForWorkbenchView(view) {
+  if (view === "reports") {
+    return "#report-workbench";
+  }
+  if (view === "docs") {
+    return "#knowledge-demo";
+  }
+  if (view === "decisions") {
+    return "#ownerDecisionQueue";
+  }
+  return "#next-workbench";
+}
+
+function renderWorkbenchView() {
+  const panels = document.querySelectorAll("[data-workbench-panel]");
+  panels.forEach(function (panel) {
+    panel.hidden = panel.dataset.workbenchPanel !== selectedWorkbenchView;
+  });
+  document.querySelectorAll("[data-workbench-view]").forEach(function (button) {
+    button.setAttribute("aria-pressed", String(button.dataset.workbenchView === selectedWorkbenchView));
+  });
+}
+
+function bindWorkbenchViewSwitch() {
+  document.querySelectorAll("[data-workbench-view]").forEach(function (button) {
+    button.addEventListener("click", function () {
+      selectedWorkbenchView = button.dataset.workbenchView;
+      renderWorkbenchView();
+      const targetHash = hashForWorkbenchView(selectedWorkbenchView);
+      if (window.location.hash !== targetHash) {
+        window.history.pushState(null, "", targetHash);
+      }
+      const target = document.getElementById(targetHash.slice(1));
+      if (target) {
+        target.scrollIntoView({ block: "start" });
+      }
+    });
+  });
+  window.addEventListener("hashchange", function () {
+    selectedWorkbenchView = viewFromHash(window.location.hash);
+    renderWorkbenchView();
+  });
+  window.addEventListener("popstate", function () {
+    selectedWorkbenchView = viewFromHash(window.location.hash);
+    renderWorkbenchView();
+  });
+}
+
 function renderAll() {
   const card = state.cards.find(function (candidate) { return candidate.templateId === selectedTemplateId; }) || state.cards[0];
   renderProofStats();
@@ -2421,9 +3225,11 @@ function renderAll() {
   renderReport(card);
   renderKnowledgeExamples();
   renderRoadmap();
+  renderWorkbenchView();
 }
 
 renderAll();
+bindWorkbenchViewSwitch();
 `;
 }
 
@@ -2472,16 +3278,22 @@ const state = {
   languageBoundaryNotice,
   languageBoundary,
   modeCards,
+  learningTasks,
+  projectStructureModules,
+  learningPages,
   cards: executions.map(toWorkbenchCard),
   knowledgeExamples: knowledgeExecutions.map(toKnowledgeExample)
 };
 
-await writeFile(path.join(webDist, "index.html"), buildHtml(), "utf8");
+await writeFile(path.join(webDist, "index.html"), buildLearningHtml(), "utf8");
+await writeFile(path.join(webDist, "workbench.html"), buildHtml(), "utf8");
 await writeFile(path.join(webDist, "styles.css"), css, "utf8");
 await writeFile(path.join(webDist, "app.js"), buildJs(state), "utf8");
+await writeFile(path.join(webDist, "learning.js"), buildLearningJs(state), "utf8");
 
 console.log("[web] ok");
-console.log("[web] Workbench: dist/web/index.html");
+console.log("[web] Learning system: dist/web/index.html");
+console.log("[web] Workbench: dist/web/workbench.html");
 for (const execution of executions) {
   console.log(`[web] Sample report card: ${execution.output.jsonRelativePath}`);
 }

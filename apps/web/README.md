@@ -1,6 +1,6 @@
-# AI-HRMS Web Workbench
+# AI-HRMS Project Learning System and Web Workbench
 
-This app is the Web-first onboarding surface for Demo Mode.
+This app is the Web-first onboarding and learning surface for Demo Mode.
 
 Current constraints:
 
@@ -15,7 +15,12 @@ Local command from the repository root:
 pnpm web:demo
 ```
 
-The generated page is written to `dist/web/index.html`.
+The generated static pages are:
+
+- `dist/web/index.html`: project learning system home page.
+- `dist/web/workbench.html`: full governed Web Workbench with report cards, templates, current tasks, owner decisions, active plans, and knowledge examples.
+
+The learning home keeps the first screen focused on project structure, learning tasks, page navigation, and current operating state. Dense report-card and governance detail remains available through the dedicated Workbench page.
 
 Visible UI frame copy is bilingual Chinese / English so reviewers can give feedback quickly. Canonical report-card body fields are still rendered from `ExecutionReportCard` JSON as written; the Web Workbench does not automatically translate, summarize, or rewrite those facts.
 
@@ -41,7 +46,7 @@ The report preview keeps review evidence visible near the top of the card:
 
 These are review surfaces only. Markdown and Web views render the JSON report card; they do not become a second fact source.
 
-The first screen includes bilingual feedback targets for positioning, governance boundary, next-action clarity, and visual load. It also keeps mock-only safety badges visible: no real connector, no production data, no secret, and no ApprovalGate bypass.
+The Workbench views include bilingual feedback targets for positioning, governance boundary, next-action clarity, and visual load. They also keep mock-only safety badges visible: no real connector, no production data, no secret, and no ApprovalGate bypass.
 
 Candidate WorkItems and WorkShards are displayed with explicit candidate status, owner, `approvalRequired`, `writeSet`, and verification details. They are not accepted assignments and are not promoted to formal work without human owner review.
 
