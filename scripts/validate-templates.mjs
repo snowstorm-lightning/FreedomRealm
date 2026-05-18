@@ -121,13 +121,10 @@ function validateToolContracts(errors, template, file) {
     }
 
     if (
-      containsAny(contract.allowedEnvironments, [
-        "prod",
-        "production",
-        "enterprise",
-        "live",
-        "real_connector"
-      ])
+      Array.isArray(contract.allowedEnvironments) &&
+      contract.allowedEnvironments.some((environment) =>
+        !isNonEmptyString(environment) || !["dev", "ci"].includes(normalizeToken(environment))
+      )
     ) {
       addIssue(
         errors,

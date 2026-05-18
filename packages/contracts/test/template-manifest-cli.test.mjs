@@ -178,7 +178,7 @@ test("validate-templates rejects unsafe Demo Mode tool contracts", async () => {
   const template = validTemplate("unsafe_tool_contract");
   template.toolContracts[0].riskLevel = "medium";
   template.toolContracts[0].autoExecute = true;
-  template.toolContracts[0].allowedEnvironments = ["dev", "prod"];
+  template.toolContracts[0].allowedEnvironments = ["dev", "staging"];
   template.toolContracts[0].budgetLimit.amount = 0;
   await writeFile(
     path.join(repoRoot, templateDir, "unsafe_tool_contract.json"),
