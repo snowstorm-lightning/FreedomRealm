@@ -290,6 +290,63 @@
       ]
     },
     {
+      "taskId": "p1-local-cli-boundary-guards",
+      "priority": "P1",
+      "status": "implemented-in-repo",
+      "title": "Harden local CLI and validator workspace boundaries",
+      "ownerActorTypes": [
+        "AgentActor"
+      ],
+      "outputs": [
+        "Demo / Knowledge / self-review output path boundary",
+        "Delivery HTML input/output path boundary",
+        "operating-entry manifest override path boundary",
+        "environment validator target path boundary",
+        "CLI option value guard coverage"
+      ],
+      "acceptanceCriteria": [
+        "Local CLIs do not treat option tokens as missing option values.",
+        "Demo, Knowledge, self-review, and Delivery HTML commands cannot read inputs or write outputs outside the workspace.",
+        "AI_HRMS_OPERATING_ENTRY_PATH must resolve inside the workspace.",
+        "validate:env target path must resolve inside the workspace.",
+        "The change does not enable real connectors, live models, secrets, production data, or external writes."
+      ],
+      "verificationCommands": [
+        "pnpm web:demo",
+        "pnpm test",
+        "pnpm check"
+      ],
+      "riskLevel": "low",
+      "suggestedWriteSet": [
+        "scripts/run-demo-mode.mjs",
+        "scripts/run-knowledge-demo.mjs",
+        "scripts/run-self-review.mjs",
+        "scripts/render-delivery-report-html.mjs",
+        "scripts/validate-operating-entry.mjs",
+        "packages/policy/bin/validate-environment.mjs",
+        "packages/contracts/test/demo-mode-cli.test.mjs",
+        "packages/contracts/test/project-operating-entry.test.mjs",
+        "packages/demo/test/demo-engine.test.mjs",
+        "packages/demo/test/knowledge-demo-cli.test.mjs",
+        "packages/policy/test/environment-isolation.test.mjs",
+        "docs/zh-CN/project-operating-entry.md",
+        "docs/zh-CN/developer-experience.md",
+        "docs/zh-CN/runbooks/demo-mode.md"
+      ],
+      "sourceRefs": [
+        "docs/zh-CN/project-operating-entry.md",
+        "docs/zh-CN/developer-experience.md",
+        "docs/zh-CN/runbooks/demo-mode.md",
+        "docs/zh-CN/quality-gates.md"
+      ],
+      "implementationRefs": [
+        "138f653",
+        "21b24fe",
+        "87d543a",
+        "6f87114"
+      ]
+    },
+    {
       "taskId": "p2-live-connectors",
       "priority": "P2",
       "status": "blocked-needs-human-owner",
