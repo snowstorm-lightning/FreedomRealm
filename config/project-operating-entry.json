@@ -348,7 +348,8 @@
         "21b24fe",
         "87d543a",
         "6f87114",
-        "cca2884"
+        "cca2884",
+        "70fb1f4"
       ]
     },
     {
@@ -475,6 +476,49 @@
         "Claude Code subagents and Stop hooks"
       ],
       "mockOnly": true
+    },
+    "ai-hrms.validatedHardening": {
+      "purpose": "Record verified low-risk contract hardening commits that do not create standalone WorkItems.",
+      "items": [
+        {
+          "commitRef": "eff88fd",
+          "scope": "AnswerCard confidence validation",
+          "writeSet": [
+            "docs/zh-CN/api-contracts.md",
+            "packages/contracts/src/index.mjs",
+            "packages/contracts/src/knowledge-cards.mjs",
+            "packages/contracts/test/knowledge-cards.test.mjs"
+          ],
+          "verificationCommands": [
+            "pnpm test",
+            "pnpm check"
+          ]
+        },
+        {
+          "commitRef": "419e7d7",
+          "scope": "ExecutionReportCard dataClassification validation",
+          "writeSet": [
+            "packages/contracts/src/execution-report-card.mjs",
+            "packages/contracts/test/execution-report-card.test.mjs"
+          ],
+          "verificationCommands": [
+            "pnpm test",
+            "pnpm check"
+          ]
+        },
+        {
+          "commitRef": "7a380d6",
+          "scope": "Knowledge source line range validation",
+          "writeSet": [
+            "packages/contracts/src/knowledge-cards.mjs",
+            "packages/contracts/test/knowledge-cards.test.mjs"
+          ],
+          "verificationCommands": [
+            "pnpm test",
+            "pnpm check"
+          ]
+        }
+      ]
     },
     "ai-hrms.decayPreventionBacklog": {
       "sourceReportPath": "dist/self-review/report-44d9d1ae-2014-4a8f-ac9b-1c5efc7152e1.json",
