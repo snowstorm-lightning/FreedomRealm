@@ -114,6 +114,17 @@ test("validate-templates rejects missing evaluation samples", async () => {
   assert.match(result.stderr, /missing_evaluation_samples|missing_template_field/u);
 });
 
+test("validate-templates identifies malformed template JSON", async () => {
+  const templateDir = path.join("dist", "test-template-validator", "malformed-json");
+  await mkdir(path.join(repoRoot, templateDir), { recursive: true });
+  await writeFile(path.join(repoRoot, templateDir, "malformed.json"), "{ bad json", "utf8");
+
+  const result = runTemplateValidator(templateDir);
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /malformed\.json/u);
+  assert.match(result.stderr, /invalid_template_json/u);
+});
+
 test("validate-templates rejects failure samples without review and reproduction evidence", async () => {
   const templateDir = path.join("dist", "test-template-validator", "missing-failure-evidence");
   await mkdir(path.join(repoRoot, templateDir), { recursive: true });
