@@ -67,7 +67,8 @@ function printHelp() {
 The HTML render is for delivery-level presentation only.
 ExecutionReportCard JSON remains canonical, and Markdown remains the default per-run render.
 Without --input, the default inputs are dist/demo-mode, dist/self-review, and dist/web/data.
-When --input is provided, only the explicit input paths are collected and missing inputs fail.`);
+When --input is provided, only the explicit input paths are collected and missing inputs fail.
+Explicit JSON file inputs must be ExecutionReportCard JSON; directories may contain unrelated JSON files.`);
 }
 
 async function collectJsonFiles(inputPath, { allowMissing }) {

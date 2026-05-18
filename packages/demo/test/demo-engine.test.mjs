@@ -408,6 +408,7 @@ test("report HTML CLI help documents explicit input behavior", () => {
   assert.equal(result.status, 0, result.stderr);
   assert.match(result.stdout, /Without --input, the default inputs/u);
   assert.match(result.stdout, /only the explicit input paths are collected/u);
+  assert.match(result.stdout, /Explicit JSON file inputs must be ExecutionReportCard JSON/u);
 });
 
 test("report HTML CLI rejects missing explicit input paths", () => {
