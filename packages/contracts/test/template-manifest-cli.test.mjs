@@ -150,6 +150,26 @@ test("validate-templates rejects eval samples that do not cover the failure samp
   assert.match(result.stderr, /evaluation_failure_mismatch/u);
 });
 
+test("validate-templates rejects invalid template risk and data classification values", async () => {
+  const templateDir = path.join("dist", "test-template-validator", "invalid-enums");
+  await mkdir(path.join(repoRoot, templateDir), { recursive: true });
+  const template = validTemplate("invalid_enums");
+  template.dataClassification = "private";
+  template.riskLevel = "severe";
+  template.evaluationSamples[0].dataClassification = "private";
+  await writeFile(
+    path.join(repoRoot, templateDir, "invalid_enums.json"),
+    `${JSON.stringify(template, null, 2)}\n`,
+    "utf8"
+  );
+
+  const result = runTemplateValidator(templateDir);
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /invalid_template_data_classification/u);
+  assert.match(result.stderr, /invalid_template_risk/u);
+  assert.match(result.stderr, /invalid_evaluation_data_classification/u);
+});
+
 test("validate-templates rejects unsafe evaluation sample sources", async () => {
   const templateDir = path.join("dist", "test-template-validator", "unsafe-source");
   await mkdir(path.join(repoRoot, templateDir), { recursive: true });

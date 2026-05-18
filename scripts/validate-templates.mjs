@@ -4,6 +4,8 @@ import { fileURLToPath } from "node:url";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const templateDir = process.env.AI_HRMS_TEMPLATE_DIR ?? "config/templates";
+const allowedTemplateDataClassifications = ["public", "internal", "restricted", "sensitive"];
+const allowedTemplateRiskLevels = ["low", "medium", "high"];
 
 function toWorkspacePath(relativePath) {
   const absolutePath = path.resolve(repoRoot, relativePath);
@@ -250,6 +252,17 @@ function validateEvaluationSamples(errors, template, file) {
         file
       );
     }
+    if (
+      isNonEmptyString(sample.dataClassification) &&
+      !allowedTemplateDataClassifications.includes(sample.dataClassification)
+    ) {
+      addIssue(
+        errors,
+        "invalid_evaluation_data_classification",
+        `evaluationSamples.${index}.dataClassification is invalid.`,
+        file
+      );
+    }
 
     if (
       containsAny(sample.allowedDataSources, [
@@ -321,6 +334,17 @@ function validateTemplate(errors, template, file) {
   validateNonEmptyArray(errors, template.skillRefs, "skillRefs", file);
   validateNonEmptyArray(errors, template.toolContracts, "toolContracts", file);
   validateToolContracts(errors, template, file);
+
+  if (
+    isNonEmptyString(template.dataClassification) &&
+    !allowedTemplateDataClassifications.includes(template.dataClassification)
+  ) {
+    addIssue(errors, "invalid_template_data_classification", "dataClassification is invalid.", file);
+  }
+
+  if (isNonEmptyString(template.riskLevel) && !allowedTemplateRiskLevels.includes(template.riskLevel)) {
+    addIssue(errors, "invalid_template_risk", "riskLevel is invalid.", file);
+  }
 
   if (template.runtimeMode !== "Demo Mode") {
     addIssue(errors, "invalid_template_runtime", "runtimeMode must be Demo Mode for checked-in templates.", file);
