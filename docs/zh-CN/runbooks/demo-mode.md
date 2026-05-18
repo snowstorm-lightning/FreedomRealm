@@ -139,7 +139,7 @@ pnpm report:html
 - 渲染顺序按 `ExecutionReportCard.generatedAt` 新到旧排列，方便阶段交付时先查看最新证据。
 - 跳过非报告卡 JSON，例如 `AnswerCard` 和 `DocChallengeDraft`。
 
-传入 `--input` 时只收集显式输入路径；需要多个来源时重复传入 `--input`。这样交付报告不会在指定目录之外额外混入默认 `dist/` 报告卡。
+传入 `--input` 时只收集显式输入路径；需要多个来源时重复传入 `--input`。显式输入路径不存在会失败。这样交付报告不会在指定目录之外额外混入默认 `dist/` 报告卡。
 
 HTML 只是整体交付或阶段汇总报告渲染物。单次报告卡的 canonical source 仍是 JSON，默认阅读物仍是 Markdown。
 

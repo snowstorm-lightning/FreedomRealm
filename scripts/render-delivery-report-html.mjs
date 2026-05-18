@@ -31,12 +31,14 @@ function parseArgs(argv) {
   const options = {
     inputs: [],
     out: "dist/reports/delivery-report.html",
-    title: "AI-HRMS Delivery Report"
+    title: "AI-HRMS Delivery Report",
+    explicitInputs: false
   };
 
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
     if (arg === "--input") {
+      options.explicitInputs = true;
       options.inputs.push(readOptionValue(argv, index, "--input"));
       index += 1;
     } else if (arg === "--out") {
@@ -65,15 +67,21 @@ function printHelp() {
 The HTML render is for delivery-level presentation only.
 ExecutionReportCard JSON remains canonical, and Markdown remains the default per-run render.
 Without --input, the default inputs are dist/demo-mode, dist/self-review, and dist/web/data.
-When --input is provided, only the explicit input paths are collected.`);
+When --input is provided, only the explicit input paths are collected and missing inputs fail.`);
 }
 
-async function collectJsonFiles(inputPath) {
+async function collectJsonFiles(inputPath, { allowMissing }) {
   const absolutePath = resolveWorkspacePath(inputPath, "Input path");
   let entries;
   try {
     entries = await readdir(absolutePath, { withFileTypes: true });
   } catch (error) {
+    if (error.code === "ENOTDIR" && inputPath.endsWith(".json")) {
+      return [absolutePath];
+    }
+    if ((error.code === "ENOENT" || error.code === "ENOTDIR") && !allowMissing) {
+      throw new Error(`Input path does not exist: ${inputPath}`);
+    }
     if (error.code === "ENOENT" && inputPath.endsWith(".json")) {
       return [absolutePath];
     }
@@ -87,7 +95,7 @@ async function collectJsonFiles(inputPath) {
     entries.map(async (entry) => {
       const child = path.join(absolutePath, entry.name);
       if (entry.isDirectory()) {
-        return collectJsonFiles(path.relative(repoRoot, child));
+        return collectJsonFiles(path.relative(repoRoot, child), { allowMissing });
       }
       return entry.isFile() && entry.name.endsWith(".json") ? [child] : [];
     })
@@ -96,8 +104,8 @@ async function collectJsonFiles(inputPath) {
   return nested.flat();
 }
 
-async function readReportCards(inputs) {
-  const files = [...new Set((await Promise.all(inputs.map(collectJsonFiles))).flat())].sort();
+async function readReportCards(inputs, options) {
+  const files = [...new Set((await Promise.all(inputs.map((input) => collectJsonFiles(input, options)))).flat())].sort();
   const cards = [];
 
   for (const file of files) {
@@ -124,7 +132,7 @@ async function main() {
     return;
   }
 
-  const reportCards = await readReportCards(options.inputs);
+  const reportCards = await readReportCards(options.inputs, { allowMissing: !options.explicitInputs });
   const html = renderDeliveryReportHtml({
     reportCards,
     title: options.title

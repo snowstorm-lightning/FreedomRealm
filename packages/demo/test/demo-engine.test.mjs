@@ -344,6 +344,18 @@ test("report HTML CLI help documents explicit input behavior", () => {
   assert.match(result.stdout, /only the explicit input paths are collected/u);
 });
 
+test("report HTML CLI rejects missing explicit input paths", () => {
+  const missingInput = `dist/missing-report-html-input/${randomUUID()}`;
+  const result = spawnSync(process.execPath, ["scripts/render-delivery-report-html.mjs", "--input", missingInput], {
+    cwd: repoRoot,
+    encoding: "utf8",
+    shell: false
+  });
+
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /Input path does not exist/u);
+});
+
 test("report HTML CLI rejects invalid option values", () => {
   for (const [argv, expectedError] of [
     [["--input"], /--input requires a value/u],
