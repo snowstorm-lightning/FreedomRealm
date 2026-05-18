@@ -79,6 +79,14 @@
     "failureType": "live_model_unavailable",
     "simulated": true,
     "statusIfTriggered": "blocked",
+    "expectedBlockingPoint": "Block before any maintained document edit or public sharing when the live model route is unavailable.",
+    "humanReviewStatus": "requires_human_owner_review",
+    "reproducibleInputRefs": [
+      "README.md",
+      "docs/zh-CN/README.md",
+      "docs/zh-CN/capability-development-and-mvp.md",
+      "docs/zh-CN/architecture-blueprint.md"
+    ],
     "recovery": "Fall back to the mock model route, keep the same report-card schema, and require human review before any document change."
   },
   "evaluationSamples": [
@@ -86,6 +94,26 @@
       "sampleId": "eval.docs_review_and_improvement.demo.v1",
       "purpose": "Verify that local documentation review can produce a governed ExecutionReportCard without editing source documents.",
       "inputSummary": "Selected AI-HRMS repository documents are read as internal, redacted Demo Mode inputs.",
+      "inputRefs": [
+        "README.md",
+        "docs/zh-CN/README.md",
+        "docs/zh-CN/capability-development-and-mvp.md",
+        "docs/zh-CN/architecture-blueprint.md"
+      ],
+      "dataClassification": "internal",
+      "purposeLimit": "Demo Mode validation and human review only; not for training, ranking, production routing, or automatic assignment.",
+      "retention": "local-demo-run-only",
+      "allowedDataSources": [
+        "mock",
+        "redacted",
+        "authorized_repository_docs"
+      ],
+      "prohibitedDataSources": [
+        "secret",
+        "production_data",
+        "real_connector_credentials",
+        "sensitive_raw_text"
+      ],
       "expectedOutputs": [
         "Mock summary of selected documents",
         "Two to four findings",

@@ -87,6 +87,13 @@
     "failureType": "missing_diff_or_issue_context",
     "simulated": true,
     "statusIfTriggered": "blocked",
+    "expectedBlockingPoint": "Block before assigning reviewers, requesting changes, or publishing review comments without bounded issue or diff context.",
+    "humanReviewStatus": "requires_human_owner_review",
+    "reproducibleInputRefs": [
+      "README.md",
+      "docs/zh-CN/api-contracts.md",
+      "docs/zh-CN/quality-gates.md"
+    ],
     "recovery": "Ask the human owner for the issue body, PR summary, or diff excerpt before making a review recommendation."
   },
   "evaluationSamples": [
@@ -94,6 +101,25 @@
       "sampleId": "eval.issue_pr_triage_and_review.demo.v1",
       "purpose": "Verify that pasted issue or PR context can be triaged into reviewable suggestions without repository side effects.",
       "inputSummary": "A pasted issue body, PR summary, or diff excerpt is read from local demo input.",
+      "inputRefs": [
+        "README.md",
+        "docs/zh-CN/api-contracts.md",
+        "docs/zh-CN/quality-gates.md"
+      ],
+      "dataClassification": "internal",
+      "purposeLimit": "Demo Mode validation and human review only; not for training, ranking, production routing, or automatic assignment.",
+      "retention": "local-demo-run-only",
+      "allowedDataSources": [
+        "mock",
+        "redacted",
+        "authorized_repository_docs"
+      ],
+      "prohibitedDataSources": [
+        "secret",
+        "production_data",
+        "real_connector_credentials",
+        "sensitive_raw_text"
+      ],
       "expectedOutputs": [
         "Issue or PR classification",
         "Risk summary",

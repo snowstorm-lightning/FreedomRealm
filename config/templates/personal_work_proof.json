@@ -86,6 +86,13 @@
     "failureType": "goal_too_broad",
     "simulated": true,
     "statusIfTriggered": "blocked",
+    "expectedBlockingPoint": "Block before producing scores, rankings, public proof, or broad behavioral claims from an oversized goal.",
+    "humanReviewStatus": "requires_human_owner_review",
+    "reproducibleInputRefs": [
+      "README.md",
+      "docs/zh-CN/capability-development-and-mvp.md",
+      "docs/zh-CN/adoption-and-growth.md"
+    ],
     "recovery": "Ask the user to narrow the goal to one small proof, keep the output private, and avoid producing scores or rankings."
   },
   "evaluationSamples": [
@@ -93,6 +100,25 @@
       "sampleId": "eval.personal_work_proof.demo.v1",
       "purpose": "Verify that a user goal, materials, and available time can become a small private work proof candidate.",
       "inputSummary": "User-provided goal, materials, constraints, and available time are read from local demo input.",
+      "inputRefs": [
+        "README.md",
+        "docs/zh-CN/capability-development-and-mvp.md",
+        "docs/zh-CN/adoption-and-growth.md"
+      ],
+      "dataClassification": "internal",
+      "purposeLimit": "Demo Mode validation and human review only; not for training, ranking, production routing, or automatic assignment.",
+      "retention": "local-demo-run-only",
+      "allowedDataSources": [
+        "mock",
+        "redacted",
+        "authorized_repository_docs"
+      ],
+      "prohibitedDataSources": [
+        "secret",
+        "production_data",
+        "real_connector_credentials",
+        "sensitive_raw_text"
+      ],
       "expectedOutputs": [
         "Candidate LearningPath",
         "CapabilityProof draft",

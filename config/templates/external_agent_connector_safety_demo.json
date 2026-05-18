@@ -63,6 +63,15 @@
     "failureType": "external_agent_policy_violation",
     "simulated": true,
     "statusIfTriggered": "blocked",
+    "expectedBlockingPoint": "Block before any ExternalConnector side effect, credential use, or non-mock connector execution.",
+    "humanReviewStatus": "requires_human_owner_review",
+    "reproducibleInputRefs": [
+      "README.md",
+      "ARCHITECTURE.md",
+      "docs/zh-CN/api-contracts.md",
+      "docs/zh-CN/security-and-governance.md",
+      "docs/zh-CN/quality-gates.md"
+    ],
     "recovery": "Keep the external agent run blocked, record the policy reason, ask the human owner to narrow data, approve explicitly, or use the mock path."
   },
   "evaluationSamples": [
@@ -70,6 +79,27 @@
       "sampleId": "eval.external_agent_connector_safety_demo.demo.v1",
       "purpose": "Verify that ExternalConnector profiles remain bounded to mock requests and cannot launch real external agent runtimes.",
       "inputSummary": "Mock OpenClaw and Hermes Agent connector profiles are reviewed as internal, redacted Demo Mode inputs.",
+      "inputRefs": [
+        "README.md",
+        "ARCHITECTURE.md",
+        "docs/zh-CN/api-contracts.md",
+        "docs/zh-CN/security-and-governance.md",
+        "docs/zh-CN/quality-gates.md"
+      ],
+      "dataClassification": "internal",
+      "purposeLimit": "Demo Mode validation and human review only; not for training, ranking, production routing, or automatic assignment.",
+      "retention": "local-demo-run-only",
+      "allowedDataSources": [
+        "mock",
+        "redacted",
+        "authorized_repository_docs"
+      ],
+      "prohibitedDataSources": [
+        "secret",
+        "production_data",
+        "real_connector_credentials",
+        "sensitive_raw_text"
+      ],
       "expectedOutputs": [
         "Bounded ExternalAgentRunRequest candidate",
         "Mock ExternalAgentRunResult candidate",

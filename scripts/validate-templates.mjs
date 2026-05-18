@@ -50,6 +50,18 @@ function validateNonEmptyArray(errors, value, field, file) {
   }
 }
 
+function normalizeToken(value) {
+  return value.toLowerCase().replace(/[\s-]+/gu, "_");
+}
+
+function containsAny(values, candidates) {
+  if (!Array.isArray(values)) {
+    return false;
+  }
+  const normalized = new Set(values.filter(isNonEmptyString).map(normalizeToken));
+  return candidates.some((candidate) => normalized.has(normalizeToken(candidate)));
+}
+
 function validateFailureSample(errors, template, file) {
   if (!isPlainObject(template.failureSample)) {
     addIssue(errors, "missing_failure_sample", "failureSample must be an object.", file);
@@ -58,10 +70,22 @@ function validateFailureSample(errors, template, file) {
 
   validateNonEmptyString(errors, template.failureSample.failureType, "failureSample.failureType", file);
   validateNonEmptyString(errors, template.failureSample.statusIfTriggered, "failureSample.statusIfTriggered", file);
+  validateNonEmptyString(errors, template.failureSample.expectedBlockingPoint, "failureSample.expectedBlockingPoint", file);
+  validateNonEmptyString(errors, template.failureSample.humanReviewStatus, "failureSample.humanReviewStatus", file);
+  validateNonEmptyArray(errors, template.failureSample.reproducibleInputRefs, "failureSample.reproducibleInputRefs", file);
   validateNonEmptyString(errors, template.failureSample.recovery, "failureSample.recovery", file);
 
   if (template.failureSample.simulated !== true) {
     addIssue(errors, "invalid_failure_sample", "failureSample.simulated must be true for Demo Mode templates.", file);
+  }
+
+  if (template.failureSample.humanReviewStatus !== "requires_human_owner_review") {
+    addIssue(
+      errors,
+      "invalid_failure_sample",
+      "failureSample.humanReviewStatus must be requires_human_owner_review.",
+      file
+    );
   }
 }
 
@@ -75,6 +99,12 @@ function validateEvaluationSamples(errors, template, file) {
     "sampleId",
     "purpose",
     "inputSummary",
+    "inputRefs",
+    "dataClassification",
+    "purposeLimit",
+    "retention",
+    "allowedDataSources",
+    "prohibitedDataSources",
     "expectedOutputs",
     "expectedGovernance",
     "failureModeCovered",
@@ -96,6 +126,12 @@ function validateEvaluationSamples(errors, template, file) {
     validateNonEmptyString(errors, sample.sampleId, `evaluationSamples.${index}.sampleId`, file);
     validateNonEmptyString(errors, sample.purpose, `evaluationSamples.${index}.purpose`, file);
     validateNonEmptyString(errors, sample.inputSummary, `evaluationSamples.${index}.inputSummary`, file);
+    validateNonEmptyArray(errors, sample.inputRefs, `evaluationSamples.${index}.inputRefs`, file);
+    validateNonEmptyString(errors, sample.dataClassification, `evaluationSamples.${index}.dataClassification`, file);
+    validateNonEmptyString(errors, sample.purposeLimit, `evaluationSamples.${index}.purposeLimit`, file);
+    validateNonEmptyString(errors, sample.retention, `evaluationSamples.${index}.retention`, file);
+    validateNonEmptyArray(errors, sample.allowedDataSources, `evaluationSamples.${index}.allowedDataSources`, file);
+    validateNonEmptyArray(errors, sample.prohibitedDataSources, `evaluationSamples.${index}.prohibitedDataSources`, file);
     validateNonEmptyArray(errors, sample.expectedOutputs, `evaluationSamples.${index}.expectedOutputs`, file);
     validateNonEmptyArray(errors, sample.expectedGovernance, `evaluationSamples.${index}.expectedGovernance`, file);
     validateNonEmptyString(
@@ -117,6 +153,48 @@ function validateEvaluationSamples(errors, template, file) {
         `evaluationSamples.${index}.failureModeCovered must match failureSample.failureType.`,
         file
       );
+    }
+
+    if (
+      isNonEmptyString(sample.dataClassification) &&
+      isNonEmptyString(template.dataClassification) &&
+      sample.dataClassification !== template.dataClassification
+    ) {
+      addIssue(
+        errors,
+        "evaluation_data_classification_mismatch",
+        `evaluationSamples.${index}.dataClassification must match template dataClassification.`,
+        file
+      );
+    }
+
+    if (
+      containsAny(sample.allowedDataSources, [
+        "live_model",
+        "real_connector",
+        "real_connector_credentials",
+        "secret",
+        "production_data",
+        "sensitive_raw_text"
+      ])
+    ) {
+      addIssue(
+        errors,
+        "unsafe_evaluation_sample_source",
+        `evaluationSamples.${index}.allowedDataSources must not require live models, real connectors, secrets, or production data.`,
+        file
+      );
+    }
+
+    for (const prohibited of ["secret", "production_data", "real_connector_credentials"]) {
+      if (!containsAny(sample.prohibitedDataSources, [prohibited])) {
+        addIssue(
+          errors,
+          "missing_prohibited_data_source",
+          `evaluationSamples.${index}.prohibitedDataSources must include ${prohibited}.`,
+          file
+        );
+      }
     }
   }
 }
@@ -160,6 +238,10 @@ function validateTemplate(errors, template, file) {
   validateNonEmptyArray(errors, template.skillRefs, "skillRefs", file);
   validateNonEmptyArray(errors, template.toolContracts, "toolContracts", file);
 
+  if (template.runtimeMode !== "Demo Mode") {
+    addIssue(errors, "invalid_template_runtime", "runtimeMode must be Demo Mode for checked-in templates.", file);
+  }
+
   if (!isPlainObject(template.mockModel)) {
     addIssue(errors, "invalid_mock_model", "mockModel must be an object.", file);
   } else {
@@ -170,6 +252,12 @@ function validateTemplate(errors, template, file) {
       "mockModel.modelCapabilityProfileRef",
       file
     );
+    if (
+      isNonEmptyString(template.mockModel.modelRouteId) &&
+      !template.mockModel.modelRouteId.startsWith("mock.")
+    ) {
+      addIssue(errors, "invalid_mock_model", "mockModel.modelRouteId must use a mock. route.", file);
+    }
   }
 
   validateFailureSample(errors, template, file);

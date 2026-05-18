@@ -84,6 +84,16 @@
     "failureType": "self_review_scope_too_broad",
     "simulated": true,
     "statusIfTriggered": "blocked",
+    "expectedBlockingPoint": "Block before converting self-review findings into repository edits, issues, PRs, or member obligations.",
+    "humanReviewStatus": "requires_human_owner_review",
+    "reproducibleInputRefs": [
+      "README.md",
+      "ARCHITECTURE.md",
+      "docs/zh-CN/developer-experience.md",
+      "docs/zh-CN/quality-gates.md",
+      "docs/zh-CN/roadmap.md",
+      "docs/zh-CN/capability-development-and-mvp.md"
+    ],
     "recovery": "Ask the human owner to narrow the review surface, split by subsystem, and rerun without modifying repository files."
   },
   "evaluationSamples": [
@@ -91,6 +101,28 @@
       "sampleId": "eval.project_self_review_and_decay_prevention.demo.v1",
       "purpose": "Verify that maintained docs and manifests can be checked for project decay without modifying repository files.",
       "inputSummary": "Selected maintained documents and local manifests are read as internal, redacted Demo Mode inputs.",
+      "inputRefs": [
+        "README.md",
+        "ARCHITECTURE.md",
+        "docs/zh-CN/developer-experience.md",
+        "docs/zh-CN/quality-gates.md",
+        "docs/zh-CN/roadmap.md",
+        "docs/zh-CN/capability-development-and-mvp.md"
+      ],
+      "dataClassification": "internal",
+      "purposeLimit": "Demo Mode validation and human review only; not for training, ranking, production routing, or automatic assignment.",
+      "retention": "local-demo-run-only",
+      "allowedDataSources": [
+        "mock",
+        "redacted",
+        "authorized_repository_docs"
+      ],
+      "prohibitedDataSources": [
+        "secret",
+        "production_data",
+        "real_connector_credentials",
+        "sensitive_raw_text"
+      ],
       "expectedOutputs": [
         "Decay and drift findings",
         "Governance boundary observations",

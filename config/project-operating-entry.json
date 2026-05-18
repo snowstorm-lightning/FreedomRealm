@@ -244,7 +244,8 @@
         "pnpm validate:templates 校验 template manifest、failure samples 和 evaluationSamples",
         "样本可被报告卡和 Demo Mode 引用",
         "样本不依赖 live model、真实连接器、secret 或生产数据",
-        "失败样本保留期望阻断点、人工复核状态和可复现输入引用"
+        "失败样本保留 expectedBlockingPoint、humanReviewStatus 和 reproducibleInputRefs",
+        "evaluationSamples 保留 inputRefs、dataClassification、purposeLimit、retention、allowedDataSources 和 prohibitedDataSources"
       ],
       "verificationCommands": [
         "pnpm validate:templates",
@@ -253,7 +254,11 @@
       "riskLevel": "medium",
       "suggestedWriteSet": [
         "config/templates",
-        "docs/zh-CN/quality-gates.md"
+        "scripts/validate-templates.mjs",
+        "packages/contracts/test/template-manifest-cli.test.mjs",
+        "packages/demo/test/demo-engine.test.mjs",
+        "docs/zh-CN/quality-gates.md",
+        "config/project-operating-entry.json"
       ],
       "sourceRefs": [
         "docs/zh-CN/project-operating-entry.md",

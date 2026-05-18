@@ -59,6 +59,9 @@ function validTemplate(templateId) {
       failureType: "sample_failure",
       simulated: true,
       statusIfTriggered: "blocked",
+      expectedBlockingPoint: "Block before treating an incomplete template as ready for Demo Mode.",
+      humanReviewStatus: "requires_human_owner_review",
+      reproducibleInputRefs: ["README.md"],
       recovery: "Keep the report card valid and ask the human owner to review the template."
     },
     evaluationSamples: [
@@ -66,6 +69,12 @@ function validTemplate(templateId) {
         sampleId: "eval.valid_template.demo.v1",
         purpose: "Verify template manifest coverage.",
         inputSummary: "A small local input set.",
+        inputRefs: ["README.md"],
+        dataClassification: "internal",
+        purposeLimit: "Demo Mode validation and human review only.",
+        retention: "local-demo-run-only",
+        allowedDataSources: ["mock", "redacted", "authorized_repository_docs"],
+        prohibitedDataSources: ["secret", "production_data", "real_connector_credentials"],
         expectedOutputs: ["ExecutionReportCard JSON"],
         expectedGovernance: ["Keep samples candidate-only until human review."],
         failureModeCovered: "sample_failure",
@@ -105,6 +114,26 @@ test("validate-templates rejects missing evaluation samples", async () => {
   assert.match(result.stderr, /missing_evaluation_samples|missing_template_field/u);
 });
 
+test("validate-templates rejects failure samples without review and reproduction evidence", async () => {
+  const templateDir = path.join("dist", "test-template-validator", "missing-failure-evidence");
+  await mkdir(path.join(repoRoot, templateDir), { recursive: true });
+  const template = validTemplate("missing_failure_evidence");
+  delete template.failureSample.expectedBlockingPoint;
+  delete template.failureSample.humanReviewStatus;
+  delete template.failureSample.reproducibleInputRefs;
+  await writeFile(
+    path.join(repoRoot, templateDir, "missing_failure_evidence.json"),
+    `${JSON.stringify(template, null, 2)}\n`,
+    "utf8"
+  );
+
+  const result = runTemplateValidator(templateDir);
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /failureSample\.expectedBlockingPoint/u);
+  assert.match(result.stderr, /failureSample\.humanReviewStatus/u);
+  assert.match(result.stderr, /failureSample\.reproducibleInputRefs/u);
+});
+
 test("validate-templates rejects eval samples that do not cover the failure sample", async () => {
   const templateDir = path.join("dist", "test-template-validator", "mismatch");
   await mkdir(path.join(repoRoot, templateDir), { recursive: true });
@@ -119,4 +148,26 @@ test("validate-templates rejects eval samples that do not cover the failure samp
   const result = runTemplateValidator(templateDir);
   assert.notEqual(result.status, 0);
   assert.match(result.stderr, /evaluation_failure_mismatch/u);
+});
+
+test("validate-templates rejects unsafe evaluation sample sources", async () => {
+  const templateDir = path.join("dist", "test-template-validator", "unsafe-source");
+  await mkdir(path.join(repoRoot, templateDir), { recursive: true });
+  const template = validTemplate("unsafe_source");
+  template.runtimeMode = "Production Mode";
+  template.mockModel.modelRouteId = "live.template.v1";
+  template.evaluationSamples[0].allowedDataSources = ["live_model", "real_connector", "secret", "production_data"];
+  template.evaluationSamples[0].prohibitedDataSources = ["secret"];
+  await writeFile(
+    path.join(repoRoot, templateDir, "unsafe_source.json"),
+    `${JSON.stringify(template, null, 2)}\n`,
+    "utf8"
+  );
+
+  const result = runTemplateValidator(templateDir);
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /invalid_template_runtime/u);
+  assert.match(result.stderr, /mockModel\.modelRouteId must use a mock\. route/u);
+  assert.match(result.stderr, /unsafe_evaluation_sample_source/u);
+  assert.match(result.stderr, /missing_prohibited_data_source/u);
 });

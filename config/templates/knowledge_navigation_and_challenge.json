@@ -142,6 +142,17 @@
     "failureType": "source_confidence_too_low",
     "simulated": true,
     "statusIfTriggered": "blocked",
+    "expectedBlockingPoint": "Block before answering as project fact or modifying source docs when source confidence is below threshold.",
+    "humanReviewStatus": "requires_human_owner_review",
+    "reproducibleInputRefs": [
+      "README.md",
+      "ARCHITECTURE.md",
+      "docs/zh-CN/capability-development-and-mvp.md",
+      "docs/zh-CN/adoption-and-growth.md",
+      "docs/zh-CN/roadmap.md",
+      "docs/zh-CN/api-contracts.md",
+      "docs/zh-CN/quality-gates.md"
+    ],
     "recovery": "Ask the human owner to narrow the question, add maintained source documents, or submit a DocChallengeDraft for review without modifying source files."
   },
   "evaluationSamples": [
@@ -149,6 +160,29 @@
       "sampleId": "eval.knowledge_navigation_and_challenge.demo.v1",
       "purpose": "Verify that a user question can be answered from maintained repository sources and challenged without editing documents.",
       "inputSummary": "A local question is matched against selected repository Markdown SourceChunks through deterministic mock search.",
+      "inputRefs": [
+        "README.md",
+        "ARCHITECTURE.md",
+        "docs/zh-CN/capability-development-and-mvp.md",
+        "docs/zh-CN/adoption-and-growth.md",
+        "docs/zh-CN/roadmap.md",
+        "docs/zh-CN/api-contracts.md",
+        "docs/zh-CN/quality-gates.md"
+      ],
+      "dataClassification": "internal",
+      "purposeLimit": "Demo Mode validation and human review only; not for training, ranking, production routing, or automatic assignment.",
+      "retention": "local-demo-run-only",
+      "allowedDataSources": [
+        "mock",
+        "redacted",
+        "authorized_repository_docs"
+      ],
+      "prohibitedDataSources": [
+        "secret",
+        "production_data",
+        "real_connector_credentials",
+        "sensitive_raw_text"
+      ],
       "expectedOutputs": [
         "Sourced AnswerCard",
         "Source references and limitations",

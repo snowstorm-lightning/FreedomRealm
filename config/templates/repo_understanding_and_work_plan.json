@@ -86,6 +86,14 @@
     "failureType": "repo_context_too_large",
     "simulated": true,
     "statusIfTriggered": "blocked",
+    "expectedBlockingPoint": "Block before making assignments or source modifications when repository context exceeds one stable WorkShard.",
+    "humanReviewStatus": "requires_human_owner_review",
+    "reproducibleInputRefs": [
+      "README.md",
+      "ARCHITECTURE.md",
+      "docs/zh-CN/developer-experience.md",
+      "docs/zh-CN/roadmap.md"
+    ],
     "recovery": "Ask the human owner to narrow inputs, split the request into WorkShards, and rerun the template without modifying source files."
   },
   "evaluationSamples": [
@@ -93,6 +101,26 @@
       "sampleId": "eval.repo_understanding_and_work_plan.demo.v1",
       "purpose": "Verify that repository context can produce project understanding, risks, next actions, and optional WorkShard suggestions.",
       "inputSummary": "Selected repository documents are read as a bounded local snapshot in Demo Mode.",
+      "inputRefs": [
+        "README.md",
+        "ARCHITECTURE.md",
+        "docs/zh-CN/developer-experience.md",
+        "docs/zh-CN/roadmap.md"
+      ],
+      "dataClassification": "internal",
+      "purposeLimit": "Demo Mode validation and human review only; not for training, ranking, production routing, or automatic assignment.",
+      "retention": "local-demo-run-only",
+      "allowedDataSources": [
+        "mock",
+        "redacted",
+        "authorized_repository_docs"
+      ],
+      "prohibitedDataSources": [
+        "secret",
+        "production_data",
+        "real_connector_credentials",
+        "sensitive_raw_text"
+      ],
       "expectedOutputs": [
         "Project understanding summary",
         "Risk list",
