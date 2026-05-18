@@ -124,6 +124,14 @@ test("rejects implemented tasks without implementation refs", () => {
   assert.equal(result.errors.some((error) => error.path === "currentTasks.0.implementationRefs"), true);
 });
 
+test("rejects implementation refs that are not commit-like", () => {
+  const entry = validEntry();
+  entry.currentTasks[0].implementationRefs = ["not-a-commit-ref"];
+  const result = validateProjectOperatingEntry(entry);
+  assert.equal(result.ok, false);
+  assert.equal(result.errors.some((error) => error.code === "invalid_implementation_ref"), true);
+});
+
 test("rejects invalid task status", () => {
   const entry = validEntry();
   entry.currentTasks[0].status = "done";

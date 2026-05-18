@@ -6,6 +6,7 @@ import {
 } from "./index.mjs";
 
 const namespacedKeyPattern = /^[A-Za-z0-9][A-Za-z0-9-]*(?:\.[A-Za-z0-9][A-Za-z0-9-]*)+$/u;
+const commitRefPattern = /^[0-9a-f]{7,40}$/u;
 const priorities = Object.freeze(["P0", "P1", "P2"]);
 const taskStatuses = Object.freeze([
   "active",
@@ -66,6 +67,24 @@ function validateOptionalStringArray(errors, object, field, path = field, option
   object[field].forEach((value, index) => {
     if (!hasText(value)) {
       errors.push(issue("validation_failed", `${path} values must be non-empty strings.`, `${path}.${index}`));
+    }
+  });
+}
+
+function validateImplementationRefs(errors, refs, path) {
+  if (!Array.isArray(refs)) {
+    return;
+  }
+
+  refs.forEach((ref, index) => {
+    if (hasText(ref) && !commitRefPattern.test(ref)) {
+      errors.push(
+        issue(
+          "invalid_implementation_ref",
+          `${path}.${index} must be a 7-40 character lowercase hexadecimal commit reference.`,
+          `${path}.${index}`
+        )
+      );
     }
   });
 }
@@ -166,6 +185,7 @@ function validateCurrentTask(errors, task, index) {
   } else {
     validateOptionalStringArray(errors, task, "implementationRefs", `${path}.implementationRefs`, { allowEmpty: true });
   }
+  validateImplementationRefs(errors, task.implementationRefs, `${path}.implementationRefs`);
 
   if ("sourceRefs" in task) {
     validateStringArray(errors, task, "sourceRefs", `${path}.sourceRefs`);
@@ -231,6 +251,7 @@ function validateBacklogItem(errors, item, index, currentTasksById) {
   validateStringArray(errors, item, "writeSet", `${path}.writeSet`);
   validateCommandList(errors, item, "verificationCommands", `${path}.verificationCommands`);
   validateOptionalStringArray(errors, item, "implementationRefs", `${path}.implementationRefs`, { allowEmpty: true });
+  validateImplementationRefs(errors, item.implementationRefs, `${path}.implementationRefs`);
 
   if (item.status === "implemented-in-repo" && (!Array.isArray(item.implementationRefs) || item.implementationRefs.length === 0)) {
     errors.push(
