@@ -4,10 +4,27 @@ import { fileURLToPath } from "node:url";
 import { validateProjectOperatingEntry } from "../packages/contracts/src/index.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const manifestPath = process.env.AI_HRMS_OPERATING_ENTRY_PATH ?? "config/project-operating-entry.json";
+const manifestPathInput = process.env.AI_HRMS_OPERATING_ENTRY_PATH ?? "config/project-operating-entry.json";
+
+function normalizeWorkspacePath(value) {
+  const absolutePath = path.resolve(repoRoot, value);
+  const relativePath = path.relative(repoRoot, absolutePath);
+  if (relativePath.startsWith("..") || path.isAbsolute(relativePath)) {
+    throw new Error(`${value} must stay inside the workspace.`);
+  }
+  return relativePath.split(path.sep).join("/");
+}
+
+let manifestPath;
+try {
+  manifestPath = normalizeWorkspacePath(manifestPathInput);
+} catch (error) {
+  console.error(`[operating-entry] FAIL ${manifestPathInput}: manifest_path_outside_workspace: ${error.message}`);
+  process.exit(1);
+}
 
 function toWorkspacePath(value) {
-  return path.join(repoRoot, value);
+  return path.resolve(repoRoot, value);
 }
 
 async function readJson(relativePath) {

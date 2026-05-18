@@ -191,3 +191,18 @@ test("validate-operating-entry script rejects unknown pnpm scripts", async () =>
   assert.notEqual(result.status, 0);
   assert.match(result.stderr, /unknown_pnpm_script/u);
 });
+
+test("validate-operating-entry script keeps override path inside the workspace", () => {
+  const result = spawnSync(process.execPath, ["scripts/validate-operating-entry.mjs"], {
+    cwd: repoRoot,
+    encoding: "utf8",
+    env: {
+      ...process.env,
+      AI_HRMS_OPERATING_ENTRY_PATH: "../outside-operating-entry.json"
+    },
+    shell: false
+  });
+
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /manifest_path_outside_workspace/u);
+});
