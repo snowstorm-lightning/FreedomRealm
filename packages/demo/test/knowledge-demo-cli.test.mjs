@@ -63,6 +63,43 @@ test("Knowledge Demo CLI generates AnswerCard, DocChallengeDraft, and report car
   assert.equal(reportCard.extensions["ai-hrms.knowledge"].searchMode, "local-mock-semantic");
 });
 
+test("Knowledge Demo CLI falls back to mock when live model is not enabled", async () => {
+  const outDir = `dist/test-knowledge-demo-live-fallback/${randomUUID()}`;
+  const result = spawnSync(
+    process.execPath,
+    [
+      "scripts/run-knowledge-demo.mjs",
+      "--model",
+      "live",
+      "--query",
+      "AI-HRMS 如何保持治理边界？",
+      "--out",
+      outDir,
+      "--input",
+      "docs/zh-CN/security-and-governance.md"
+    ],
+    {
+      cwd: repoRoot,
+      encoding: "utf8",
+      shell: false,
+      env: {
+        ...process.env,
+        AI_HRMS_LIVE_MODEL_ENABLED: "false"
+      }
+    }
+  );
+
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /\[knowledge\] model route: mock \(mock\)/u);
+  const reportPath = parsePath(result.stdout, "ExecutionReportCard");
+  const reportCard = JSON.parse(await readFile(path.join(repoRoot, reportPath), "utf8"));
+  const modelRoute = reportCard.extensions["ai-hrms.demo"].modelRoute;
+  assert.equal(modelRoute.requested, "live");
+  assert.equal(modelRoute.actual, "mock");
+  assert.equal(modelRoute.mock, true);
+  assert.equal(reportCard.extensions["ai-hrms.knowledge"].searchMode, "local-mock-semantic");
+});
+
 test("Knowledge Demo CLI rejects invalid option values", () => {
   for (const [argv, expectedError] of [
     [["--query"], /--query requires a value/u],
