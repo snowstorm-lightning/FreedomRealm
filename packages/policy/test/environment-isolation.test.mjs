@@ -228,6 +228,26 @@ test("allows a low-risk mock external agent run", () => {
   assert.equal(result.decision, "allow");
 });
 
+test("rejects external agent requests for a different connector profile", () => {
+  const result = evaluateExternalAgentRun({
+    connectorProfile: externalAgentProfile,
+    request: externalAgentRequest({ connectorId: "external-agent.hermes-agent.mock" }),
+    env: "dev"
+  });
+  assert.equal(result.decision, "deny");
+  assert.equal(result.reason, "connector_not_registered_for_request");
+});
+
+test("rejects external agent requests when runtime env and request env differ", () => {
+  const result = evaluateExternalAgentRun({
+    connectorProfile: externalAgentProfile,
+    request: externalAgentRequest({ env: "ci" }),
+    env: "dev"
+  });
+  assert.equal(result.decision, "deny");
+  assert.equal(result.reason, "environment_mismatch");
+});
+
 test("allows checked-in mock connector profiles only inside their declared boundary", async () => {
   const profilePaths = [
     "config/connectors/openclaw.mock.json",
