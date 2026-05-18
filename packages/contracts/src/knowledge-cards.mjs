@@ -1,6 +1,8 @@
 import {
+  ANSWER_CARD_CONFIDENCES,
   ANSWER_CARD_SCHEMA_VERSION,
   APPROVAL_STATUSES,
+  DATA_CLASSIFICATIONS,
   DOC_CHALLENGE_DRAFT_SCHEMA_VERSION,
   DOC_CHALLENGE_STATUSES
 } from "./index.mjs";
@@ -127,6 +129,18 @@ export function validateAnswerCard(card) {
         "unsupported_schema_version",
         `schemaVersion must be ${ANSWER_CARD_SCHEMA_VERSION}.`,
         "schemaVersion"
+      )
+    );
+  }
+  if ("confidence" in card && !ANSWER_CARD_CONFIDENCES.includes(card.confidence)) {
+    errors.push(issue("invalid_answer_confidence", "confidence is invalid.", "confidence"));
+  }
+  if ("dataClassification" in card && !DATA_CLASSIFICATIONS.includes(card.dataClassification)) {
+    errors.push(
+      issue(
+        "invalid_data_classification",
+        "dataClassification is invalid.",
+        "dataClassification"
       )
     );
   }

@@ -798,6 +798,7 @@
 
 边界说明：
 - `AnswerCard` 必须引用维护文档来源；无来源或低置信度时必须说明限制，不能伪装成生产事实。
+- `AnswerCard.confidence` 只能是 `low`、`medium` 或 `high`；`dataClassification` 必须使用统一数据分级。
 - `DocChallengeDraft` 只是可审查草稿，不能自动修改文档、创建 PR、评论 issue 或发布公开结论。
 - `sourceRefs` 只能保存路径、行号、摘要、分数、匹配原因和 digest；不得保存未授权敏感原文。
 - 本地 Demo 的 `local-mock-semantic` 只能作为 deterministic mock 搜索路径；真实 embedding 或 file search 只能作为增强路径，且必须保留相同输出契约和数据分级。

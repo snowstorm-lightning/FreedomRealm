@@ -33,6 +33,12 @@ export const ANSWER_CARD_SCHEMA_VERSION = "answer-card.v1";
 
 export const DOC_CHALLENGE_DRAFT_SCHEMA_VERSION = "doc-challenge-draft.v1";
 
+export const ANSWER_CARD_CONFIDENCES = Object.freeze([
+  "low",
+  "medium",
+  "high"
+]);
+
 export const EXTERNAL_AGENT_CONNECTOR_PROFILE_SCHEMA_VERSION = "external-agent-connector-profile.v1";
 
 export const EXTERNAL_AGENT_RUN_REQUEST_SCHEMA_VERSION = "external-agent-run-request.v1";

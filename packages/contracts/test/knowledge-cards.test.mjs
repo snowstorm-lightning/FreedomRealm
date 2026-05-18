@@ -63,6 +63,28 @@ test("rejects AnswerCard without schemaVersion", () => {
   assert.equal(result.errors.some((error) => error.path === "schemaVersion"), true);
 });
 
+test("rejects AnswerCard with invalid confidence or data classification", () => {
+  const card = {
+    answerCardId: "answer-demo",
+    schemaVersion: ANSWER_CARD_SCHEMA_VERSION,
+    question: "What next?",
+    answer: "Use sourced docs.",
+    sourceRefs: [sourceRef()],
+    confidence: "certain",
+    limitations: [],
+    nextActions: [],
+    dataClassification: "secret",
+    redactionStatus: "redacted",
+    sharePermission: "private",
+    extensions: {}
+  };
+
+  const result = validateAnswerCard(card);
+  assert.equal(result.ok, false);
+  assert.equal(result.errors.some((error) => error.code === "invalid_answer_confidence"), true);
+  assert.equal(result.errors.some((error) => error.code === "invalid_data_classification"), true);
+});
+
 test("validates draft DocChallengeDraft v1", () => {
   const draft = {
     challengeId: "challenge-demo",
