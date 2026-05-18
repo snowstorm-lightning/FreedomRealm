@@ -378,9 +378,26 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   assert.match(html, /视图切换 \/ View Switch/u);
   assert.match(html, /data-workbench-view="tasks"/u);
   assert.match(html, /data-workbench-panel="reports"/u);
+  for (const view of ["tasks", "reports", "docs", "decisions"]) {
+    assert.match(html, new RegExp(`data-workbench-view="${view}"`, "u"));
+  }
+  for (const [panelId, panelView] of [
+    ["next-workbench", "tasks"],
+    ["report-workbench", "reports"],
+    ["knowledge-demo", "docs"],
+    ["ownerDecisionQueue", "decisions"]
+  ]) {
+    assert.match(html, new RegExp(`id="${panelId}"[\\s\\S]*?data-workbench-panel="${panelView}"`, "u"));
+  }
   assert.match(app, /selectedWorkbenchView/u);
   assert.match(app, /renderWorkbenchView/u);
   assert.match(app, /hashForWorkbenchView/u);
+  assert.match(app, /if \(hash === "#report-workbench"\) \{\n    return "reports";\n  \}/u);
+  assert.match(app, /if \(hash === "#knowledge-demo"\) \{\n    return "docs";\n  \}/u);
+  assert.match(app, /if \(hash === "#ownerDecisionQueue"\) \{\n    return "decisions";\n  \}/u);
+  assert.match(app, /return "#next-workbench";/u);
+  assert.match(app, /panel\.hidden = panel\.dataset\.workbenchPanel !== selectedWorkbenchView/u);
+  assert.match(app, /button\.setAttribute\("aria-pressed", String\(button\.dataset\.workbenchView === selectedWorkbenchView\)\)/u);
   assert.match(app, /window\.history\.pushState/u);
   assert.match(app, /popstate/u);
   assert.match(app, /scrollIntoView/u);
@@ -390,6 +407,15 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   assert.match(html, /无实时副作用 \/ No live side effects/u);
   assert.match(html, /No model key, connector, HR data, external write, or hidden training resource/u);
   assert.match(html, /无模型 key、连接器、HR 数据、外部写入或隐藏训练资源/u);
+  for (const readOnlyBoundary of [
+    /Read-only plan entry, not automatic implementation authorization/u,
+    /Candidate decisions, not automatic assignments/u,
+    /Tracking only, no automatic execution/u,
+    /High-risk live connector work still requires ApprovalGate/u,
+    /Human owner decision and ApprovalGate are required before any live execution/u
+  ]) {
+    assert.match(app, readOnlyBoundary);
+  }
   assert.match(html, /首屏反馈目标 \/ First-screen feedback targets/u);
   assert.match(html, /演示安全边界 \/ Demo safety boundaries/u);
   assert.match(html, /页面框架提供中英双语；报告卡正文保持 canonical JSON 原文/u);
