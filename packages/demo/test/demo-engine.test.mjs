@@ -354,9 +354,26 @@ test("self-review CLI rejects option-shaped values", () => {
   for (const [argv, expectedError] of [
     [["--input", "--out"], /--input requires a value/u],
     [["--out", "-h"], /--out requires a value/u],
+    [["--out", "../outside-self-review"], /Output path must stay inside the workspace/u],
     [["--unknown"], /Unknown argument: --unknown/u]
   ]) {
     const result = spawnSync(process.execPath, ["scripts/run-self-review.mjs", ...argv], {
+      cwd: repoRoot,
+      encoding: "utf8",
+      shell: false
+    });
+
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, expectedError);
+  }
+});
+
+test("report HTML CLI keeps input and output paths inside the workspace", () => {
+  for (const [argv, expectedError] of [
+    [["--input", "../outside-report-cards"], /Input path must stay inside the workspace/u],
+    [["--out", "../outside-delivery.html"], /Output path must stay inside the workspace/u]
+  ]) {
+    const result = spawnSync(process.execPath, ["scripts/render-delivery-report-html.mjs", ...argv], {
       cwd: repoRoot,
       encoding: "utf8",
       shell: false

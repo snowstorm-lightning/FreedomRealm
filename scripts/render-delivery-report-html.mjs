@@ -9,6 +9,15 @@ import { renderDeliveryReportHtml } from "../packages/demo/src/index.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
+function resolveWorkspacePath(value, label) {
+  const absolutePath = path.resolve(repoRoot, value);
+  const relativePath = path.relative(repoRoot, absolutePath);
+  if (relativePath.startsWith("..") || path.isAbsolute(relativePath)) {
+    throw new Error(`${label} must stay inside the workspace: ${value}`);
+  }
+  return absolutePath;
+}
+
 function readOptionValue(argv, index, optionName) {
   const value = argv[index + 1];
   if (!value || value.startsWith("--") || value === "-h") {
@@ -53,7 +62,7 @@ ExecutionReportCard JSON remains canonical, and Markdown remains the default per
 }
 
 async function collectJsonFiles(inputPath) {
-  const absolutePath = path.resolve(repoRoot, inputPath);
+  const absolutePath = resolveWorkspacePath(inputPath, "Input path");
   let entries;
   try {
     entries = await readdir(absolutePath, { withFileTypes: true });
@@ -113,7 +122,7 @@ async function main() {
     reportCards,
     title: options.title
   });
-  const outputPath = path.resolve(repoRoot, options.out);
+  const outputPath = resolveWorkspacePath(options.out, "Output path");
   await mkdir(path.dirname(outputPath), { recursive: true });
   await writeFile(outputPath, html, "utf8");
 

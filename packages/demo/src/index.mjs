@@ -76,13 +76,17 @@ export function getDefaultInputs(templateId = DEFAULT_DEMO_TEMPLATE_ID) {
   return [...(DEFAULT_DEMO_INPUTS[templateId] ?? DEFAULT_DEMO_INPUTS[DEFAULT_DEMO_TEMPLATE_ID])];
 }
 
-function workspacePath(repoRoot, relativeOrAbsolutePath) {
+function resolveWorkspacePath(repoRoot, relativeOrAbsolutePath, label) {
   const absolutePath = path.resolve(repoRoot, relativeOrAbsolutePath);
   const relativePath = path.relative(repoRoot, absolutePath);
   if (relativePath.startsWith("..") || path.isAbsolute(relativePath)) {
-    throw new Error(`Input path must stay inside the workspace: ${relativeOrAbsolutePath}`);
+    throw new Error(`${label} must stay inside the workspace: ${relativeOrAbsolutePath}`);
   }
   return { absolutePath, relativePath: relativePath.split(path.sep).join("/") };
+}
+
+function workspacePath(repoRoot, relativeOrAbsolutePath) {
+  return resolveWorkspacePath(repoRoot, relativeOrAbsolutePath, "Input path");
 }
 
 async function readJson(repoRoot, relativePath) {
@@ -1280,7 +1284,7 @@ export async function createDemoExecution({
     retention: "local-demo-run"
   };
 
-  const absoluteOutputDir = path.resolve(repoRoot, outputDir);
+  const { absolutePath: absoluteOutputDir } = resolveWorkspacePath(repoRoot, outputDir, "Output path");
   const jsonPath = path.join(absoluteOutputDir, `${trace.reportCardId}.json`);
   const markdownPath = path.join(absoluteOutputDir, `${trace.reportCardId}.md`);
   const answerCardPath = knowledgeArtifacts

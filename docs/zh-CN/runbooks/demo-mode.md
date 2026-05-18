@@ -122,6 +122,8 @@ pnpm self-review
 
 该命令不自动修改仓库文档、代码、issue、PR 或配置。自审发现必须由 human owner 决定是否转为正式 WorkItem。
 
+所有 Demo、Knowledge、自我审查和交付 HTML 报告命令的 `--input` 与 `--out` 路径都必须解析到当前仓库工作区内部。不要用这些命令读取仓库外文件、secret、生产数据，也不要把输出写到仓库外路径。
+
 ## Delivery HTML Report
 
 从仓库根目录执行：
