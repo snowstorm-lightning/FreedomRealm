@@ -157,6 +157,7 @@ pnpm knowledge:demo -- --query "AI-HRMS 下一步应该做什么？"
 - 搜索路径：`local-mock-semantic`
 - 输入文档：`README.md`、`ARCHITECTURE.md` 和 `docs/zh-CN/**/*.md`
 - 输出目录：`dist/knowledge-demo/`
+- 模型路径：默认 `mock`；即使传入 `--model live`，未设置 `AI_HRMS_LIVE_MODEL_ENABLED=true` 时仍回退到 `mock`，并继续使用 `local-mock-semantic`。
 
 输出文件：
 
