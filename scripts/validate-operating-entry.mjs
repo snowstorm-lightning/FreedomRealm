@@ -28,7 +28,17 @@ function toWorkspacePath(value) {
 }
 
 async function readJson(relativePath) {
-  return JSON.parse(await readFile(toWorkspacePath(relativePath), "utf8"));
+  try {
+    return JSON.parse(await readFile(toWorkspacePath(relativePath), "utf8"));
+  } catch (error) {
+    if (error instanceof SyntaxError) {
+      throw Object.assign(new Error(`${relativePath} is not parseable JSON: ${error.message}`), {
+        code: relativePath === manifestPath ? "invalid_manifest_json" : "invalid_json",
+        file: relativePath
+      });
+    }
+    throw error;
+  }
 }
 
 async function pathExists(relativePath) {
@@ -61,9 +71,16 @@ function addIssue(collection, code, message, file = manifestPath) {
 }
 
 const errors = [];
-const rootPackage = await readJson("package.json");
+let rootPackage;
+let entry;
+try {
+  rootPackage = await readJson("package.json");
+  entry = await readJson(manifestPath);
+} catch (error) {
+  console.error(`[operating-entry] FAIL ${error.file ?? manifestPath}: ${error.code ?? "read_failed"}: ${error.message}`);
+  process.exit(1);
+}
 const rootScripts = rootPackage.scripts ?? {};
-const entry = await readJson(manifestPath);
 
 const validation = validateProjectOperatingEntry(entry);
 for (const error of validation.errors) {
