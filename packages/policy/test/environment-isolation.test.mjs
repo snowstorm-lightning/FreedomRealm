@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -133,6 +134,17 @@ test("validates an isolated staging environment config", () => {
   const result = validateEnvironmentConfig(baseConfig);
   assert.equal(result.ok, true);
   assert.deepEqual(result.errors, []);
+});
+
+test("validate environment CLI keeps target path inside the workspace", () => {
+  const result = spawnSync(process.execPath, ["packages/policy/bin/validate-environment.mjs", "../outside-env.json"], {
+    cwd: repoRoot,
+    encoding: "utf8",
+    shell: false
+  });
+
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /must stay inside the workspace/u);
 });
 
 test("rejects a config that points staging at prod resources", () => {

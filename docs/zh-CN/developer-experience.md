@@ -55,6 +55,8 @@ pnpm validate:env:all
 pnpm validate:env -- config/environments/dev.sample.json
 ```
 
+`pnpm validate:env -- <path>` 只接受解析后仍位于当前仓库工作区内的配置文件路径；环境样例应继续放在 `config/environments/`，不要用该命令读取仓库外文件或 secret。
+
 ### 本机开发路径
 
 适合只改文档、contracts、policy、schemas、eval samples、Demo engine、Knowledge engine 或轻量 Web Workbench。
