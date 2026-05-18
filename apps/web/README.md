@@ -15,6 +15,12 @@ Local command from the repository root:
 pnpm web:demo
 ```
 
+Generator structure:
+
+- `bin/build-demo.mjs` orchestrates the static build: it creates mock executions, reads the operating entry and active plans, builds the shared state, and writes files to `dist/web/`.
+- `src/demo-state.mjs` owns Web state mapping, static learning/workbench metadata, local repo hrefs, and active plan extraction.
+- `src/pages.mjs`, `src/client-scripts.mjs`, and `src/styles.mjs` render the static HTML, browser-side JavaScript, and CSS.
+
 The generated static pages are:
 
 - `dist/web/index.html`: project learning system home page.

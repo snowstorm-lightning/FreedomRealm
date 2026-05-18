@@ -115,6 +115,11 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   const app = await readFile(path.join(repoRoot, "dist/web/app.js"), "utf8");
   const learningApp = await readFile(path.join(repoRoot, "dist/web/learning.js"), "utf8");
   const css = await readFile(path.join(repoRoot, "dist/web/styles.css"), "utf8");
+  const webBuildCli = await readFile(path.join(repoRoot, "apps/web/bin/build-demo.mjs"), "utf8");
+  const webStateModule = await readFile(path.join(repoRoot, "apps/web/src/demo-state.mjs"), "utf8");
+  const webPagesModule = await readFile(path.join(repoRoot, "apps/web/src/pages.mjs"), "utf8");
+  const webClientScriptsModule = await readFile(path.join(repoRoot, "apps/web/src/client-scripts.mjs"), "utf8");
+  const webStylesModule = await readFile(path.join(repoRoot, "apps/web/src/styles.mjs"), "utf8");
   const operatingEntry = JSON.parse(await readFile(path.join(repoRoot, "config/project-operating-entry.json"), "utf8"));
   const operatingEntryValidation = validateProjectOperatingEntry(operatingEntry);
   assert.equal(operatingEntryValidation.ok, true, JSON.stringify(operatingEntryValidation.errors, null, 2));
@@ -190,6 +195,7 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   assert.deepEqual(currentWorkbenchTask.suggestedWriteSet, [
     "config/project-operating-entry.json",
     "apps/web/bin/build-demo.mjs",
+    "apps/web/src",
     "apps/web/README.md",
     "README.md",
     "docs/zh-CN/project-operating-entry.md",
@@ -353,6 +359,13 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   assert.match(learningApp, /selectedLearningTaskId/u);
   assert.match(learningApp, /structure/u);
   assert.match(learningApp, /projectStructureModules/u);
+  assert.match(webBuildCli, /from "\.\.\/src\/demo-state\.mjs"/u);
+  assert.match(webBuildCli, /buildWebState/u);
+  assert.match(webBuildCli, /buildLearningHtml/u);
+  assert.match(webStateModule, /export function buildWebState/u);
+  assert.match(webPagesModule, /export function buildLearningHtml/u);
+  assert.match(webClientScriptsModule, /export function buildJs/u);
+  assert.match(webStylesModule, /export const css/u);
   assert.match(html, /AI-HRMS Workbench/u);
   assert.match(html, /AI-HRMS Workbench \/ AI-HRMS 工作台/u);
   assert.match(html, /视图切换 \/ View Switch/u);

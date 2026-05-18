@@ -55,6 +55,7 @@
       "suggestedWriteSet": [
         "config/project-operating-entry.json",
         "apps/web/bin/build-demo.mjs",
+        "apps/web/src",
         "apps/web/README.md",
         "README.md",
         "docs/zh-CN/project-operating-entry.md",
