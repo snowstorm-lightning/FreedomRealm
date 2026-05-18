@@ -309,6 +309,40 @@ function validateDecayPreventionBacklog(errors, entry) {
   backlog.items.forEach((item, index) => validateBacklogItem(errors, item, index, currentTasksById));
 }
 
+function validateValidatedHardening(errors, entry) {
+  const hardening = entry.extensions?.["ai-hrms.validatedHardening"];
+  if (hardening === undefined) {
+    return;
+  }
+
+  const path = "extensions.ai-hrms.validatedHardening";
+  if (!isPlainObject(hardening)) {
+    errors.push(issue("validation_failed", "ai-hrms.validatedHardening must be an object.", path));
+    return;
+  }
+
+  validateStringField(errors, hardening, "purpose", `${path}.purpose`);
+
+  if (!Array.isArray(hardening.items) || hardening.items.length === 0) {
+    errors.push(issue("validation_failed", `${path}.items must be a non-empty array.`, `${path}.items`));
+    return;
+  }
+
+  hardening.items.forEach((item, index) => {
+    const itemPath = `${path}.items.${index}`;
+    if (!isPlainObject(item)) {
+      errors.push(issue("validation_failed", `${itemPath} must be an object.`, itemPath));
+      return;
+    }
+
+    validateStringField(errors, item, "commitRef", `${itemPath}.commitRef`);
+    validateStringField(errors, item, "scope", `${itemPath}.scope`);
+    validateStringArray(errors, item, "writeSet", `${itemPath}.writeSet`);
+    validateCommandList(errors, item, "verificationCommands", `${itemPath}.verificationCommands`);
+    validateImplementationRefs(errors, [item.commitRef], `${itemPath}.commitRef`);
+  });
+}
+
 export function validateProjectOperatingEntry(entry) {
   const errors = [];
 
@@ -395,6 +429,7 @@ export function validateProjectOperatingEntry(entry) {
   validateNamespacedExtensions(errors, entry.extensions);
   if (isPlainObject(entry.extensions)) {
     validateDecayPreventionBacklog(errors, entry);
+    validateValidatedHardening(errors, entry);
   }
 
   return { ok: errors.length === 0, errors };

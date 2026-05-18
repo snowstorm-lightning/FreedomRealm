@@ -148,6 +148,48 @@ test("rejects non-namespaced project operating entry extensions", () => {
   assert.equal(result.errors.some((error) => error.code === "invalid_extension_namespace"), true);
 });
 
+test("validates checked hardening extension evidence", () => {
+  const entry = validEntry();
+  entry.extensions["ai-hrms.validatedHardening"] = {
+    purpose: "Track low-risk hardening commits that do not create standalone WorkItems.",
+    items: [
+      {
+        commitRef: "abc1234",
+        scope: "Contract validation hardening",
+        writeSet: ["packages/contracts/src/project-operating-entry.mjs"],
+        verificationCommands: ["pnpm test", "pnpm check"]
+      }
+    ]
+  };
+
+  const result = validateProjectOperatingEntry(entry);
+  assert.equal(result.ok, true, JSON.stringify(result.errors, null, 2));
+});
+
+test("rejects invalid checked hardening extension evidence", () => {
+  const entry = validEntry();
+  entry.extensions["ai-hrms.validatedHardening"] = {
+    purpose: "Track low-risk hardening commits that do not create standalone WorkItems.",
+    items: [
+      {
+        commitRef: "not-a-commit-ref",
+        scope: "Contract validation hardening",
+        writeSet: [],
+        verificationCommands: ["node scripts/check.mjs"]
+      }
+    ]
+  };
+
+  const result = validateProjectOperatingEntry(entry);
+  assert.equal(result.ok, false);
+  assert.equal(result.errors.some((error) => error.code === "invalid_implementation_ref"), true);
+  assert.equal(
+    result.errors.some((error) => error.path === "extensions.ai-hrms.validatedHardening.items.0.writeSet"),
+    true
+  );
+  assert.equal(result.errors.some((error) => error.code === "invalid_command"), true);
+});
+
 test("rejects implemented backlog items that drift from formal task implementation refs", () => {
   const entry = validEntry();
   entry.extensions["ai-hrms.decayPreventionBacklog"] = {
