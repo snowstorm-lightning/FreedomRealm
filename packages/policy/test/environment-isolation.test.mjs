@@ -265,6 +265,40 @@ test("requires approval before sending restricted data to an external agent", ()
   assert.equal(result.reason, "data_classification_approval_required");
 });
 
+test("requires sanitized input references after restricted external agent approval", () => {
+  const profile = externalAgentStressProfile({
+    dataClassificationAllowed: ["public", "internal", "restricted"]
+  });
+
+  const missingEvidence = evaluateExternalAgentRun({
+    connectorProfile: profile,
+    request: externalAgentRequest({ dataClassification: "restricted" }),
+    env: "dev",
+    hasApproval: true
+  });
+  assert.equal(missingEvidence.decision, "deny");
+  assert.equal(missingEvidence.reason, "sanitized_input_refs_required");
+
+  const redacted = evaluateExternalAgentRun({
+    connectorProfile: profile,
+    request: externalAgentRequest({
+      dataClassification: "restricted",
+      inputRefs: [
+        {
+          refId: "input-redacted-001",
+          kind: "redacted_summary",
+          path: "dist/redacted/external-agent-input-001.json",
+          redactionStatus: "redacted",
+          rawSensitiveDataIncluded: false
+        }
+      ]
+    }),
+    env: "dev",
+    hasApproval: true
+  });
+  assert.equal(redacted.decision, "allow");
+});
+
 test("requires approval before sending sensitive data to an external agent", () => {
   const result = evaluateExternalAgentRun({
     connectorProfile: externalAgentStressProfile({

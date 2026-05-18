@@ -287,6 +287,7 @@ MVP 不再只以“命令能跑通”为完成标准。进入 Phase 0.6 验收�
 - checked-in mock connector profile 是否保持在 `dev` / `ci`、`public` / `internal`、`low` / `medium` 范围内；`prod`、`restricted` / `sensitive`、`high` / `critical` 或 non-mock 场景是否只通过显式 stress test、候选计划或批准后的 live connector 路径表达。
 - 是否禁止 connector profile 保存明文 token、API key、密码、消息账号凭据或本地 agent 配置。
 - 是否让每个 `ExternalAgentRunRequest` 绑定 env、actor、ProjectInstance、WorkItem、AgentRun、风险等级、数据分级和输入引用。
+- 当 `ExternalAgentRunRequest.dataClassification` 为 `restricted` 或 `sensitive` 时，`inputRefs` 是否只指向已脱敏、摘要化或可审计引用，并携带对应状态证据。
 - 是否让每个 `ExternalAgentRunResult` 只作为候选输入，不能直接修改生产事实、创建 PR、评论 issue、发送外部通知或公开发布。
 - 是否在 medium/high 风险、restricted/sensitive 数据、真实执行或生产环境中触发 `ApprovalGate` 或策略拒绝。
 - 是否记录策略判断、预算影响、审计标签、失败原因和人工复核点。

@@ -20,6 +20,10 @@ function hasText(value) {
   return typeof value === "string" && value.trim().length > 0;
 }
 
+function isPlainObject(value) {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
 function readPath(root, path) {
   return path.split(".").reduce((value, key) => value?.[key], root);
 }
@@ -494,6 +498,22 @@ export function evaluateExternalAgentRun({
     };
   }
 
+  if (sensitiveOutbound && !request.inputRefs.some(hasSanitizedOrAuditableInputRef)) {
+    return {
+      decision: "deny",
+      riskLevel: request.riskLevel,
+      reason: "sanitized_input_refs_required",
+      errors: [
+        issue(
+          "policy_violation",
+          "Restricted or sensitive external agent outbound requests must use redacted, summarized, or auditable inputRefs.",
+          "inputRefs"
+        )
+      ],
+      auditTags: connectorProfile.auditTags
+    };
+  }
+
   if (request.riskLevel !== "low" && !hasApproval) {
     return {
       decision: "require_approval",
@@ -521,4 +541,25 @@ export function evaluateExternalAgentRun({
     errors: [],
     auditTags: connectorProfile.auditTags
   };
+}
+
+const SANITIZED_INPUT_REF_STATUSES = ["redacted", "summarized", "reference_only", "auditable_reference"];
+
+function hasSanitizedOrAuditableInputRef(inputRef) {
+  if (!isPlainObject(inputRef)) {
+    return false;
+  }
+
+  const statusCandidates = [
+    inputRef.redactionStatus,
+    inputRef.sanitizationStatus,
+    inputRef.summaryStatus,
+    inputRef.referenceStatus
+  ].filter(hasText);
+
+  if (statusCandidates.some((status) => SANITIZED_INPUT_REF_STATUSES.includes(status))) {
+    return true;
+  }
+
+  return inputRef.auditable === true && inputRef.rawSensitiveDataIncluded !== true;
 }
