@@ -62,3 +62,20 @@ test("Knowledge Demo CLI generates AnswerCard, DocChallengeDraft, and report car
   assert.equal(reportCard.outputRefs.some((outputRef) => outputRef.kind === "DocChallengeDraft"), true);
   assert.equal(reportCard.extensions["ai-hrms.knowledge"].searchMode, "local-mock-semantic");
 });
+
+test("Knowledge Demo CLI rejects invalid option values", () => {
+  for (const [argv, expectedError] of [
+    [["--query"], /--query requires a value/u],
+    [["--input"], /--input requires a value/u],
+    [["--model", "real"], /--model must be mock or live/u]
+  ]) {
+    const result = spawnSync(process.execPath, ["scripts/run-knowledge-demo.mjs", ...argv], {
+      cwd: repoRoot,
+      encoding: "utf8",
+      shell: false
+    });
+
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, expectedError);
+  }
+});
