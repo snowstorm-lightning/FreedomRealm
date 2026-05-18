@@ -28,6 +28,15 @@ The generated static pages are:
 
 The learning home keeps the first screen focused on project structure, learning tasks, page navigation, and current operating state. Dense report-card and governance detail remains available through the dedicated Workbench page.
 
+Workbench view deep links use canonical task-oriented hashes:
+
+- `dist/web/workbench.html#tasks`
+- `dist/web/workbench.html#reports`
+- `dist/web/workbench.html#docs`
+- `dist/web/workbench.html#decisions`
+
+Legacy section anchors such as `#next-workbench`, `#report-workbench`, `#knowledge-demo`, and `#ownerDecisionQueue` remain readable for existing links, but new UI links should use the canonical view hashes above.
+
 Visible UI frame copy is bilingual Chinese / English so reviewers can give feedback quickly. Canonical report-card body fields are still rendered from `ExecutionReportCard` JSON as written; the Web Workbench does not automatically translate, summarize, or rewrite those facts.
 
 The current build renders seven built-in templates:
