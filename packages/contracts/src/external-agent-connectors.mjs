@@ -10,6 +10,7 @@ import {
   EXTERNAL_AGENT_RUN_REQUEST_REQUIRED_FIELDS,
   EXTERNAL_AGENT_RUN_REQUEST_SCHEMA_VERSION,
   EXTERNAL_AGENT_RUN_RESULT_REQUIRED_FIELDS,
+  EXTERNAL_AGENT_RUN_RESULT_STATUSES,
   EXTERNAL_AGENT_RUN_RESULT_SCHEMA_VERSION,
   RISK_LEVELS
 } from "./index.mjs";
@@ -323,6 +324,15 @@ export function validateExternalAgentRunResult(result) {
         "invalid_data_classification",
         "dataClassification is invalid.",
         "dataClassification"
+      )
+    );
+  }
+  if ("status" in result && !EXTERNAL_AGENT_RUN_RESULT_STATUSES.includes(result.status)) {
+    errors.push(
+      issue(
+        "invalid_external_agent_result_status",
+        "status must remain a reviewable ExternalAgentRunResult status.",
+        "status"
       )
     );
   }

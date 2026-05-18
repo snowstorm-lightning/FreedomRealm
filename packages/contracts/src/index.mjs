@@ -58,6 +58,13 @@ export const EXTERNAL_AGENT_DIRECTIONS = Object.freeze([
   "external_agent_to_ai_hrms"
 ]);
 
+export const EXTERNAL_AGENT_RUN_RESULT_STATUSES = Object.freeze([
+  "candidate",
+  "needs_review",
+  "blocked",
+  "failed"
+]);
+
 export const EXTERNAL_AGENT_CONNECTOR_PROFILE_REQUIRED_FIELDS = Object.freeze([
   "connectorId",
   "schemaVersion",

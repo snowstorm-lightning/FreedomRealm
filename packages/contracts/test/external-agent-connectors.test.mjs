@@ -149,3 +149,33 @@ test("validates ExternalAgentRunRequest and ExternalAgentRunResult v1", () => {
   });
   assert.equal(runResult.ok, true);
 });
+
+test("rejects external agent results that claim non-reviewable status", () => {
+  const runResult = validateExternalAgentRunResult({
+    resultId: "external-agent-result-001",
+    schemaVersion: EXTERNAL_AGENT_RUN_RESULT_SCHEMA_VERSION,
+    connectorId: "external-agent.openclaw.mock",
+    direction: "external_agent_to_ai_hrms",
+    env: "dev",
+    agentRunId: "run-demo-001",
+    status: "published",
+    outputRefs: [],
+    summary: "Mock external agent output tried to bypass review.",
+    findings: [],
+    recommendations: [],
+    auditRefs: [],
+    dataClassification: "internal",
+    redactionStatus: "redacted",
+    extensions: {
+      "ai-hrms.external-agent": {
+        mock: true
+      }
+    }
+  });
+
+  assert.equal(runResult.ok, false);
+  assert.equal(
+    runResult.errors.some((error) => error.code === "invalid_external_agent_result_status"),
+    true
+  );
+});

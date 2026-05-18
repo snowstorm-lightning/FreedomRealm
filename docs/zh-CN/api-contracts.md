@@ -659,7 +659,7 @@
 - `direction`
 - `env`
 - `agentRunId`
-- `status`
+- `status`：只能是 `candidate`、`needs_review`、`blocked` 或 `failed`，不能表达已发布、已采信或已写入事实源。
 - `outputRefs`
 - `summary`
 - `findings`
