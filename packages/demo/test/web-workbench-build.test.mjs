@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { access, readFile } from "node:fs/promises";
+import { access, mkdir, readFile, writeFile } from "node:fs/promises";
 import { spawnSync } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -56,6 +56,10 @@ async function assertHrefTargetExists(href, htmlRelativePath) {
 }
 
 test("web demo builds a multi-template static workbench from shared demo data", async () => {
+  const staleOutputFile = path.join(repoRoot, "dist/web/data/stale-report-card.json");
+  await mkdir(path.dirname(staleOutputFile), { recursive: true });
+  await writeFile(staleOutputFile, JSON.stringify({ stale: true }), "utf8");
+
   const result = spawnSync(process.execPath, ["apps/web/bin/build-demo.mjs"], {
     cwd: repoRoot,
     encoding: "utf8",
@@ -63,6 +67,7 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   });
 
   assert.equal(result.status, 0, result.stderr);
+  assert.equal(await pathExists(staleOutputFile), false, "web demo build should remove stale data files");
 
   const generatedJsonPaths = [...result.stdout.matchAll(/\[web\] (?:Sample|Knowledge sample) report card: (.+\.json)/gu)]
     .map((match) => match[1].trim());

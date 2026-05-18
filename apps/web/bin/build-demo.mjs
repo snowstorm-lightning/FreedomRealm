@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
@@ -16,6 +16,7 @@ const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../
 const webDist = path.join(repoRoot, "dist", "web");
 const sampleOut = "dist/web/data";
 
+await rm(webDist, { recursive: true, force: true });
 await mkdir(webDist, { recursive: true });
 
 const executions = [];
