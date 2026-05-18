@@ -27,7 +27,7 @@ P0 是当前打开仓库后默认优先级。除非用户明确改变方向，ag
 | 优先级 | 状态 | 任务 | 建议 owner | 产出 | 验收 |
 | --- | --- | --- | --- | --- | --- |
 | P0 | implemented-in-repo (`0e0733e`, `a5d5e50`) | 项目学习系统首页与 Web Workbench 拆页落地 | HumanActor + AgentActor | 项目学习首页、多页面导航、任务化学习路径、完整工作台独立页面、三类入口、推荐下一步、报告卡预览、当前计划入口、Review Prompts、Running Modes、Owner Decision Queue、active plan 状态提示、人工复核 decay prevention backlog | `pnpm web:demo` 和 `pnpm check` 通过 |
-| P0 | implemented-in-repo (`81ce7ab`, `0532341`, `49cb758`) | 把项目运行入口提升为可校验 manifest | AgentActor | `project-operating-entry.v1` manifest、validator、根命令 | `pnpm validate:operating-entry` 和 `pnpm check` 通过 |
+| P0 | implemented-in-repo (`81ce7ab`, `0532341`, `49cb758`, `db3bfc1`) | 把项目运行入口提升为可校验 manifest | AgentActor | `project-operating-entry.v1` manifest、validator、根命令、hardening evidence 校验 | `pnpm validate:operating-entry` 和 `pnpm check` 通过 |
 | P0 | implemented-in-repo (`365bb77`) | 建立多 agent 防冲突最小规则 | HumanActor + AgentActor | `AgentWorkLease` 模板、`writeSet` 冲突规则、`MergeGate` 检查清单 | 每个 `WorkShard` 都能声明 `readSet`、`writeSet`、验证命令和回滚说明；并行 `writeSet` 默认 non-overlapping；高风险动作不能因拆分绕过 `ApprovalGate` |
 | P1 | implemented-in-repo (`f6c3cb7`, `59d2adb`, `5f7cadb`) | 同步外部 agent connector 治理文档与测试 | HumanActor + AgentActor | `ExternalConnector` 治理文档同步说明、`ApprovalGate` 与数据分级一致性检查、相关策略测试更新 | `pnpm check` 通过；不启用真实 connector；保留 `candidate-work-item-001` 来源和 `user-approved-continuation-20260517` 人工批准记录 |
 | P1 | needs-human-owner-review | 建立人工复核的衰减预防 backlog | HumanActor | human-reviewed decay prevention backlog、正式 `WorkItem` 记录、来源追踪 | `pnpm self-review` 和 `pnpm check` 通过；保留 `candidate-work-item-002` 来源和 `user-approved-continuation-20260517` 人工批准记录 |

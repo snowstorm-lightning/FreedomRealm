@@ -76,6 +76,7 @@
 - `conflictRules.defaultWriteSetPolicy` 是否保持 `non-overlapping`。
 - `conflictRules.rules` 是否声明 subagent 不得自行扩大 `writeSet`、冲突时等待或缩小范围、以及无法裁决时回到 human owner。
 - `continuationRules.allowStopWhen` 是否包含 `ApprovalGate` 和 `dataClassification` 触发条件。
+- `extensions["ai-hrms.validatedHardening"]` 如存在，是否为每条记录保留 `commitRef`、`scope`、`writeSet` 和 `verificationCommands`，并通过 `validateProjectOperatingEntry` 机械校验。
 - Web Workbench 是否读取同一 manifest，而不是复制一份任务清单。
 - `pnpm validate:operating-entry` 和 `pnpm check` 是否通过。
 
@@ -187,7 +188,7 @@ MVP 不再只以“命令能跑通”为完成标准。进入 Phase 0.6 验收�
 - `workProofEvidence`：至少一个 `ExecutionReportCard` JSON 可被打开、复盘、渲染为 Markdown/Web，并包含候选 nextActions。
 - `workPlanEvidence`：`repo_understanding_and_work_plan` 输出候选 `WorkItem`、建议 `WorkShard`、风险、验证命令和来源引用，且全部是 review material。
 - `governanceEvidence`：Web 或报告卡可见 `ApprovalGate`、`AgentWorkLease`、`writeSet`、`ChangePacket`、`MergeGate`、数据分级、分享许可和人工复核状态。
-- `continuationEvidence`：`config/project-operating-entry.json` 和 `project-operating-entry.md` 能告诉下一个 agent 当前 P0/P1/P2、验证命令、停止条件和候选后续工作。
+- `continuationEvidence`：`config/project-operating-entry.json` 和 `project-operating-entry.md` 能告诉下一个 agent 当前 P0/P1/P2、验证命令、停止条件、已验证 hardening 记录和候选后续工作。
 
 ## Capability Development Gate
 
