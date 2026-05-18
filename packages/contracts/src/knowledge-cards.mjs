@@ -81,6 +81,19 @@ function validateSourceRefs(errors, sourceRefs, path = "sourceRefs") {
     if ("lineEnd" in sourceRef && !Number.isInteger(sourceRef.lineEnd)) {
       errors.push(issue("validation_failed", "lineEnd must be an integer.", `${sourcePath}.lineEnd`));
     }
+    if (
+      Number.isInteger(sourceRef.lineStart) &&
+      Number.isInteger(sourceRef.lineEnd) &&
+      (sourceRef.lineStart < 1 || sourceRef.lineEnd < sourceRef.lineStart)
+    ) {
+      errors.push(
+        issue(
+          "invalid_source_ref_range",
+          "sourceRef line range must use positive ordered line numbers.",
+          sourcePath
+        )
+      );
+    }
   });
 }
 

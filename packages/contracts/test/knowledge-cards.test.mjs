@@ -85,6 +85,27 @@ test("rejects AnswerCard with invalid confidence or data classification", () => 
   assert.equal(result.errors.some((error) => error.code === "invalid_data_classification"), true);
 });
 
+test("rejects source refs with invalid line ranges", () => {
+  const card = {
+    answerCardId: "answer-demo",
+    schemaVersion: ANSWER_CARD_SCHEMA_VERSION,
+    question: "What next?",
+    answer: "Use sourced docs.",
+    sourceRefs: [{ ...sourceRef(), lineStart: 9, lineEnd: 3 }],
+    confidence: "medium",
+    limitations: [],
+    nextActions: [],
+    dataClassification: "internal",
+    redactionStatus: "redacted",
+    sharePermission: "private",
+    extensions: {}
+  };
+
+  const result = validateAnswerCard(card);
+  assert.equal(result.ok, false);
+  assert.equal(result.errors.some((error) => error.code === "invalid_source_ref_range"), true);
+});
+
 test("validates draft DocChallengeDraft v1", () => {
   const draft = {
     challengeId: "challenge-demo",
