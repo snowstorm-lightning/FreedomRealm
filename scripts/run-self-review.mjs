@@ -5,6 +5,14 @@ import { getDefaultInputs, runDemoMode } from "../packages/demo/src/index.mjs";
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const templateId = "project_self_review_and_decay_prevention";
 
+function readOptionValue(argv, index, optionName) {
+  const value = argv[index + 1];
+  if (!value || value.startsWith("--") || value === "-h") {
+    throw new Error(`${optionName} requires a value.`);
+  }
+  return value;
+}
+
 function parseArgs(argv) {
   const options = {
     out: "dist/self-review",
@@ -13,18 +21,11 @@ function parseArgs(argv) {
 
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
-    const next = argv[index + 1];
     if (arg === "--out") {
-      if (!next) {
-        throw new Error("--out requires a value.");
-      }
-      options.out = next;
+      options.out = readOptionValue(argv, index, "--out");
       index += 1;
     } else if (arg === "--input") {
-      if (!next) {
-        throw new Error("--input requires a value.");
-      }
-      options.inputs.push(next);
+      options.inputs.push(readOptionValue(argv, index, "--input"));
       index += 1;
     } else if (arg === "--help" || arg === "-h") {
       options.help = true;

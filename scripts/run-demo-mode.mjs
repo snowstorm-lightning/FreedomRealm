@@ -8,6 +8,14 @@ import {
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
+function readOptionValue(argv, index, optionName) {
+  const value = argv[index + 1];
+  if (!value || value.startsWith("--") || value === "-h") {
+    throw new Error(`${optionName} requires a value.`);
+  }
+  return value;
+}
+
 function parseArgs(argv) {
   const options = {
     template: DEFAULT_DEMO_TEMPLATE_ID,
@@ -19,36 +27,20 @@ function parseArgs(argv) {
 
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
-    const next = argv[index + 1];
     if (arg === "--template") {
-      if (!next) {
-        throw new Error("--template requires a value.");
-      }
-      options.template = next;
+      options.template = readOptionValue(argv, index, "--template");
       index += 1;
     } else if (arg === "--model") {
-      if (!next) {
-        throw new Error("--model requires a value.");
-      }
-      options.model = next;
+      options.model = readOptionValue(argv, index, "--model");
       index += 1;
     } else if (arg === "--out") {
-      if (!next) {
-        throw new Error("--out requires a value.");
-      }
-      options.out = next;
+      options.out = readOptionValue(argv, index, "--out");
       index += 1;
     } else if (arg === "--query") {
-      if (!next) {
-        throw new Error("--query requires a value.");
-      }
-      options.query = next;
+      options.query = readOptionValue(argv, index, "--query");
       index += 1;
     } else if (arg === "--input") {
-      if (!next) {
-        throw new Error("--input requires a value.");
-      }
-      options.inputs.push(next);
+      options.inputs.push(readOptionValue(argv, index, "--input"));
       index += 1;
     } else if (arg === "--help" || arg === "-h") {
       options.help = true;

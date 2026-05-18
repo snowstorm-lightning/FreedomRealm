@@ -64,7 +64,13 @@ test("Demo Mode CLI generates a valid report card with reusable asset candidates
 });
 
 test("Demo Mode CLI rejects missing option values", () => {
-  const result = runDemo(["--input"]);
-  assert.notEqual(result.status, 0);
-  assert.match(result.stderr, /--input requires a value/u);
+  for (const [argv, expectedError] of [
+    [["--input"], /--input requires a value/u],
+    [["--out", "--model"], /--out requires a value/u],
+    [["--template", "-h"], /--template requires a value/u]
+  ]) {
+    const result = runDemo(argv);
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, expectedError);
+  }
 });

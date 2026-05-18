@@ -9,6 +9,14 @@ import { renderDeliveryReportHtml } from "../packages/demo/src/index.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
+function readOptionValue(argv, index, optionName) {
+  const value = argv[index + 1];
+  if (!value || value.startsWith("--") || value === "-h") {
+    throw new Error(`${optionName} requires a value.`);
+  }
+  return value;
+}
+
 function parseArgs(argv) {
   const options = {
     inputs: ["dist/demo-mode", "dist/self-review", "dist/web/data"],
@@ -18,24 +26,14 @@ function parseArgs(argv) {
 
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
-    const next = argv[index + 1];
     if (arg === "--input") {
-      if (!next) {
-        throw new Error("--input requires a value.");
-      }
-      options.inputs.push(next);
+      options.inputs.push(readOptionValue(argv, index, "--input"));
       index += 1;
     } else if (arg === "--out") {
-      if (!next) {
-        throw new Error("--out requires a value.");
-      }
-      options.out = next;
+      options.out = readOptionValue(argv, index, "--out");
       index += 1;
     } else if (arg === "--title") {
-      if (!next) {
-        throw new Error("--title requires a value.");
-      }
-      options.title = next;
+      options.title = readOptionValue(argv, index, "--title");
       index += 1;
     } else if (arg === "--help" || arg === "-h") {
       options.help = true;

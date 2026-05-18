@@ -336,9 +336,27 @@ test("report HTML CLI rejects invalid option values", () => {
     [["--input"], /--input requires a value/u],
     [["--out"], /--out requires a value/u],
     [["--title"], /--title requires a value/u],
+    [["--title", "--input"], /--title requires a value/u],
     [["--unknown"], /Unknown argument: --unknown/u]
   ]) {
     const result = spawnSync(process.execPath, ["scripts/render-delivery-report-html.mjs", ...argv], {
+      cwd: repoRoot,
+      encoding: "utf8",
+      shell: false
+    });
+
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, expectedError);
+  }
+});
+
+test("self-review CLI rejects option-shaped values", () => {
+  for (const [argv, expectedError] of [
+    [["--input", "--out"], /--input requires a value/u],
+    [["--out", "-h"], /--out requires a value/u],
+    [["--unknown"], /Unknown argument: --unknown/u]
+  ]) {
+    const result = spawnSync(process.execPath, ["scripts/run-self-review.mjs", ...argv], {
       cwd: repoRoot,
       encoding: "utf8",
       shell: false
