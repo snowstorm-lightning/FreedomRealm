@@ -68,7 +68,8 @@
         "docs/zh-CN/execution-plans/completed/phase-0-6-web-workbench-mvp.md"
       ],
       "implementationRefs": [
-        "0e0733e"
+        "0e0733e",
+        "a5d5e50"
       ]
     },
     {
@@ -195,7 +196,8 @@
       ],
       "implementationRefs": [
         "f6c3cb7",
-        "59d2adb"
+        "59d2adb",
+        "5f7cadb"
       ]
     },
     {
@@ -286,7 +288,8 @@
       ],
       "implementationRefs": [
         "578b08f",
-        "bae8140"
+        "bae8140",
+        "72aa79d"
       ]
     },
     {
@@ -343,7 +346,8 @@
         "138f653",
         "21b24fe",
         "87d543a",
-        "6f87114"
+        "6f87114",
+        "cca2884"
       ]
     },
     {
@@ -512,7 +516,8 @@
           ],
           "implementationRefs": [
             "f6c3cb7",
-            "59d2adb"
+            "59d2adb",
+            "5f7cadb"
           ]
         },
         {
