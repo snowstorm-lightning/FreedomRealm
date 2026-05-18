@@ -23,7 +23,15 @@ function resolveWorkspacePath(value) {
 
 try {
   const file = resolveWorkspacePath(target);
-  const config = JSON.parse(await readFile(file, "utf8"));
+  let config;
+  try {
+    config = JSON.parse(await readFile(file, "utf8"));
+  } catch (error) {
+    if (error instanceof SyntaxError) {
+      error.code = "invalid_environment_json";
+    }
+    throw error;
+  }
   const result = validateEnvironmentConfig(config);
   console.log(JSON.stringify(result, null, 2));
   process.exit(result.ok ? 0 : 1);
@@ -32,7 +40,7 @@ try {
     ok: false,
     errors: [
       {
-        code: "validation_failed",
+        code: error.code ?? "validation_failed",
         message: error.message,
         path: target
       }

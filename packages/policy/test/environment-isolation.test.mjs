@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { readFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
@@ -145,6 +145,24 @@ test("validate environment CLI keeps target path inside the workspace", () => {
 
   assert.notEqual(result.status, 0);
   assert.match(result.stderr, /must stay inside the workspace/u);
+});
+
+test("validate environment CLI identifies malformed JSON configs", async () => {
+  const configPath = path.join("dist", "test-environment-validator", "malformed", "bad-env.json");
+  await mkdir(path.dirname(path.join(repoRoot, configPath)), { recursive: true });
+  await writeFile(path.join(repoRoot, configPath), "{ bad json", "utf8");
+
+  const result = spawnSync(process.execPath, ["packages/policy/bin/validate-environment.mjs", configPath], {
+    cwd: repoRoot,
+    encoding: "utf8",
+    shell: false
+  });
+
+  assert.notEqual(result.status, 0);
+  const parsed = JSON.parse(result.stderr);
+  assert.equal(parsed.ok, false);
+  assert.equal(parsed.errors[0].code, "invalid_environment_json");
+  assert.equal(parsed.errors[0].path, configPath);
 });
 
 test("rejects a config that points staging at prod resources", () => {
