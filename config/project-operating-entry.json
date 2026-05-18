@@ -644,6 +644,36 @@
           "verificationCommands": [
             "pnpm check"
           ]
+        },
+        {
+          "commitRef": "550f6df",
+          "scope": "ExecutionReportCard enum and timestamp validation coverage",
+          "writeSet": [
+            "packages/contracts/test/execution-report-card.test.mjs"
+          ],
+          "verificationCommands": [
+            "pnpm check"
+          ]
+        },
+        {
+          "commitRef": "ef1de04",
+          "scope": "DocChallengeDraft status and source range validation coverage",
+          "writeSet": [
+            "packages/contracts/test/knowledge-cards.test.mjs"
+          ],
+          "verificationCommands": [
+            "pnpm check"
+          ]
+        },
+        {
+          "commitRef": "94722ce",
+          "scope": "AnswerCard extension namespace coverage",
+          "writeSet": [
+            "packages/contracts/test/knowledge-cards.test.mjs"
+          ],
+          "verificationCommands": [
+            "pnpm check"
+          ]
         }
       ]
     },
