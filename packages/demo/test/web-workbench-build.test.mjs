@@ -174,7 +174,7 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   assert.ok(currentWorkbenchTask);
   assert.equal(currentWorkbenchTask.priority, "P0");
   assert.equal(currentWorkbenchTask.status, "implemented-in-repo");
-  assert.deepEqual(currentWorkbenchTask.implementationRefs, ["0e0733e", "a5d5e50"]);
+  assert.deepEqual(currentWorkbenchTask.implementationRefs, ["0e0733e", "a5d5e50", "2d1973c"]);
   assert.equal(currentWorkbenchTask.title, "项目学习系统首页与 Web Workbench 拆页落地");
   assert.deepEqual(currentWorkbenchTask.verificationCommands, ["pnpm web:demo", "pnpm check"]);
   assert.equal(currentWorkbenchTask.outputs.includes("项目学习首页"), true);
