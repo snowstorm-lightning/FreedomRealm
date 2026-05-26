@@ -23,8 +23,8 @@
     {
       "toolName": "knowledge.index_local_docs",
       "description": "Index selected local repository Markdown documents into SourceChunks for Demo Mode.",
-      "inputSchemaRef": "schema://ai-hrms.demo.knowledge.index_local_docs.input.v1",
-      "outputSchemaRef": "schema://ai-hrms.demo.knowledge.index_local_docs.output.v1",
+      "inputSchemaRef": "schema://freedomrealm.demo.knowledge.index_local_docs.input.v1",
+      "outputSchemaRef": "schema://freedomrealm.demo.knowledge.index_local_docs.output.v1",
       "requiredPermissions": [
         "knowledge:read"
       ],
@@ -50,8 +50,8 @@
     {
       "toolName": "knowledge.locate_sources",
       "description": "Locate relevant source chunks through deterministic local mock semantic scoring.",
-      "inputSchemaRef": "schema://ai-hrms.demo.knowledge.locate_sources.input.v1",
-      "outputSchemaRef": "schema://ai-hrms.demo.knowledge.locate_sources.output.v1",
+      "inputSchemaRef": "schema://freedomrealm.demo.knowledge.locate_sources.input.v1",
+      "outputSchemaRef": "schema://freedomrealm.demo.knowledge.locate_sources.output.v1",
       "requiredPermissions": [
         "knowledge:read"
       ],
@@ -78,8 +78,8 @@
     {
       "toolName": "knowledge.propose_answer_card",
       "description": "Generate an AnswerCard with source references and limitations without creating a production fact.",
-      "inputSchemaRef": "schema://ai-hrms.demo.knowledge.propose_answer_card.input.v1",
-      "outputSchemaRef": "schema://ai-hrms.demo.knowledge.propose_answer_card.output.v1",
+      "inputSchemaRef": "schema://freedomrealm.demo.knowledge.propose_answer_card.input.v1",
+      "outputSchemaRef": "schema://freedomrealm.demo.knowledge.propose_answer_card.output.v1",
       "requiredPermissions": [
         "reports:create"
       ],
@@ -106,8 +106,8 @@
     {
       "toolName": "knowledge.create_doc_challenge_draft",
       "description": "Create a draft challenge for human review without editing the source document.",
-      "inputSchemaRef": "schema://ai-hrms.demo.knowledge.create_doc_challenge_draft.input.v1",
-      "outputSchemaRef": "schema://ai-hrms.demo.knowledge.create_doc_challenge_draft.output.v1",
+      "inputSchemaRef": "schema://freedomrealm.demo.knowledge.create_doc_challenge_draft.input.v1",
+      "outputSchemaRef": "schema://freedomrealm.demo.knowledge.create_doc_challenge_draft.output.v1",
       "requiredPermissions": [
         "reports:create"
       ],

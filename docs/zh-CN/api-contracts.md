@@ -38,7 +38,7 @@
 }
 ```
 
-`projectInstanceId` 用于绑定 AI-HRMS Instance。`reason` 在高风险动作中必填。`env` 必须与服务端运行环境一致，客户端传入值只能用于校验和审计，不能决定真实环境。
+`projectInstanceId` 用于绑定 FreedomRealm Instance。`reason` 在高风险动作中必填。`env` 必须与服务端运行环境一致，客户端传入值只能用于校验和审计，不能决定真实环境。
 
 ### ID 与时间
 
@@ -386,7 +386,7 @@
 用途：管理跨实例授权协作、能力发现、模板共享和脱敏评测摘要交换。
 
 关键操作：
-- `GET /.well-known/ai-hrms-instance.json`
+- `GET /.well-known/freedomrealm-instance.json`
 - `GET /api/v1/federation/manifest`
 - `POST /api/v1/federation/messages`
 - `GET /api/v1/federation/messages/{messageId}/receipt`
@@ -533,7 +533,7 @@
 - `inputRefs` 和 `outputRefs` 只能保存引用、摘要或脱敏快照，不能保存原始敏感数据。
 - `metrics`、`failure` 和 `extensions` 首版可以为空对象，但字段位置必须保留。
 - `extensions` 必须使用 namespaced key，不能覆盖标准字段语义。
-- 自我审查报告卡可使用 `extensions["ai-hrms.selfReview"].candidateWorkItems` 保存候选 `WorkItem`，但这些候选只能作为人工复核材料，不能自动创建 issue、PR、分派或生产事实。
+- 自我审查报告卡可使用 `extensions["freedomrealm.selfReview"].candidateWorkItems` 保存候选 `WorkItem`，但这些候选只能作为人工复核材料，不能自动创建 issue、PR、分派或生产事实。
 - 公开分享必须显式授权。
 - 报告卡不得包含用户私有数据、敏感字段、内部任务内容或原始模型上下文。
 
@@ -624,7 +624,7 @@
 - `schemaVersion`
 - `provider`：`openclaw`、`hermes-agent` 或 `custom`
 - `mode`：`mock`、`local_cli` 或 `remote_gateway`
-- `supportedDirections`：`ai_hrms_to_external_agent`、`external_agent_to_ai_hrms`
+- `supportedDirections`：`freedomrealm_to_external_agent`、`external_agent_to_freedomrealm`
 - `allowedEnvironments`
 - `dataClassificationAllowed`
 - `riskLevelAllowed`
@@ -676,7 +676,7 @@
 - 当前 checked-in mock connector profile 只覆盖 `dev` / `ci`、`public` / `internal`、`low` / `medium` 场景；`prod`、`restricted` / `sensitive`、`high` / `critical` 或 non-mock 执行只能出现在显式 policy stress test、候选计划或未来经批准的 live connector 路径中。
 - `restricted` 与 `sensitive` 数据默认不得外发；确需外发时必须先脱敏或摘要化，并进入 `ApprovalGate`。
 - 当 `ExternalAgentRunRequest.dataClassification` 为 `restricted` 或 `sensitive` 时，`inputRefs` 必须指向已经脱敏、摘要化或可审计引用的材料，并保留 `redactionStatus`、`sanitizationStatus`、`summaryStatus`、`referenceStatus` 或等价审计证据；不得把敏感原文直接嵌入 request payload、connector profile、auditTags 或 `extensions`。
-- `external_agent_to_ai_hrms` 入站结果如果携带 `restricted` / `sensitive` 数据、要求副作用、或试图写入事实源，必须停留为候选材料并触发 `ApprovalGate` 或策略拒绝，不能因为来自外部 agent 就被自动采信。
+- `external_agent_to_freedomrealm` 入站结果如果携带 `restricted` / `sensitive` 数据、要求副作用、或试图写入事实源，必须停留为候选材料并触发 `ApprovalGate` 或策略拒绝，不能因为来自外部 agent 就被自动采信。
 - 高风险动作必须回到本地 `ApprovalGate`，外部 agent 不能替代本地 human owner、审批链、审计和回滚。
 - connector profile 只能保存 secret 引用或 secret path，不得保存明文 token、API key、密码或消息账号凭据。
 - `extensions` 必须使用 namespaced key，不能覆盖标准字段语义。

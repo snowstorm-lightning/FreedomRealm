@@ -64,7 +64,7 @@ function printHelp() {
   console.log(`Usage: pnpm demo [--template ${DEFAULT_DEMO_TEMPLATE_ID}] [--model mock|live] [--query text] [--input path] [--out dist/demo-mode]
 
 Demo Mode writes JSON ExecutionReportCard as the canonical source.
-The default model route is mock. The live route is optional and falls back to mock unless AI_HRMS_LIVE_MODEL_ENABLED=true.`);
+The default model route is mock. The live route is optional and falls back to mock unless FREEDOMREALM_LIVE_MODEL_ENABLED=true.`);
 }
 
 async function main() {
@@ -83,7 +83,7 @@ async function main() {
     outputDir: options.out
   });
 
-  const modelRoute = execution.reportCard.extensions["ai-hrms.demo"].modelRoute;
+  const modelRoute = execution.reportCard.extensions["freedomrealm.demo"].modelRoute;
   console.log("[demo] ok");
   console.log(`[demo] JSON canonical source: ${execution.output.jsonRelativePath}`);
   console.log(`[demo] Markdown render: ${execution.output.markdownRelativePath}`);

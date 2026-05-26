@@ -68,7 +68,7 @@ async function main() {
   console.log(`[self-review] Markdown render: ${execution.output.markdownRelativePath}`);
   console.log(
     `[self-review] candidate WorkItems: ${
-      execution.reportCard.extensions["ai-hrms.selfReview"]?.candidateWorkItems?.length ?? 0
+      execution.reportCard.extensions["freedomrealm.selfReview"]?.candidateWorkItems?.length ?? 0
     }`
   );
   console.log("[self-review] repository files were not modified by this command");

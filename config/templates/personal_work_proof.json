@@ -22,8 +22,8 @@
     {
       "toolName": "work_proof.read_user_materials",
       "description": "Read user-provided goals and materials from local demo inputs.",
-      "inputSchemaRef": "schema://ai-hrms.demo.work_proof.read_user_materials.input.v1",
-      "outputSchemaRef": "schema://ai-hrms.demo.work_proof.read_user_materials.output.v1",
+      "inputSchemaRef": "schema://freedomrealm.demo.work_proof.read_user_materials.input.v1",
+      "outputSchemaRef": "schema://freedomrealm.demo.work_proof.read_user_materials.output.v1",
       "requiredPermissions": [
         "work_proof:read"
       ],
@@ -49,8 +49,8 @@
     {
       "toolName": "work_proof.propose_learning_path",
       "description": "Generate candidate LearningPath, CapabilityProof, and GrowthWorkItem suggestions without assigning tasks or publishing data.",
-      "inputSchemaRef": "schema://ai-hrms.demo.work_proof.propose_learning_path.input.v1",
-      "outputSchemaRef": "schema://ai-hrms.demo.work_proof.propose_learning_path.output.v1",
+      "inputSchemaRef": "schema://freedomrealm.demo.work_proof.propose_learning_path.input.v1",
+      "outputSchemaRef": "schema://freedomrealm.demo.work_proof.propose_learning_path.output.v1",
       "requiredPermissions": [
         "reports:create"
       ],

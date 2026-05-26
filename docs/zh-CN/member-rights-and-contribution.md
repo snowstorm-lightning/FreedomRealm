@@ -2,9 +2,9 @@
 
 ## 定位
 
-AI-HRMS 管理工作、责任、工具、审批和学习资产，不管理人对 AI 的服从。`GovernanceBrain` 可以解释上下文、生成 `TaskFitAssessment`、建议协作方式和提示风险，但 AI 分派默认是建议，不是命令。
+FreedomRealm 管理工作、责任、工具、审批和学习资产，不管理人对 AI 的服从。`GovernanceBrain` 可以解释上下文、生成 `TaskFitAssessment`、建议协作方式和提示风险，但 AI 分派默认是建议，不是命令。
 
-本文件约束 `HumanActor`、`CommunityActor`、`InstanceMember`、`GovernanceBrain`、贡献者声誉和社区协作机制，避免 AI-HRMS 退化为算法压力系统。
+本文件约束 `HumanActor`、`CommunityActor`、`InstanceMember`、`GovernanceBrain`、贡献者声誉和社区协作机制，避免 FreedomRealm 退化为算法压力系统。
 
 ## 核心原则
 
@@ -87,7 +87,7 @@ AI 不得直接创造成员义务。即使在企业场景中，成员义务也�
 
 ## 禁止的贡献机制
 
-AI-HRMS 不应引入以下机制：
+FreedomRealm 不应引入以下机制：
 
 - 全局单一贡献分。
 - 低价值刷量榜。

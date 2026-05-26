@@ -3,7 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const templateDir = process.env.AI_HRMS_TEMPLATE_DIR ?? "config/templates";
+const templateDir = process.env.FREEDOMREALM_TEMPLATE_DIR ?? "config/templates";
 const allowedTemplateDataClassifications = ["public", "internal", "restricted", "sensitive"];
 const allowedTemplateRiskLevels = ["low", "medium", "high"];
 

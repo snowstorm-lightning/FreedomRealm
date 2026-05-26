@@ -1,6 +1,6 @@
-# AI-HRMS Policy Kernel RS
+# FreedomRealm Policy Kernel RS
 
-This crate is an isolated Rust skeleton for AI-HRMS policy and contract checks.
+This crate is an isolated Rust skeleton for FreedomRealm policy and contract checks.
 It is not wired into the production control plane, JS contracts, Web UI, model
 routes, external connectors, or agent runtime.
 

@@ -1,5 +1,11 @@
 # Phase 1: Go Core Control Plane Skeleton 计划
 
+## 状态
+
+Active
+
+等待 human owner 关闭 Go module import path、HTTP 框架、Rust kernel 集成方式、首期 endpoint 范围和本地存储策略后，才能进入实现。
+
 ## 背景和问题陈述
 
 ADR-0010 已接受长期生产 Core Control Plane 默认采用 Go，Rust 用于 Policy / Contract / Protocol Kernel。当前仓库已经有 TypeScript Demo / Web / contracts / policy 基础，以及不接入生产路径的 Rust policy kernel skeleton，但还没有 Go 控制面 skeleton 的受控执行计划。

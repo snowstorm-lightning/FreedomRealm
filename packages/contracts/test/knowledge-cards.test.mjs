@@ -33,7 +33,7 @@ test("validates AnswerCard v1", () => {
     redactionStatus: "redacted",
     sharePermission: "private",
     extensions: {
-      "ai-hrms.knowledge": {
+      "freedomrealm.knowledge": {
         searchMode: "local-mock-semantic"
       }
     }

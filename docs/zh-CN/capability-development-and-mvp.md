@@ -2,9 +2,9 @@
 
 ## 定位
 
-AI-HRMS 的长期目标不是只把工作自动化，而是让每个 `HumanActor` 的能力在输入和输出两侧都得到更充分发挥：系统应能帮助成员理解任务、学习知识、发现显性和潜在能力，并把个人成长、集体生产效率和 Commons 资产沉淀连成正循环。
+FreedomRealm 的长期目标不是只把工作自动化，而是让每个 `HumanActor` 的能力在输入和输出两侧都得到更充分发挥：系统应能帮助成员理解任务、学习知识、发现显性和潜在能力，并把个人成长、集体生产效率和 Commons 资产沉淀连成正循环。
 
-但当前阶段必须优先回答一个更现实的问题：项目如何活下来。MVP 的目标不是一次性实现完整能力发展系统，而是用最小闭环证明 AI-HRMS 的新定义可理解、可运行、可复盘、可分享、可继续贡献。
+但当前阶段必须优先回答一个更现实的问题：项目如何活下来。MVP 的目标不是一次性实现完整能力发展系统，而是用最小闭环证明 FreedomRealm 的新定义可理解、可运行、可复盘、可分享、可继续贡献。
 
 ## 当前假设
 
@@ -73,7 +73,7 @@ MVP 的 `TeachingStrategy` 固定为 document-first：先把文档写清楚，�
 
 当前最小目标：
 
-1. 30 秒内让新用户理解 AI-HRMS 不是传统 HRMS，也不是泛泛 agent framework。
+1. 30 秒内让新用户理解 FreedomRealm 不是传统 HRMS，也不是泛泛 agent framework。
 2. 5 到 10 分钟内跑通 Demo Mode 最小闭环。
 3. 至少跑通一个低连接器依赖、低敏感数据依赖的模板。
 4. 能看到 `WorkItem`、`AgentActor`、`ToolContract`、`ApprovalGate`、`Observation` 和 `ExecutionReportCard` 的完整关系。
@@ -92,7 +92,7 @@ MVP 标准需要从“能跑通最小闭环”抬高到“能被真实用户评�
 
 MVP 可评价验收证据分为 5 层：
 
-1. `understanding`：首屏或 README 在 30 秒内说明 AI-HRMS 不是传统 HRMS，也不是泛 agent framework，并能看到 `WorkItem -> AgentActor -> ToolContract -> ApprovalGate -> Observation -> ExecutionReportCard`。
+1. `understanding`：首屏或 README 在 30 秒内说明 FreedomRealm 不是传统 HRMS，也不是泛 agent framework，并能看到 `WorkItem -> AgentActor -> ToolContract -> ApprovalGate -> Observation -> ExecutionReportCard`。
 2. `runnable`：`pnpm demo`、`pnpm web:demo` 和 `pnpm check` 在 mock mode 下通过，不需要真实模型 key、真实外部连接器、生产数据或 secret。
 3. `workProof`：至少一个模板生成 JSON-first `ExecutionReportCard`，并能渲染 Markdown 或 Web 预览；`repo_understanding_and_work_plan` 必须输出候选 `WorkItem` 和 `WorkShard` 建议。
 4. `governed`：报告卡、Web Workbench 或运行入口必须显示 `ApprovalGate`、`AgentWorkLease`、`writeSet`、`ChangePacket`、`MergeGate`、数据分级和人工复核要求。
@@ -225,11 +225,11 @@ MVP 默认模型路径采用 `mock`，可选增强路径采用 `live`。
 
 ## 外部 Agent 接入首版决策
 
-OpenClaw、Hermes Agent 等外部 agent runtime 对项目关注度有价值，因为它们代表了用户已经在尝试的本地优先、多通道、skills、MCP、持久记忆和自我改进型 agent 生态。但这类能力不能成为 MVP 跑通前置条件，也不能绕过 AI-HRMS 的治理边界。
+OpenClaw、Hermes Agent 等外部 agent runtime 对项目关注度有价值，因为它们代表了用户已经在尝试的本地优先、多通道、skills、MCP、持久记忆和自我改进型 agent 生态。但这类能力不能成为 MVP 跑通前置条件，也不能绕过 FreedomRealm 的治理边界。
 
 首版只做受控双向接口与 deterministic mock：
 
-- AI-HRMS 可以生成 `ExternalAgentRunRequest`，请求外部 agent runtime 做候选分析。
+- FreedomRealm 可以生成 `ExternalAgentRunRequest`，请求外部 agent runtime 做候选分析。
 - 外部 agent 可以提交 `ExternalAgentRunResult`，作为候选输入进入本地 review。
 - OpenClaw 和 Hermes Agent 只登记为 `ExternalConnector` provider profile，不新增 actor 类型。
 - Demo Mode 不调用真实外部 agent CLI，不读取本地配置、消息账号、memory、skills 或 MCP 配置。
@@ -240,13 +240,13 @@ OpenClaw、Hermes Agent 等外部 agent runtime 对项目关注度有价值，�
 
 ## 自我审查与项目腐烂预防
 
-AI-HRMS 需要持续防止项目腐烂，包括文档与实现漂移、术语扩散、范围膨胀、缺失测试、runbook 过期、治理规则只停留在文档中、失败样本被隐藏等问题。
+FreedomRealm 需要持续防止项目腐烂，包括文档与实现漂移、术语扩散、范围膨胀、缺失测试、runbook 过期、治理规则只停留在文档中、失败样本被隐藏等问题。
 
 首版用 `project_self_review_and_decay_prevention` 模板和 `pnpm self-review` 建立自我审查闭环：
 
 - 只读取维护文档和本地 manifest。
 - 只生成发现、风险、候选后续 WorkItem 和 `ExecutionReportCard`。
-- 候选后续 WorkItem 写入 `extensions["ai-hrms.selfReview"].candidateWorkItems`，只作为人工复核材料。
+- 候选后续 WorkItem 写入 `extensions["freedomrealm.selfReview"].candidateWorkItems`，只作为人工复核材料。
 - 不自动修改文档、代码、issue、PR 或配置。
 - 输出默认仍是 JSON canonical source 和 Markdown render。
 - 自审发现必须由 human owner 决定是否转为正式 WorkItem。

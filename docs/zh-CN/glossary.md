@@ -46,7 +46,7 @@ WorkShard 完成后提交的结构化交付包，至少包含变更摘要、文�
 
 ## ExternalConnector
 
-受控外部系统或外部 agent runtime 连接器。OpenClaw、Hermes Agent 等接入 AI-HRMS 时都属于 ExternalConnector provider profile，不新增独立 actor 类型，也不能绕过本地审批、审计、预算和数据分级。
+受控外部系统或外部 agent runtime 连接器。OpenClaw、Hermes Agent 等接入 FreedomRealm 时都属于 ExternalConnector provider profile，不新增独立 actor 类型，也不能绕过本地审批、审计、预算和数据分级。
 
 ## ExternalAgentConnectorProfile
 
@@ -54,11 +54,11 @@ WorkShard 完成后提交的结构化交付包，至少包含变更摘要、文�
 
 ## ExternalAgentRunRequest
 
-AI-HRMS 发给外部 agent runtime 的受控运行请求。请求必须绑定 env、actor、ProjectInstance、WorkItem、AgentRun、风险等级、数据分级、输入引用和审批引用。
+FreedomRealm 发给外部 agent runtime 的受控运行请求。请求必须绑定 env、actor、ProjectInstance、WorkItem、AgentRun、风险等级、数据分级、输入引用和审批引用。
 
 ## ExternalAgentRunResult
 
-外部 agent runtime 回传给 AI-HRMS 的运行结果候选。它只能作为候选输入进入报告卡、Observation 或后续 WorkItem 草稿，不能直接修改生产事实、文档、代码、issue、PR 或公开资产。
+外部 agent runtime 回传给 FreedomRealm 的运行结果候选。它只能作为候选输入进入报告卡、Observation 或后续 WorkItem 草稿，不能直接修改生产事实、文档、代码、issue、PR 或公开资产。
 
 ## Observation
 
@@ -98,7 +98,7 @@ AI-HRMS 发给外部 agent runtime 的受控运行请求。请求必须绑定 en
 
 ## AI-assisted work proof
 
-用户在 AI-HRMS 中完成的一次可展示工作证明，通常包含目标、输入引用、受控 AI 协作过程、人工复核点、ExecutionReportCard，以及可选的 CapabilityProof、LearningPath 或后续 GrowthWorkItem。
+用户在 FreedomRealm 中完成的一次可展示工作证明，通常包含目标、输入引用、受控 AI 协作过程、人工复核点、ExecutionReportCard，以及可选的 CapabilityProof、LearningPath 或后续 GrowthWorkItem。
 
 ## KeywordHelpOverlay
 
@@ -114,11 +114,11 @@ AI-HRMS 发给外部 agent runtime 的受控运行请求。请求必须绑定 en
 
 ## ProjectInstance
 
-一个 AI-HRMS 运行实例。可以由一个人运行，也可以由多个成员共同使用；可以表示个人工作系统、开源项目工作台、小团队工作台、社区组织、合作社、工作室、企业内部团队或临时项目组。
+一个 FreedomRealm 运行实例。可以由一个人运行，也可以由多个成员共同使用；可以表示个人工作系统、开源项目工作台、小团队工作台、社区组织、合作社、工作室、企业内部团队或临时项目组。
 
-## AI-HRMS Instance
+## FreedomRealm Instance
 
-ProjectInstance 的同义表达，强调它是一个独立运行、独立治理和独立审计的 AI-HRMS 实例。
+ProjectInstance 的同义表达，强调它是一个独立运行、独立治理和独立审计的 FreedomRealm 实例。
 
 ## InstanceMember
 
@@ -130,7 +130,7 @@ ProjectInstance 的成员，拥有实例内角色、权限、审批责任、资�
 
 ## MemberRights
 
-成员围绕 AI 分派、成员画像、贡献记录和个人权益影响拥有的查看、拒绝、协商、修正、撤回、申诉和复审权利。AI-HRMS 不能把成员变成服从 AI 分派的执行资源。
+成员围绕 AI 分派、成员画像、贡献记录和个人权益影响拥有的查看、拒绝、协商、修正、撤回、申诉和复审权利。FreedomRealm 不能把成员变成服从 AI 分派的执行资源。
 
 ## ContributionRecord
 
@@ -146,7 +146,7 @@ GovernanceBrain 对 WorkItem 与候选 HumanActor、CommunityActor、AgentActor 
 
 ## FederationPeer
 
-另一个可协作的 AI-HRMS 实例。Peer 不代表默认信任。
+另一个可协作的 FreedomRealm 实例。Peer 不代表默认信任。
 
 ## FederationLink
 

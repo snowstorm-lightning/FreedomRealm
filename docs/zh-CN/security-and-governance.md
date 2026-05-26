@@ -45,7 +45,7 @@ ProjectInstance 内权限还必须考虑实例成员角色、审批责任、资�
 
 ## 外部 Agent 接入治理
 
-OpenClaw、Hermes Agent 和类似项目可以提高 AI-HRMS 的生态关注度，但它们必须作为受控 `ExternalConnector` 接入，不能成为绕过本地治理的旁路。
+OpenClaw、Hermes Agent 和类似项目可以提高 FreedomRealm 的生态关注度，但它们必须作为受控 `ExternalConnector` 接入，不能成为绕过本地治理的旁路。
 
 首版规则：
 
@@ -91,7 +91,7 @@ OpenClaw、Hermes Agent 和类似项目可以提高 AI-HRMS 的生态关注度�
 
 ## 数据生命周期与训练资源
 
-数据进入 AI-HRMS 时必须尽早绑定来源、owner、用途、`ProjectInstance`、环境、数据分级和保留策略。业务主数据、协作内容、模型上下文、Observation、LearningArtifact、Eval sample、审计日志、备份和公开资产必须分开治理，不能因为进入 AI 流程就失去原始约束。
+数据进入 FreedomRealm 时必须尽早绑定来源、owner、用途、`ProjectInstance`、环境、数据分级和保留策略。业务主数据、协作内容、模型上下文、Observation、LearningArtifact、Eval sample、审计日志、备份和公开资产必须分开治理，不能因为进入 AI 流程就失去原始约束。
 
 敏感数据可以在脱敏后保留为训练、评测或模型能力改进资源，但原始敏感数据不得直接作为训练资源保留。脱敏训练资源必须满足：
 

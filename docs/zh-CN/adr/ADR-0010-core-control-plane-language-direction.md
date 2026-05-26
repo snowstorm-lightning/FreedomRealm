@@ -6,15 +6,15 @@ Accepted
 
 ## 背景
 
-ADR-0009 将 AI-HRMS 的短期技术栈基线统一到 Node.js 24 LTS、NestJS 11、Prisma ORM 6.x、PostgreSQL 18 和 Python Agent Runtime。这一决策适合当时的文档底座、Demo Mode、静态 Web Workbench 和仓库脚本阶段，但它把长期生产 Core Control Plane 也默认放在 Node.js / NestJS 上。
+ADR-0009 将 FreedomRealm 的短期技术栈基线统一到 Node.js 24 LTS、NestJS 11、Prisma ORM 6.x、PostgreSQL 18 和 Python Agent Runtime。这一决策适合当时的文档底座、Demo Mode、静态 Web Workbench 和仓库脚本阶段，但它把长期生产 Core Control Plane 也默认放在 Node.js / NestJS 上。
 
-FreedomRealm / AI-HRMS 的新会话规则要求长期生产架构更偏向类型安全、可审计、可本地部署、可长期维护、可治理的语言与运行时。控制面负责事实、权限、审批、审计、ProjectInstance、WorkItem、ApprovalGate、PolicyRule、ExecutionReportCard 和 Federation 等核心边界，不应由 agent runtime 或临时 demo 工具链默认承载。
+FreedomRealm 的新会话规则要求长期生产架构更偏向类型安全、可审计、可本地部署、可长期维护、可治理的语言与运行时。控制面负责事实、权限、审批、审计、ProjectInstance、WorkItem、ApprovalGate、PolicyRule、ExecutionReportCard 和 Federation 等核心边界，不应由 agent runtime 或临时 demo 工具链默认承载。
 
 因此需要新增后续 ADR，保留 ADR-0009 的“单一稳定基线、避免 Current/RC 作为生产强制依赖、跨平台可验证”原则，但修正长期 Core Control Plane 的默认语言方向，并明确 Rust 在治理内核中的位置。
 
 ## 决策
 
-AI-HRMS / FreedomRealm 的长期生产 Core Control Plane 默认采用 Go。Rust 默认用于 Policy / Contract / Protocol Kernel。
+FreedomRealm 的长期生产 Core Control Plane 默认采用 Go。Rust 默认用于 Policy / Contract / Protocol Kernel。
 
 分层语言方向如下：
 

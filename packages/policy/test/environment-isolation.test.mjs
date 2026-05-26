@@ -19,14 +19,14 @@ const baseConfig = {
   service: "control-plane",
   version: "0.1.0",
   resources: {
-    database: { name: "ai_hrms_staging" },
-    temporal: { namespace: "ai-hrms-staging" },
-    keycloak: { realm: "ai-hrms-staging" },
+    database: { name: "freedomrealm_staging" },
+    temporal: { namespace: "freedomrealm-staging" },
+    keycloak: { realm: "freedomrealm-staging" },
     litellm: { deployment: "litellm-staging" },
-    langfuse: { project: "ai-hrms-staging" },
-    objectStorage: { bucketOrPrefix: "ai-hrms-staging/uploads/" },
-    kubernetes: { namespace: "ai-hrms-staging" },
-    secretPath: "ai-hrms/staging/"
+    langfuse: { project: "freedomrealm-staging" },
+    objectStorage: { bucketOrPrefix: "freedomrealm-staging/uploads/" },
+    kubernetes: { namespace: "freedomrealm-staging" },
+    secretPath: "freedomrealm/staging/"
   },
   telemetry: {
     labels: {
@@ -72,7 +72,7 @@ const externalAgentProfile = {
   schemaVersion: "external-agent-connector-profile.v1",
   provider: "openclaw",
   mode: "mock",
-  supportedDirections: ["ai_hrms_to_external_agent", "external_agent_to_ai_hrms"],
+  supportedDirections: ["freedomrealm_to_external_agent", "external_agent_to_freedomrealm"],
   allowedEnvironments: ["dev", "ci"],
   dataClassificationAllowed: ["public", "internal"],
   riskLevelAllowed: ["low", "medium"],
@@ -88,7 +88,7 @@ const externalAgentProfile = {
   },
   auditTags: ["external-agent", "openclaw", "mock"],
   extensions: {
-    "ai-hrms.external-agent": {
+    "freedomrealm.external-agent": {
       mock: true
     }
   }
@@ -106,7 +106,7 @@ function externalAgentRequest(overrides = {}) {
     requestId: "external-agent-request-001",
     schemaVersion: "external-agent-run-request.v1",
     connectorId: "external-agent.openclaw.mock",
-    direction: "ai_hrms_to_external_agent",
+    direction: "freedomrealm_to_external_agent",
     env: "dev",
     actor: {
       actorType: "AgentActor",
@@ -122,7 +122,7 @@ function externalAgentRequest(overrides = {}) {
     requestedCapabilities: ["planning"],
     approvalRef: null,
     extensions: {
-      "ai-hrms.external-agent": {
+      "freedomrealm.external-agent": {
         mock: true
       }
     },
@@ -170,7 +170,7 @@ test("rejects a config that points staging at prod resources", () => {
     ...baseConfig,
     resources: {
       ...baseConfig.resources,
-      database: { name: "ai_hrms_prod" }
+      database: { name: "freedomrealm_prod" }
     }
   });
   assert.equal(result.ok, false);
@@ -418,9 +418,9 @@ test("rejects external agent environments outside the connector profile", () => 
 test("rejects external agent directions outside the connector profile", () => {
   const result = evaluateExternalAgentRun({
     connectorProfile: externalAgentStressProfile({
-      supportedDirections: ["ai_hrms_to_external_agent"]
+      supportedDirections: ["freedomrealm_to_external_agent"]
     }),
-    request: externalAgentRequest({ direction: "external_agent_to_ai_hrms" }),
+    request: externalAgentRequest({ direction: "external_agent_to_freedomrealm" }),
     env: "dev"
   });
   assert.equal(result.decision, "deny");

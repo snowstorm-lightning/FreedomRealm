@@ -34,7 +34,7 @@ pnpm demo -- --input docs/zh-CN/api-contracts.md --input docs/zh-CN/quality-gate
 pnpm demo -- --out dist/demo-mode/custom
 pnpm demo -- --model live
 pnpm demo -- --template repo_understanding_and_work_plan
-pnpm demo -- --template knowledge_navigation_and_challenge --query "AI-HRMS 下一步应该做什么？"
+pnpm demo -- --template knowledge_navigation_and_challenge --query "FreedomRealm 下一步应该做什么？"
 pnpm demo -- --template external_agent_connector_safety_demo
 ```
 
@@ -100,7 +100,7 @@ pnpm demo -- --template external_agent_connector_safety_demo
 - 读取 `config/connectors/openclaw.mock.json` 和 `config/connectors/hermes-agent.mock.json`。
 - 生成 `ExternalAgentRunRequest` 和 `ExternalAgentRunResult` 的 deterministic mock。
 - 通过策略判断记录 policy decision。
-- 在 `ExecutionReportCard.extensions["ai-hrms.externalAgent"]` 中记录 connector、request、result 和策略原因。
+- 在 `ExecutionReportCard.extensions["freedomrealm.externalAgent"]` 中记录 connector、request、result 和策略原因。
 
 该路径不会启动真实 OpenClaw / Hermes Agent CLI，不读取消息账号、聊天记录、skills、memory、MCP 配置或本地 secret。外部 agent 输出只作为候选输入，不能直接修改文档、代码、issue、PR、生产事实或公开资产。
 
@@ -118,7 +118,7 @@ pnpm self-review
 - 输出目录：`dist/self-review/`
 - 输出 JSON `ExecutionReportCard` 和 Markdown render。
 - 只生成发现、风险、候选后续 WorkItem 和复盘建议。
-- 候选 WorkItem 写入 `ExecutionReportCard.extensions["ai-hrms.selfReview"].candidateWorkItems`，包含来源 finding / recommendation、owner、风险、`readSet`、`writeSet`、验收标准和验证命令。
+- 候选 WorkItem 写入 `ExecutionReportCard.extensions["freedomrealm.selfReview"].candidateWorkItems`，包含来源 finding / recommendation、owner、风险、`readSet`、`writeSet`、验收标准和验证命令。
 
 该命令不自动修改仓库文档、代码、issue、PR 或配置。自审发现必须由 human owner 决定是否转为正式 WorkItem。
 
@@ -150,7 +150,7 @@ Delivery HTML 也会显示 human decision checkpoint，帮助读者在阶段汇�
 从仓库根目录执行：
 
 ```text
-pnpm knowledge:demo -- --query "AI-HRMS 下一步应该做什么？"
+pnpm knowledge:demo -- --query "FreedomRealm 下一步应该做什么？"
 ```
 
 默认行为：
@@ -159,7 +159,7 @@ pnpm knowledge:demo -- --query "AI-HRMS 下一步应该做什么？"
 - 搜索路径：`local-mock-semantic`
 - 输入文档：`README.md`、`ARCHITECTURE.md` 和 `docs/zh-CN/**/*.md`
 - 输出目录：`dist/knowledge-demo/`
-- 模型路径：默认 `mock`；即使传入 `--model live`，未设置 `AI_HRMS_LIVE_MODEL_ENABLED=true` 时仍回退到 `mock`，并继续使用 `local-mock-semantic`。
+- 模型路径：默认 `mock`；即使传入 `--model live`，未设置 `FREEDOMREALM_LIVE_MODEL_ENABLED=true` 时仍回退到 `mock`，并继续使用 `local-mock-semantic`。
 
 输出文件：
 

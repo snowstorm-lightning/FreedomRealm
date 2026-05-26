@@ -3,14 +3,14 @@
   "service": "control-plane",
   "version": "0.1.0",
   "resources": {
-    "database": { "name": "ai_hrms_ci" },
-    "temporal": { "namespace": "ai-hrms-ci" },
-    "keycloak": { "realm": "ai-hrms-ci" },
+    "database": { "name": "freedomrealm_ci" },
+    "temporal": { "namespace": "freedomrealm-ci" },
+    "keycloak": { "realm": "freedomrealm-ci" },
     "litellm": { "deployment": "litellm-ci" },
-    "langfuse": { "project": "ai-hrms-ci" },
-    "objectStorage": { "bucketOrPrefix": "ai-hrms-ci/uploads/" },
-    "kubernetes": { "namespace": "ai-hrms-ci" },
-    "secretPath": "ai-hrms/ci/"
+    "langfuse": { "project": "freedomrealm-ci" },
+    "objectStorage": { "bucketOrPrefix": "freedomrealm-ci/uploads/" },
+    "kubernetes": { "namespace": "freedomrealm-ci" },
+    "secretPath": "freedomrealm/ci/"
   },
   "telemetry": {
     "labels": {

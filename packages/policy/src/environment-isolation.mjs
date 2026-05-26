@@ -105,14 +105,14 @@ export function validateEnvironmentConfig(config) {
   }
 
   if (isEnvironment(env)) {
-    requireExact(errors, config, "resources.database.name", `ai_hrms_${env}`);
-    requireExact(errors, config, "resources.temporal.namespace", `ai-hrms-${env}`);
-    requireExact(errors, config, "resources.keycloak.realm", `ai-hrms-${env}`);
+    requireExact(errors, config, "resources.database.name", `freedomrealm_${env}`);
+    requireExact(errors, config, "resources.temporal.namespace", `freedomrealm-${env}`);
+    requireExact(errors, config, "resources.keycloak.realm", `freedomrealm-${env}`);
     requireExact(errors, config, "resources.litellm.deployment", `litellm-${env}`);
-    requireExact(errors, config, "resources.langfuse.project", `ai-hrms-${env}`);
-    requirePrefix(errors, config, "resources.objectStorage.bucketOrPrefix", `ai-hrms-${env}/`);
-    requireExact(errors, config, "resources.kubernetes.namespace", `ai-hrms-${env}`);
-    requirePrefix(errors, config, "resources.secretPath", `ai-hrms/${env}/`);
+    requireExact(errors, config, "resources.langfuse.project", `freedomrealm-${env}`);
+    requirePrefix(errors, config, "resources.objectStorage.bucketOrPrefix", `freedomrealm-${env}/`);
+    requireExact(errors, config, "resources.kubernetes.namespace", `freedomrealm-${env}`);
+    requirePrefix(errors, config, "resources.secretPath", `freedomrealm/${env}/`);
   }
 
   const labels = config.telemetry?.labels ?? {};
@@ -486,7 +486,7 @@ export function evaluateExternalAgentRun({
   }
 
   const sensitiveOutbound =
-    request.direction === "ai_hrms_to_external_agent" &&
+    request.direction === "freedomrealm_to_external_agent" &&
     ["restricted", "sensitive"].includes(request.dataClassification);
   if (sensitiveOutbound && !hasApproval) {
     return {

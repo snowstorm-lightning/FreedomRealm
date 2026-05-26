@@ -2,9 +2,9 @@
 
 ## 业务目标
 
-AI-HRMS v1 围绕“工作被谁执行、如何被分派、如何被审批、如何被学习、由哪个实例负责”建立统一模型。系统既保留传统 HRMS 场景，也支持 agent-first、个人、社区、多人成员实例和跨实例协作场景。所有自动化都必须服从事实、审批、预算、数据分级和审计边界。
+FreedomRealm v1 围绕“工作被谁执行、如何被分派、如何被审批、如何被学习、由哪个实例负责”建立统一模型。系统既保留传统 HRMS 场景，也支持 agent-first、个人、社区、多人成员实例和跨实例协作场景。所有自动化都必须服从事实、审批、预算、数据分级和审计边界。
 
-AI-HRMS 是 AI 时代的人类与智能体资源管理系统。它不只管理员工、组织、考勤、档案、审批和协作内容，还管理 HumanActor、AgentActor、WorkItem、ToolContract、ApprovalGate、PolicyRule、Observation、LearningArtifact、ProjectInstance、GovernanceBrain、DomainWorkflow、模板、评测和实例间协作关系。
+FreedomRealm 是 AI 时代的人类与智能体资源管理系统。它不只管理员工、组织、考勤、档案、审批和协作内容，还管理 HumanActor、AgentActor、WorkItem、ToolContract、ApprovalGate、PolicyRule、Observation、LearningArtifact、ProjectInstance、GovernanceBrain、DomainWorkflow、模板、评测和实例间协作关系。
 
 ## 核心概念
 
@@ -98,7 +98,7 @@ ProjectInstance 内注册的 AI 执行者。具备注册身份、能力、工具
 
 ### ProjectInstance
 
-一个 AI-HRMS 运行实例，也可称为 AI-HRMS Instance。它可以是个人工作系统、开源项目工作台、小团队工作台、社区组织、合作社、工作室、企业内部团队或临时项目组。
+一个 FreedomRealm 运行实例，也可称为 FreedomRealm Instance。它可以是个人工作系统、开源项目工作台、小团队工作台、社区组织、合作社、工作室、企业内部团队或临时项目组。
 
 ### GovernanceBrain
 
@@ -110,7 +110,7 @@ GovernanceBrain 对 WorkItem 与 HumanActor、CommunityActor、AgentActor 或跨
 
 ### FederationPeer
 
-另一个可协作的 AI-HRMS 实例。Peer 不代表默认信任。
+另一个可协作的 FreedomRealm 实例。Peer 不代表默认信任。
 
 ### FederationLink
 

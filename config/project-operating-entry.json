@@ -9,7 +9,7 @@
     "docs/zh-CN/project-operating-entry.md"
   ],
   "startupCommands": [
-    "pnpm knowledge:demo -- --query \"AI-HRMS 下一步应该做什么？\"",
+    "pnpm knowledge:demo -- --query \"FreedomRealm 下一步应该做什么？\"",
     "pnpm self-review"
   ],
   "currentTasks": [
@@ -206,7 +206,7 @@
     {
       "taskId": "p1-decay-prevention-backlog",
       "priority": "P1",
-      "status": "needs-human-owner-review",
+      "status": "implemented-in-repo",
       "title": "建立人工复核的衰减预防 backlog",
       "ownerActorTypes": [
         "HumanActor"
@@ -249,6 +249,9 @@
         "config/project-operating-entry.json",
         "docs/zh-CN/project-operating-entry.md",
         "docs/zh-CN/quality-gates.md"
+      ],
+      "implementationRefs": [
+        "2bc71d5"
       ]
     },
     {
@@ -313,7 +316,7 @@
       "acceptanceCriteria": [
         "Local CLIs do not treat option tokens as missing option values.",
         "Demo, Knowledge, self-review, and Delivery HTML commands cannot read inputs or write outputs outside the workspace.",
-        "AI_HRMS_OPERATING_ENTRY_PATH must resolve inside the workspace.",
+        "FREEDOMREALM_OPERATING_ENTRY_PATH must resolve inside the workspace.",
         "validate:env target path must resolve inside the workspace.",
         "The change does not enable real connectors, live models, secrets, production data, or external writes."
       ],
@@ -470,7 +473,7 @@
     "持续推进服从质量、审批、审计、预算和数据分级"
   ],
   "extensions": {
-    "ai-hrms.harness": {
+    "freedomrealm.harness": {
       "externalPractices": [
         "OpenAI harness engineering",
         "AGENTS.md",
@@ -479,7 +482,7 @@
       ],
       "mockOnly": true
     },
-    "ai-hrms.validatedHardening": {
+    "freedomrealm.validatedHardening": {
       "purpose": "Record verified low-risk contract hardening commits that do not create standalone WorkItems.",
       "items": [
         {
@@ -677,8 +680,8 @@
         }
       ]
     },
-    "ai-hrms.decayPreventionBacklog": {
-      "sourceReportPath": "dist/self-review/report-44d9d1ae-2014-4a8f-ac9b-1c5efc7152e1.json",
+    "freedomrealm.decayPreventionBacklog": {
+      "sourceReportPath": "dist/self-review/report-02cd1888-6f32-495e-b171-da73d311a116.json",
       "humanApprovalRef": "user-approved-continuation-20260517",
       "promotionPolicy": "human_owner_review_required",
       "autoCreateExternalIssues": false,
@@ -725,7 +728,7 @@
         {
           "candidateWorkItemId": "candidate-work-item-002",
           "formalTaskId": "p1-decay-prevention-backlog",
-          "status": "active",
+          "status": "implemented-in-repo",
           "priority": "P1",
           "riskLevel": "medium",
           "ownerActorTypes": [
@@ -755,7 +758,9 @@
             "pnpm self-review",
             "pnpm check"
           ],
-          "implementationRefs": []
+          "implementationRefs": [
+            "2bc71d5"
+          ]
         }
       ]
     }

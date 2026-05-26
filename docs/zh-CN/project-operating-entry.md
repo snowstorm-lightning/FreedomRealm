@@ -14,7 +14,7 @@
 4. 需要重新判断下一步时运行：
 
 ```text
-pnpm knowledge:demo -- --query "AI-HRMS 下一步应该做什么？"
+pnpm knowledge:demo -- --query "FreedomRealm 下一步应该做什么？"
 pnpm self-review
 ```
 
@@ -30,14 +30,14 @@ P0 是当前打开仓库后默认优先级。除非用户明确改变方向，ag
 | P0 | implemented-in-repo (`81ce7ab`, `0532341`, `49cb758`, `db3bfc1`) | 把项目运行入口提升为可校验 manifest | AgentActor | `project-operating-entry.v1` manifest、validator、根命令、hardening evidence 校验 | `pnpm validate:operating-entry` 和 `pnpm check` 通过 |
 | P0 | implemented-in-repo (`365bb77`) | 建立多 agent 防冲突最小规则 | HumanActor + AgentActor | `AgentWorkLease` 模板、`writeSet` 冲突规则、`MergeGate` 检查清单 | 每个 `WorkShard` 都能声明 `readSet`、`writeSet`、验证命令和回滚说明；并行 `writeSet` 默认 non-overlapping；高风险动作不能因拆分绕过 `ApprovalGate` |
 | P1 | implemented-in-repo (`f6c3cb7`, `59d2adb`, `5f7cadb`) | 同步外部 agent connector 治理文档与测试 | HumanActor + AgentActor | `ExternalConnector` 治理文档同步说明、`ApprovalGate` 与数据分级一致性检查、相关策略测试更新 | `pnpm check` 通过；不启用真实 connector；保留 `candidate-work-item-001` 来源和 `user-approved-continuation-20260517` 人工批准记录 |
-| P1 | needs-human-owner-review | 建立人工复核的衰减预防 backlog | HumanActor | human-reviewed decay prevention backlog、正式 `WorkItem` 记录、来源追踪 | `pnpm self-review` 和 `pnpm check` 通过；保留 `candidate-work-item-002` 来源和 `user-approved-continuation-20260517` 人工批准记录 |
+| P1 | implemented-in-repo (`2bc71d5`) | 建立人工复核的衰减预防 backlog | HumanActor | human-reviewed decay prevention backlog、正式 `WorkItem` 记录、来源追踪 | `pnpm self-review` 和 `pnpm check` 通过；保留 `candidate-work-item-002` 来源和 `user-approved-continuation-20260517` 人工批准记录；2026-05-19 human owner 复核接受当前 backlog 台账 |
 | P1 | implemented-in-repo (`578b08f`, `bae8140`, `72aa79d`) | 为首批用户可见模板补评测样本 | AgentActor | template manifest、失败样本、`evaluationSamples`、报告卡案例 | `pnpm validate:templates` 和 `pnpm check` 通过，样本可引用且不依赖真实连接器；失败样本保留 `expectedBlockingPoint`、`humanReviewStatus` 和 `reproducibleInputRefs`；`evaluationSamples` 保留输入引用、数据分级、用途限定、保留期和数据来源边界 |
 | P1 | implemented-in-repo (`138f653`, `21b24fe`, `87d543a`, `6f87114`, `cca2884`, `70fb1f4`) | 加固本地 CLI 与验证入口的工作区边界 | AgentActor | CLI 参数值防护、Demo / Knowledge / self-review 输出边界、Delivery HTML 输入输出边界、manifest override、template directory override 和环境验证路径边界 | `pnpm web:demo`、`pnpm test` 和 `pnpm check` 通过；不启用真实 connector、live model、secret、生产数据或外部写入 |
 | P2 | blocked-needs-human-owner | 真实连接器和 live model 增强 | HumanActor 审批后 | 受控增强路径 | 不改变 MVP 通过标准，不绕过 `ApprovalGate` |
 
 自我审查晋升记录：`dist/self-review/report-02cd1888-6f32-495e-b171-da73d311a116.json` 中的 `candidate-work-item-001` 和 `candidate-work-item-002` 已经由 `user-approved-continuation-20260517` 批准，从候选材料晋升为正式 P1 任务。该批准不授权执行 P2 live connectors、创建外部 issue / PR、访问 secret 或扩大数据分级边界。
 
-已验证但不单独形成 WorkItem 的契约加固记录在 `config/project-operating-entry.json` 的 `extensions["ai-hrms.validatedHardening"]` 中：
+已验证但不单独形成 WorkItem 的契约加固记录在 `config/project-operating-entry.json` 的 `extensions["freedomrealm.validatedHardening"]` 中：
 
 - `eff88fd`：补充 `AnswerCard` confidence 校验与测试。
 - `419e7d7`：补充 `ExecutionReportCard.dataClassification` 校验与测试。
@@ -45,13 +45,13 @@ P0 是当前打开仓库后默认优先级。除非用户明确改变方向，ag
 
 ### 衰减预防 Backlog
 
-机器事实源在 `extensions["ai-hrms.decayPreventionBacklog"]` 中保留人工复核后的衰减预防 backlog。该 backlog 只用于追踪自我审查候选项的来源、owner、风险、`readSet`、`writeSet`、验证命令、人工批准引用和实现引用；它不授权 `pnpm self-review` 修改仓库，不自动创建 issue / PR，不自动公开 Commons 资产，也不把候选结论变成成员义务。
+机器事实源在 `extensions["freedomrealm.decayPreventionBacklog"]` 中保留人工复核后的衰减预防 backlog。该 backlog 只用于追踪自我审查候选项的来源、owner、风险、`readSet`、`writeSet`、验证命令、人工批准引用和实现引用；它不授权 `pnpm self-review` 修改仓库，不自动创建 issue / PR，不自动公开 Commons 资产，也不把候选结论变成成员义务。
 
 当前记录：
 
 - `candidate-work-item-001` 已映射到 `p1-connector-governance-sync`，状态为 `implemented-in-repo`，实现引用为 `f6c3cb7`、`59d2adb` 和 `5f7cadb`。
-- `candidate-work-item-002` 已映射到 `p1-decay-prevention-backlog`，状态为 `active`，继续要求 human owner 复核。
-`pnpm validate:operating-entry` 会校验任务状态、已实现任务的 `implementationRefs`，并检查 backlog 中已实现候选与正式任务实现引用是否漂移。通过 `AI_HRMS_OPERATING_ENTRY_PATH` 覆盖 manifest 路径时，目标仍必须解析到仓库工作区内部，不能读取仓库外文件。
+- `candidate-work-item-002` 已映射到 `p1-decay-prevention-backlog`，状态为 `implemented-in-repo`，实现引用为 `2bc71d5`；2026-05-19 human owner 已复核接受当前 backlog 台账。
+`pnpm validate:operating-entry` 会校验任务状态、已实现任务的 `implementationRefs`，并检查 backlog 中已实现候选与正式任务实现引用是否漂移。通过 `FREEDOMREALM_OPERATING_ENTRY_PATH` 覆盖 manifest 路径时，目标仍必须解析到仓库工作区内部，不能读取仓库外文件。
 
 ### 当前 Human Owner 决策点
 
@@ -71,10 +71,10 @@ Go Core Control Plane skeleton 在进入实现前仍需要 human owner 确认：
 - `ExternalAgentRunRequest` 是否需要显式增加 redaction / sanitization 字段，用于 restricted / sensitive 出站数据。
 - 是否允许任何真实外部连接器、secret、账号、消息记录、MCP 配置、skills、memory 或生产数据进入本轮 readSet / writeSet；默认答案仍是否。
 
-Active execution plans 的状态清理也需要 human owner 复核：
+Active execution plans 状态清理已在 2026-05-19 完成：
 
-- 缺少 `## 状态` 的 active plan 当前只能在 Web Workbench 中显示为推断 active。
-- 是否补状态、归档旧 Phase 0 / Phase 0.5 计划，或保留为 active，需要单独确认；agent 不自动移动 active/completed 文件。
+- `phase-0-doc-foundation.md`、`phase-0-5-freedomrealm-repositioning.md` 和 `phase-1-environment-isolation-guard.md` 已归档到 `docs/zh-CN/execution-plans/completed/`。
+- `phase-1-go-control-plane-skeleton.md` 继续保留为 active，等待 human owner 关闭 Go module import path、HTTP 框架、Rust kernel 集成方式、首期 endpoint 范围和本地存储策略。
 
 ## 分派规则
 
@@ -176,7 +176,7 @@ Active execution plans 的状态清理也需要 human owner 复核：
 `MergeGate` 最小检查清单：
 
 - `writeSet` 是否合规，是否存在未声明路径或并行冲突。
-- 是否引入未登记术语，是否违反 AI-HRMS / FreedomRealm 定位。
+- 是否引入未登记术语，是否违反 FreedomRealm 定位。
 - 是否违反技术栈方向、`ApprovalGate`、`DataClassification`、成员权利或反监控边界。
 - 是否影响 `ExecutionReportCard`、`ToolContract`、`FederationMessage` 或 `ModelRoute`。
 - 是否同步了相关文档、manifest 或测试。
@@ -185,7 +185,7 @@ Active execution plans 的状态清理也需要 human owner 复核：
 
 ## 持续推进与停止条件
 
-用户可以指定“在某个时间点前不要停止”。AI-HRMS 对这类请求采用质量优先解释：agent 应在指定时间前持续推进可验证路径，但不能为了不停而扩大风险、绕过审批或堆积未验证变更。
+用户可以指定“在某个时间点前不要停止”。FreedomRealm 对这类请求采用质量优先解释：agent 应在指定时间前持续推进可验证路径，但不能为了不停而扩大风险、绕过审批或堆积未验证变更。
 
 允许停止的条件：
 

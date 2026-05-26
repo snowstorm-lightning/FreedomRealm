@@ -1,4 +1,4 @@
-# AI-HRMS Knowledge Package
+# FreedomRealm Knowledge Package
 
 This package contains the local, deterministic knowledge navigation layer used by Demo Mode.
 

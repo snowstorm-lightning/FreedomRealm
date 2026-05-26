@@ -2,12 +2,12 @@
 
 ## 总体形态
 
-AI-HRMS 采用“AI-HRMS Core Control Plane + GovernanceBrain + Agent Runtime + Workflow Backbone + Adaptive Runtime Layer + Domain/Template/Federation 扩展层”的结构。
+FreedomRealm 采用“FreedomRealm Core Control Plane + GovernanceBrain + Agent Runtime + Workflow Backbone + Adaptive Runtime Layer + Domain/Template/Federation 扩展层”的结构。
 
 ```mermaid
 flowchart LR
     UI[Workspace / Console<br/>Web UI or CLI]
-    API[AI-HRMS Core Control Plane<br/>Go service]
+    API[FreedomRealm Core Control Plane<br/>Go service]
     PK[Policy / Contract / Protocol Kernel<br/>Rust]
     WF[Workflow Backbone<br/>Temporal]
     AR[Agent Runtime / AI Adapters<br/>Python + LangGraph]
@@ -62,7 +62,7 @@ flowchart LR
 
 基线验证时间：2026-05-17。
 
-AI-HRMS 只维护一条分层技术栈基线。基线选择原则是：在保证生产稳定、依赖兼容、跨平台可用、可审计和可回滚的前提下，为每个架构层选择合适语言。`Current`、RC、beta、canary、preview-only 和 experimental-only 能力不得作为 Enterprise Mode 的强制依赖。ADR-0010 已将长期生产 Core Control Plane 的默认方向修正为 Go 服务主干，并将高治理契约收敛到 Rust Policy / Contract / Protocol Kernel；Node.js 继续用于 TypeScript 前端、Demo Mode、仓库脚本和轻量 glue code。
+FreedomRealm 只维护一条分层技术栈基线。基线选择原则是：在保证生产稳定、依赖兼容、跨平台可用、可审计和可回滚的前提下，为每个架构层选择合适语言。`Current`、RC、beta、canary、preview-only 和 experimental-only 能力不得作为 Enterprise Mode 的强制依赖。ADR-0010 已将长期生产 Core Control Plane 的默认方向修正为 Go 服务主干，并将高治理契约收敛到 Rust Policy / Contract / Protocol Kernel；Node.js 继续用于 TypeScript 前端、Demo Mode、仓库脚本和轻量 glue code。
 
 | 层 | 选型 | 用途 |
 | --- | --- | --- |

@@ -20,7 +20,7 @@ function validProfile() {
     schemaVersion: EXTERNAL_AGENT_CONNECTOR_PROFILE_SCHEMA_VERSION,
     provider: "openclaw",
     mode: "mock",
-    supportedDirections: ["ai_hrms_to_external_agent", "external_agent_to_ai_hrms"],
+    supportedDirections: ["freedomrealm_to_external_agent", "external_agent_to_freedomrealm"],
     allowedEnvironments: ["dev", "ci"],
     dataClassificationAllowed: ["public", "internal"],
     riskLevelAllowed: ["low", "medium"],
@@ -33,7 +33,7 @@ function validProfile() {
     },
     auditTags: ["external-agent", "openclaw", "mock"],
     extensions: {
-      "ai-hrms.external-agent": {
+      "freedomrealm.external-agent": {
         upstreamDocs: "https://docs.openclaw.ai/"
       }
     }
@@ -45,7 +45,7 @@ function validRunRequest() {
     requestId: "external-agent-request-001",
     schemaVersion: EXTERNAL_AGENT_RUN_REQUEST_SCHEMA_VERSION,
     connectorId: "external-agent.openclaw.mock",
-    direction: "ai_hrms_to_external_agent",
+    direction: "freedomrealm_to_external_agent",
     env: "dev",
     actor: {
       actorType: "AgentActor",
@@ -61,7 +61,7 @@ function validRunRequest() {
     requestedCapabilities: ["planning"],
     approvalRef: null,
     extensions: {
-      "ai-hrms.external-agent": {
+      "freedomrealm.external-agent": {
         mock: true
       }
     }
@@ -133,7 +133,7 @@ test("rejects non-namespaced external agent run extensions", () => {
     resultId: "external-agent-result-001",
     schemaVersion: EXTERNAL_AGENT_RUN_RESULT_SCHEMA_VERSION,
     connectorId: "external-agent.openclaw.mock",
-    direction: "external_agent_to_ai_hrms",
+    direction: "external_agent_to_freedomrealm",
     env: "dev",
     agentRunId: "run-demo-001",
     status: "needs_review",
@@ -160,7 +160,7 @@ test("validates ExternalAgentRunRequest and ExternalAgentRunResult v1", () => {
     resultId: "external-agent-result-001",
     schemaVersion: EXTERNAL_AGENT_RUN_RESULT_SCHEMA_VERSION,
     connectorId: "external-agent.openclaw.mock",
-    direction: "external_agent_to_ai_hrms",
+    direction: "external_agent_to_freedomrealm",
     env: "dev",
     agentRunId: "run-demo-001",
     status: "needs_review",
@@ -172,7 +172,7 @@ test("validates ExternalAgentRunRequest and ExternalAgentRunResult v1", () => {
     dataClassification: "internal",
     redactionStatus: "redacted",
     extensions: {
-      "ai-hrms.external-agent": {
+      "freedomrealm.external-agent": {
         mock: true
       }
     }
@@ -185,7 +185,7 @@ test("rejects external agent results that claim non-reviewable status", () => {
     resultId: "external-agent-result-001",
     schemaVersion: EXTERNAL_AGENT_RUN_RESULT_SCHEMA_VERSION,
     connectorId: "external-agent.openclaw.mock",
-    direction: "external_agent_to_ai_hrms",
+    direction: "external_agent_to_freedomrealm",
     env: "dev",
     agentRunId: "run-demo-001",
     status: "published",
@@ -197,7 +197,7 @@ test("rejects external agent results that claim non-reviewable status", () => {
     dataClassification: "internal",
     redactionStatus: "redacted",
     extensions: {
-      "ai-hrms.external-agent": {
+      "freedomrealm.external-agent": {
         mock: true
       }
     }

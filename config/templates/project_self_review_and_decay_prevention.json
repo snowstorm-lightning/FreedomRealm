@@ -22,8 +22,8 @@
     {
       "toolName": "project.self_review_read",
       "description": "Read selected maintained documents and local manifests to produce a self-review report.",
-      "inputSchemaRef": "schema://ai-hrms.demo.project.self_review_read.input.v1",
-      "outputSchemaRef": "schema://ai-hrms.demo.project.self_review_read.output.v1",
+      "inputSchemaRef": "schema://freedomrealm.demo.project.self_review_read.input.v1",
+      "outputSchemaRef": "schema://freedomrealm.demo.project.self_review_read.output.v1",
       "requiredPermissions": [
         "repo:read"
       ],
@@ -49,8 +49,8 @@
     {
       "toolName": "project.propose_decay_prevention_work_items",
       "description": "Generate candidate follow-up WorkItems for drift, stale docs, missing tests, or weak governance boundaries.",
-      "inputSchemaRef": "schema://ai-hrms.demo.project.propose_decay_prevention_work_items.input.v1",
-      "outputSchemaRef": "schema://ai-hrms.demo.project.propose_decay_prevention_work_items.output.v1",
+      "inputSchemaRef": "schema://freedomrealm.demo.project.propose_decay_prevention_work_items.input.v1",
+      "outputSchemaRef": "schema://freedomrealm.demo.project.propose_decay_prevention_work_items.output.v1",
       "requiredPermissions": [
         "reports:create"
       ],

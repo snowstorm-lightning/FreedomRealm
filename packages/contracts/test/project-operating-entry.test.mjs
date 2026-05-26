@@ -72,7 +72,7 @@ function validEntry() {
     },
     harnessPrinciples: ["仓库知识是 system of record"],
     extensions: {
-      "ai-hrms.harness": {
+      "freedomrealm.harness": {
         mockOnly: true
       }
     }
@@ -150,7 +150,7 @@ test("rejects non-namespaced project operating entry extensions", () => {
 
 test("validates checked hardening extension evidence", () => {
   const entry = validEntry();
-  entry.extensions["ai-hrms.validatedHardening"] = {
+  entry.extensions["freedomrealm.validatedHardening"] = {
     purpose: "Track low-risk hardening commits that do not create standalone WorkItems.",
     items: [
       {
@@ -168,7 +168,7 @@ test("validates checked hardening extension evidence", () => {
 
 test("rejects invalid checked hardening extension evidence", () => {
   const entry = validEntry();
-  entry.extensions["ai-hrms.validatedHardening"] = {
+  entry.extensions["freedomrealm.validatedHardening"] = {
     purpose: "Track low-risk hardening commits that do not create standalone WorkItems.",
     items: [
       {
@@ -184,7 +184,7 @@ test("rejects invalid checked hardening extension evidence", () => {
   assert.equal(result.ok, false);
   assert.equal(result.errors.some((error) => error.code === "invalid_implementation_ref"), true);
   assert.equal(
-    result.errors.some((error) => error.path === "extensions.ai-hrms.validatedHardening.items.0.writeSet"),
+    result.errors.some((error) => error.path === "extensions.freedomrealm.validatedHardening.items.0.writeSet"),
     true
   );
   assert.equal(result.errors.some((error) => error.code === "invalid_command"), true);
@@ -192,7 +192,7 @@ test("rejects invalid checked hardening extension evidence", () => {
 
 test("rejects implemented backlog items that drift from formal task implementation refs", () => {
   const entry = validEntry();
-  entry.extensions["ai-hrms.decayPreventionBacklog"] = {
+  entry.extensions["freedomrealm.decayPreventionBacklog"] = {
     sourceReportPath: "dist/self-review/report-demo.json",
     humanApprovalRef: "human-approved-demo",
     promotionPolicy: "human_owner_review_required",
@@ -233,7 +233,7 @@ test("validate-operating-entry script rejects unknown pnpm scripts", async () =>
     encoding: "utf8",
     env: {
       ...process.env,
-      AI_HRMS_OPERATING_ENTRY_PATH: path.relative(repoRoot, invalidPath).split(path.sep).join("/")
+      FREEDOMREALM_OPERATING_ENTRY_PATH: path.relative(repoRoot, invalidPath).split(path.sep).join("/")
     },
     shell: false
   });
@@ -253,7 +253,7 @@ test("validate-operating-entry script identifies malformed manifest JSON", async
     encoding: "utf8",
     env: {
       ...process.env,
-      AI_HRMS_OPERATING_ENTRY_PATH: path.relative(repoRoot, invalidPath).split(path.sep).join("/")
+      FREEDOMREALM_OPERATING_ENTRY_PATH: path.relative(repoRoot, invalidPath).split(path.sep).join("/")
     },
     shell: false
   });
@@ -269,7 +269,7 @@ test("validate-operating-entry script keeps override path inside the workspace",
     encoding: "utf8",
     env: {
       ...process.env,
-      AI_HRMS_OPERATING_ENTRY_PATH: "../outside-operating-entry.json"
+      FREEDOMREALM_OPERATING_ENTRY_PATH: "../outside-operating-entry.json"
     },
     shell: false
   });

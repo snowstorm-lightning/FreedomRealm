@@ -1,14 +1,23 @@
 # Phase 0.5: AI-HRMS Repositioning and Adaptive Demo Foundation
 
+## 归档记录
+
+- 完成日期：2026-05-19。
+- 验收依据：本轮 human owner 批准清理 active execution plans；归档前执行 `pnpm check`，并确认 README、业务蓝图、架构蓝图、路线图、质量门禁、术语表、ADR 索引和执行计划索引已覆盖本计划验收标准。
+- 实际交付物：AI 时代 HRMS 新定义、个人与社区优先原则、ProjectInstance / Federation / Adaptive Runtime / GovernanceBrain / ModelCapabilityProfile 语言、开源反商业捕获策略、传播增长机制和 Demo Mode 文档基础。
+- 与原计划偏差：实际范围延伸到 Phase 0.6 Web Workbench、外部 agent mock connector 安全样例、知识导航和自我审查入口；当时未处理正式更名、未实现完整分布式计算网络、未引入生产业务代码，符合非目标。后续正式更名由 ADR-0011 记录。
+- 未解决风险：正式 LICENSE、商标策略、P2 live connectors、真实 Federation 互操作测试和社区贡献闭环仍需后续 human owner 决策或独立执行计划。
+- 后续事项：继续从 [../README.md](../README.md) 的 active 计划和 [../../project-operating-entry.md](../../project-operating-entry.md) 的当前任务清单领取 Phase 1 后续工作。
+
 ## 状态
 
-Active
+Completed
 
 ## 背景和问题陈述
 
 AI-HRMS 的既有文档偏向单企业私有化部署的 agent-first 人力资源管理与协作平台。该定位保留了强治理边界，但不利于个人、社区、开源项目、小团队和多人协作体理解并试用 AI-HRMS。
 
-本阶段保留 AI-HRMS 名称，扩展 HRMS 定义：AI-HRMS 是 AI 时代的人类与智能体资源管理系统。它统一管理 HumanActor、AgentActor、WorkItem、ToolContract、ApprovalGate、PolicyRule、Observation、LearningArtifact、ProjectInstance、GovernanceBrain 和 DomainWorkflow，让标准化工作可以在明确约束下由 AI 执行，由人类设定目标、定义边界、审批高风险动作、审查结果和承担最终责任。
+本阶段保留 AI-HRMS 名称，扩展 HRMS 定义：AI-HRMS 是 AI 时代的人类与智能体资源管理系统。它统一管理 HumanActor、AgentActor、WorkItem、ToolContract、ApprovalGate、PolicyRule、Observation、LearningArtifact、ProjectInstance、GovernanceBrain 和 DomainWorkflow，让标准化工作可以在明确约束下由 AI 执行，由人类设定目标、定义边界、审批高风险动作、审查结果和承担最终责任。项目正式更名为 FreedomRealm 的后续决策见 ADR-0011。
 
 ## 目标
 
@@ -23,7 +32,7 @@ AI-HRMS 的既有文档偏向单企业私有化部署的 agent-first 人力资�
 
 ## 非目标
 
-- 本任务不处理正式更名。
+- 本任务当时不处理正式更名；后续正式更名见 ADR-0011。
 - 本任务不实现完整分布式计算网络。
 - 本任务不实现完整商业化。
 - 本任务不引入生产业务代码。
@@ -83,8 +92,8 @@ AI-HRMS 的既有文档偏向单企业私有化部署的 agent-first 人力资�
 
 ## 文档一致性检查
 
-- 项目名称仍为 AI-HRMS。
-- 本轮不处理正式更名。
+- 本阶段项目名称仍为 AI-HRMS。
+- 本轮不处理正式更名；后续正式更名为 FreedomRealm 见 ADR-0011。
 - 传统 HRMS 能力继续保留。
 - Enterprise Mode 保留企业私有化部署和强治理架构。
 - Tiny / Demo / Local / Community / Enterprise 成为运行档位。
@@ -95,10 +104,10 @@ AI-HRMS 的既有文档偏向单企业私有化部署的 agent-first 人力资�
 
 ## 验收标准
 
-- README 首屏能解释 AI-HRMS 是什么、AI 时代 HRMS 管理什么、个人和多人如何使用、Demo Mode 能跑通什么。
+- README 首屏能解释 FreedomRealm 是什么、AI 时代 HRMS 管理什么、个人和多人如何使用、Demo Mode 能跑通什么。
 - business-blueprint 出现 ProjectInstance、GovernanceBrain、InstanceMember、MemberCapabilityProfile、TaskFitAssessment、CommunityActor、FederationLink、CapabilityOffer、CapabilityRequest、SharedTemplate、SharedEvalSummary、ExecutionReportCard、ResourceProfile、ModelCapabilityProfile、AdaptiveRuntimePolicy、DomainWorkflow 和 DomainPack。
 - architecture-blueprint 出现 GovernanceBrain Layer、Adaptive Runtime Layer、Federation Gateway、FederationProtocol、Execution Report Generator、Resource Profile Detector、Adaptive Model Router 和 Adaptive Task Scheduler。
-- roadmap 出现 Phase 0.5、0.6、0.7，并调整 Phase 1 为 AI-HRMS Core 基础能力。
+- roadmap 出现 Phase 0.5、0.6、0.7，并调整 Phase 1 为 FreedomRealm Core 基础能力。
 - quality-gates 出现 Adoption、Adaptive runtime、Model capability、GovernanceBrain、Anti-capture、Federation safety、Federation compatibility 和 Community contribution gate。
 - glossary 新增相关术语。
 - ADR 和执行计划索引已更新。

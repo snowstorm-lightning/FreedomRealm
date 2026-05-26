@@ -205,12 +205,12 @@ export function renderExecutionReportCardMarkdown(card) {
     throw new Error(`Cannot render invalid ExecutionReportCard: ${details}`);
   }
 
-  const demo = card.extensions["ai-hrms.demo"] ?? {};
+  const demo = card.extensions["freedomrealm.demo"] ?? {};
   const modelRoute = demo.modelRoute ?? {};
   const failureSample = card.failure?.sample;
   const learningArtifact = demo.learningArtifact;
   const evalSample = demo.evalSample;
-  const selfReview = card.extensions["ai-hrms.selfReview"];
+  const selfReview = card.extensions["freedomrealm.selfReview"];
 
   return `# ExecutionReportCard
 

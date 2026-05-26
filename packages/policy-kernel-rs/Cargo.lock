@@ -3,5 +3,5 @@
 version = 4
 
 [[package]]
-name = "ai-hrms-policy-kernel"
+name = "freedomrealm-policy-kernel"
 version = "0.1.0"

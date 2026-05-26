@@ -88,18 +88,18 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   for (const card of cards) {
     const validation = validateExecutionReportCard(card);
     assert.equal(validation.ok, true, JSON.stringify(validation.errors, null, 2));
-    assert.equal(card.extensions["ai-hrms.demo"].modelRoute.mock, true);
+    assert.equal(card.extensions["freedomrealm.demo"].modelRoute.mock, true);
     const canonicalReportRefs = card.outputRefs.filter(
       (outputRef) => outputRef.kind === "ExecutionReportCard" && outputRef.canonical === true
     );
     assert.equal(canonicalReportRefs.length, 1);
     assert.equal(canonicalReportRefs[0].schemaVersion, card.schemaVersion);
-    assert.equal(card.extensions["ai-hrms.demo"].evalSample.status, "candidate");
-    assert.equal(card.extensions["ai-hrms.demo"].evalSample.sourceTemplateId, card.templateId);
-    assert.equal(card.extensions["ai-hrms.demo"].templateEvaluationSamples.source, "template.evaluationSamples");
-    assert.equal(card.extensions["ai-hrms.demo"].templateEvaluationSamples.status, "candidate");
-    assert.equal(card.extensions["ai-hrms.demo"].templateEvaluationSamples.reviewRequired, true);
-    assert.equal(Array.isArray(card.extensions["ai-hrms.demo"].templateEvaluationSamples.samples), true);
+    assert.equal(card.extensions["freedomrealm.demo"].evalSample.status, "candidate");
+    assert.equal(card.extensions["freedomrealm.demo"].evalSample.sourceTemplateId, card.templateId);
+    assert.equal(card.extensions["freedomrealm.demo"].templateEvaluationSamples.source, "template.evaluationSamples");
+    assert.equal(card.extensions["freedomrealm.demo"].templateEvaluationSamples.status, "candidate");
+    assert.equal(card.extensions["freedomrealm.demo"].templateEvaluationSamples.reviewRequired, true);
+    assert.equal(Array.isArray(card.extensions["freedomrealm.demo"].templateEvaluationSamples.samples), true);
   }
 
   const knowledgeCards = cards.filter((card) => card.templateId === "knowledge_navigation_and_challenge");
@@ -133,28 +133,24 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   const state = JSON.parse(stateMatch[1]);
   assert.deepEqual(state.operatingEntry, operatingEntry);
   assert.equal(validateProjectOperatingEntry(state.operatingEntry).ok, true);
-  assert.equal(state.activePlans.length >= 4, true);
+  assert.equal(state.activePlans.length >= 1, true);
   const activePlanFiles = new Set(state.activePlans.map((plan) => plan.filename));
-  assert.equal(activePlanFiles.has("phase-0-5-ai-hrms-repositioning.md"), true);
-  assert.equal(activePlanFiles.has("phase-0-doc-foundation.md"), true);
-  assert.equal(activePlanFiles.has("phase-1-environment-isolation-guard.md"), true);
+  assert.equal(activePlanFiles.has("phase-0-5-freedomrealm-repositioning.md"), false);
+  assert.equal(activePlanFiles.has("phase-0-doc-foundation.md"), false);
+  assert.equal(activePlanFiles.has("phase-1-environment-isolation-guard.md"), false);
   assert.equal(activePlanFiles.has("phase-1-go-control-plane-skeleton.md"), true);
   const goControlPlanePlan = state.activePlans.find(
     (plan) => plan.filename === "phase-1-go-control-plane-skeleton.md"
   );
   assert.equal(goControlPlanePlan?.status, "Active");
-  assert.equal(goControlPlanePlan?.statusSource, "inferred");
+  assert.equal(goControlPlanePlan?.statusSource, "explicit");
   assert.equal(goControlPlanePlan?.planOnly, true);
   assert.equal(goControlPlanePlan?.humanDecisionCount, 5);
   assert.equal(goControlPlanePlan?.humanDecisionPreview.length, 5);
   assert.equal(goControlPlanePlan?.humanDecisionPreview.some((item) => /本地存储/u.test(item)), true);
   assert.match(goControlPlanePlan?.title || "", /Go Core Control Plane Skeleton/u);
   assert.match(goControlPlanePlan?.href || "", /phase-1-go-control-plane-skeleton\.md/u);
-  const repositioningPlan = state.activePlans.find(
-    (plan) => plan.filename === "phase-0-5-ai-hrms-repositioning.md"
-  );
-  assert.equal(repositioningPlan?.statusSource, "explicit");
-  const decayBacklog = state.operatingEntry.extensions["ai-hrms.decayPreventionBacklog"];
+  const decayBacklog = state.operatingEntry.extensions["freedomrealm.decayPreventionBacklog"];
   assert.ok(decayBacklog);
   assert.equal(decayBacklog.promotionPolicy, "human_owner_review_required");
   assert.equal(decayBacklog.humanApprovalRef, "user-approved-continuation-20260517");
@@ -164,10 +160,11 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   assert.equal(backlogCandidateIds.has("candidate-work-item-002"), true);
   const activeDecayBacklogItem = decayBacklog.items.find((item) => item.candidateWorkItemId === "candidate-work-item-002");
   assert.equal(activeDecayBacklogItem?.formalTaskId, "p1-decay-prevention-backlog");
-  assert.equal(activeDecayBacklogItem?.status, "active");
+  assert.equal(activeDecayBacklogItem?.status, "implemented-in-repo");
   assert.deepEqual(activeDecayBacklogItem?.sourceFindingIds, ["finding-002", "finding-003"]);
   assert.deepEqual(activeDecayBacklogItem?.sourceRecommendationIds, ["recommendation-002"]);
   assert.deepEqual(activeDecayBacklogItem?.verificationCommands, ["pnpm self-review", "pnpm check"]);
+  assert.deepEqual(activeDecayBacklogItem?.implementationRefs, ["2bc71d5"]);
   const currentWorkbenchTask = state.operatingEntry.currentTasks.find(
     (task) => task.taskId === "p0-next-workbench-entry"
   );
@@ -353,7 +350,7 @@ test("web demo builds a multi-template static workbench from shared demo data", 
     assert.match(example.answerCardHref, /^\.\/data\/.+\.json$/u);
     assert.match(example.docChallengeDraftHref, /^\.\/data\/.+\.json$/u);
   }
-  assert.match(learningHtml, /AI-HRMS Project Learning System/u);
+  assert.match(learningHtml, /FreedomRealm Project Learning System/u);
   assert.match(learningHtml, /项目学习系统 \/ Project Learning/u);
   assert.match(learningHtml, /先理解项目结构，再进入治理工作台/u);
   assert.match(learningHtml, /Learn the project structure before entering the governed workbench/u);
@@ -378,8 +375,8 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   assert.match(webPagesModule, /export function buildLearningHtml/u);
   assert.match(webClientScriptsModule, /export function buildJs/u);
   assert.match(webStylesModule, /export const css/u);
-  assert.match(html, /AI-HRMS Workbench/u);
-  assert.match(html, /AI-HRMS Workbench \/ AI-HRMS 工作台/u);
+  assert.match(html, /FreedomRealm Workbench/u);
+  assert.match(html, /FreedomRealm Workbench \/ FreedomRealm 工作台/u);
   assert.match(html, /视图切换 \/ View Switch/u);
   assert.match(html, /data-workbench-view="tasks"/u);
   assert.match(html, /data-workbench-panel="reports"/u);
@@ -407,7 +404,7 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   assert.match(app, /window\.history\.pushState/u);
   assert.match(app, /popstate/u);
   assert.match(app, /scrollIntoView/u);
-  assert.match(html, /FreedomRealm \/ AI-HRMS/u);
+  assert.match(html, /<p class="eyebrow">FreedomRealm<\/p>/u);
   assert.match(html, /治理工作台 \/ Governed workbench/u);
   assert.match(html, /No live side effects/u);
   assert.match(html, /无实时副作用 \/ No live side effects/u);

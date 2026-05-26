@@ -42,12 +42,12 @@ test("local mock semantic search is deterministic", async () => {
   ];
   const first = await searchKnowledge({
     repoRoot,
-    query: "AI-HRMS 下一步应该做什么？",
+    query: "FreedomRealm 下一步应该做什么？",
     inputs
   });
   const second = await searchKnowledge({
     repoRoot,
-    query: "AI-HRMS 下一步应该做什么？",
+    query: "FreedomRealm 下一步应该做什么？",
     inputs
   });
 

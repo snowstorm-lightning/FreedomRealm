@@ -4,7 +4,7 @@ export function buildLearningHtml() {
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>AI-HRMS Project Learning System / 项目学习系统</title>
+    <title>FreedomRealm Project Learning System / 项目学习系统</title>
     <link rel="stylesheet" href="./styles.css">
   </head>
   <body>
@@ -24,7 +24,7 @@ export function buildLearningHtml() {
 
       <section class="learning-hero" aria-label="项目学习系统概览 / Project learning overview">
         <div class="learning-hero-copy">
-          <p class="eyebrow">AI-HRMS 学习入口 / AI-HRMS learning entry</p>
+          <p class="eyebrow">FreedomRealm 学习入口 / FreedomRealm learning entry</p>
           <h1>先理解项目结构，再进入治理工作台。 / Learn the project structure before entering the governed workbench.</h1>
           <p class="lead">这个首页把仓库入口、当前任务、Demo 闭环和治理边界拆成可点击学习路径；完整报告卡和密集信息保留在独立工作台页面。 / This page turns repo entry points, current tasks, the Demo loop, and governance boundaries into clickable learning paths; dense report-card detail stays on a separate workbench page.</p>
           <div class="hero-actions">
@@ -84,7 +84,7 @@ export function buildHtml(languageBoundaryNotice) {
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>AI-HRMS Workbench / AI-HRMS 工作台</title>
+    <title>FreedomRealm Workbench / FreedomRealm 工作台</title>
     <link rel="stylesheet" href="./styles.css">
   </head>
   <body>
@@ -107,7 +107,7 @@ export function buildHtml(languageBoundaryNotice) {
           <div class="brand-lockup">
             <span class="brand-mark" aria-hidden="true">FR</span>
             <div>
-              <p class="eyebrow">FreedomRealm / AI-HRMS</p>
+              <p class="eyebrow">FreedomRealm</p>
               <strong>治理工作台 / Governed workbench</strong>
             </div>
           </div>

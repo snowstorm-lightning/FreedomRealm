@@ -31,7 +31,7 @@ function parseArgs(argv) {
   const options = {
     inputs: [],
     out: "dist/reports/delivery-report.html",
-    title: "AI-HRMS Delivery Report",
+    title: "FreedomRealm Delivery Report",
     explicitInputs: false
   };
 

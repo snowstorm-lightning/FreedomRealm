@@ -171,7 +171,7 @@ function buildMockAnalysis(templateId, knowledgeArtifacts = null) {
   if (templateId === "external_agent_connector_safety_demo") {
     return {
       summary:
-        "Mock analysis: OpenClaw and Hermes Agent style runtimes can increase ecosystem reach, but AI-HRMS must treat them as governed ExternalConnector profiles. The demo creates bounded mock requests, evaluates policy, and records candidate results without launching real external agents.",
+        "Mock analysis: OpenClaw and Hermes Agent style runtimes can increase ecosystem reach, but FreedomRealm must treat them as governed ExternalConnector profiles. The demo creates bounded mock requests, evaluates policy, and records candidate results without launching real external agents.",
       findings: [
         {
           id: "finding-001",
@@ -189,7 +189,7 @@ function buildMockAnalysis(templateId, knowledgeArtifacts = null) {
           id: "finding-003",
           title: "ApprovalGate remains local",
           detail:
-            "External agent output can become candidate evidence, but high-risk action, assignment, publication, and data sharing still return to the local AI-HRMS ApprovalGate."
+            "External agent output can become candidate evidence, but high-risk action, assignment, publication, and data sharing still return to the local FreedomRealm ApprovalGate."
         }
       ],
       recommendations: [
@@ -291,7 +291,7 @@ function buildMockAnalysis(templateId, knowledgeArtifacts = null) {
   if (templateId === "repo_understanding_and_work_plan") {
     return {
       summary:
-        "Mock analysis: AI-HRMS is ready to turn its software-layer MVP into a Web-first Workbench. The next valuable step is to keep CLI as the tested core, expose a Web onboarding path, and generate report cards from the same execution data.",
+        "Mock analysis: FreedomRealm is ready to turn its software-layer MVP into a Web-first Workbench. The next valuable step is to keep CLI as the tested core, expose a Web onboarding path, and generate report cards from the same execution data.",
       findings: [
         {
           id: "finding-001",
@@ -428,7 +428,7 @@ function buildMockAnalysis(templateId, knowledgeArtifacts = null) {
 
   return {
     summary:
-      "Mock analysis: the selected AI-HRMS documents already define a CLI-first Demo Mode path, JSON-first report cards, and governance boundaries. The MVP should keep the first template narrow: document review suggestions only, no automatic document edits.",
+      "Mock analysis: the selected FreedomRealm documents already define a CLI-first Demo Mode path, JSON-first report cards, and governance boundaries. The MVP should keep the first template narrow: document review suggestions only, no automatic document edits.",
     findings: [
       {
         id: "finding-001",
@@ -466,7 +466,7 @@ function buildMockAnalysis(templateId, knowledgeArtifacts = null) {
         id: "recommendation-003",
         title: "Make failure review visible",
         detail:
-          "Include a simulated live-model-unavailable path so users see how AI-HRMS records blocked work and recovery guidance."
+          "Include a simulated live-model-unavailable path so users see how FreedomRealm records blocked work and recovery guidance."
       }
     ],
     nextActions: [
@@ -735,7 +735,7 @@ function ensureToolContractsAllowed(toolEvaluations) {
 }
 
 function buildModelRoute({ requestedModel, template }) {
-  if (requestedModel === "live" && process.env.AI_HRMS_LIVE_MODEL_ENABLED === "true") {
+  if (requestedModel === "live" && process.env.FREEDOMREALM_LIVE_MODEL_ENABLED === "true") {
     return {
       requested: "live",
       actual: "live",
@@ -770,7 +770,7 @@ async function createExternalAgentArtifacts({ repoRoot, template, trace, inputRe
       requestId: `external-agent-request-${randomUUID()}`,
       schemaVersion: EXTERNAL_AGENT_RUN_REQUEST_SCHEMA_VERSION,
       connectorId: profile.connectorId,
-      direction: "ai_hrms_to_external_agent",
+      direction: "freedomrealm_to_external_agent",
       env: "dev",
       actor: {
         actorType: "AgentActor",
@@ -795,7 +795,7 @@ async function createExternalAgentArtifacts({ repoRoot, template, trace, inputRe
       ],
       approvalRef: null,
       extensions: {
-        "ai-hrms.external-agent": {
+        "freedomrealm.external-agent": {
           mock: true,
           realExecution: false,
           provider: profile.provider
@@ -825,7 +825,7 @@ async function createExternalAgentArtifacts({ repoRoot, template, trace, inputRe
       resultId: `external-agent-result-${randomUUID()}`,
       schemaVersion: EXTERNAL_AGENT_RUN_RESULT_SCHEMA_VERSION,
       connectorId: profile.connectorId,
-      direction: "external_agent_to_ai_hrms",
+      direction: "external_agent_to_freedomrealm",
       env: "dev",
       agentRunId: trace.agentRunId,
       status: "needs_review",
@@ -860,7 +860,7 @@ async function createExternalAgentArtifacts({ repoRoot, template, trace, inputRe
       dataClassification: template.dataClassification,
       redactionStatus: template.redactionStatus,
       extensions: {
-        "ai-hrms.external-agent": {
+        "freedomrealm.external-agent": {
           mock: true,
           realExecution: false,
           provider: profile.provider
@@ -918,7 +918,7 @@ function renderHtmlList(items) {
 
 function renderHumanDecisionHtml(card) {
   const firstNextAction = Array.isArray(card.nextActions) ? card.nextActions[0] : null;
-  const approvalGate = card.extensions["ai-hrms.demo"]?.approvalGate;
+  const approvalGate = card.extensions["freedomrealm.demo"]?.approvalGate;
   const reviewRequired = card.metrics?.requiresHumanReview === true;
   const approvalNeeded = card.approvalStatus === "requires_human_review";
   const approvalDecision = approvalGate?.decision ?? card.approvalStatus;
@@ -972,7 +972,7 @@ function compareReportCardsByGeneratedAtDescending(left, right) {
 
 export function renderDeliveryReportHtml({
   reportCards,
-  title = "AI-HRMS Delivery Report",
+  title = "FreedomRealm Delivery Report",
   generatedAt = new Date().toISOString()
 }) {
   if (!Array.isArray(reportCards)) {
@@ -994,7 +994,7 @@ export function renderDeliveryReportHtml({
         const canonicalJson = card.outputRefs.find(
           (outputRef) => outputRef.kind === "ExecutionReportCard" && outputRef.canonical === true
         );
-        const templateEvaluationSamples = card.extensions["ai-hrms.demo"]?.templateEvaluationSamples?.samples ?? [];
+        const templateEvaluationSamples = card.extensions["freedomrealm.demo"]?.templateEvaluationSamples?.samples ?? [];
         const failureSample = card.failure?.sample;
         const failureInputRefs = Array.isArray(failureSample?.reproducibleInputRefs)
           ? failureSample.reproducibleInputRefs.join(", ")
@@ -1408,7 +1408,7 @@ export async function createDemoExecution({
       sample: template.failureSample
     },
     extensions: {
-      "ai-hrms.demo": {
+      "freedomrealm.demo": {
         runtimeMode: template.runtimeMode,
         templateManifestPath: templatePath,
         modelRoute,
@@ -1435,7 +1435,7 @@ export async function createDemoExecution({
       },
       ...(externalAgentArtifacts
         ? {
-            "ai-hrms.externalAgent": {
+            "freedomrealm.externalAgent": {
               mockOnly: true,
               realExecution: false,
               connectorCount: externalAgentArtifacts.connectors.length,
@@ -1459,7 +1459,7 @@ export async function createDemoExecution({
         : {}),
       ...(knowledgeArtifacts
         ? {
-            "ai-hrms.knowledge": {
+            "freedomrealm.knowledge": {
               searchMode: knowledgeArtifacts.searchMode,
               query: knowledgeArtifacts.query,
               answerCard: knowledgeArtifacts.answerCard,
@@ -1473,12 +1473,12 @@ export async function createDemoExecution({
         : {}),
       ...(repoWorkPlan
         ? {
-            "ai-hrms.workPlan": repoWorkPlan
+            "freedomrealm.workPlan": repoWorkPlan
           }
         : {}),
       ...(selfReviewCandidateWorkItems.length > 0
         ? {
-            "ai-hrms.selfReview": {
+            "freedomrealm.selfReview": {
               noWriteSideEffects: true,
               reviewRequired: true,
               promotionPolicy: "human_owner_review_required",

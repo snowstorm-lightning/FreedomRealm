@@ -197,7 +197,7 @@ function hasRequiredStopCondition(rules, token) {
 }
 
 function validateBacklogItem(errors, item, index, currentTasksById) {
-  const path = `extensions.ai-hrms.decayPreventionBacklog.items.${index}`;
+  const path = `extensions.freedomrealm.decayPreventionBacklog.items.${index}`;
   if (!isPlainObject(item)) {
     errors.push(issue("validation_failed", "decayPreventionBacklog.items values must be objects.", path));
     return;
@@ -281,14 +281,14 @@ function validateBacklogItem(errors, item, index, currentTasksById) {
 }
 
 function validateDecayPreventionBacklog(errors, entry) {
-  const backlog = entry.extensions?.["ai-hrms.decayPreventionBacklog"];
+  const backlog = entry.extensions?.["freedomrealm.decayPreventionBacklog"];
   if (backlog === undefined) {
     return;
   }
 
-  const path = "extensions.ai-hrms.decayPreventionBacklog";
+  const path = "extensions.freedomrealm.decayPreventionBacklog";
   if (!isPlainObject(backlog)) {
-    errors.push(issue("validation_failed", "ai-hrms.decayPreventionBacklog must be an object.", path));
+    errors.push(issue("validation_failed", "freedomrealm.decayPreventionBacklog must be an object.", path));
     return;
   }
 
@@ -310,14 +310,14 @@ function validateDecayPreventionBacklog(errors, entry) {
 }
 
 function validateValidatedHardening(errors, entry) {
-  const hardening = entry.extensions?.["ai-hrms.validatedHardening"];
+  const hardening = entry.extensions?.["freedomrealm.validatedHardening"];
   if (hardening === undefined) {
     return;
   }
 
-  const path = "extensions.ai-hrms.validatedHardening";
+  const path = "extensions.freedomrealm.validatedHardening";
   if (!isPlainObject(hardening)) {
-    errors.push(issue("validation_failed", "ai-hrms.validatedHardening must be an object.", path));
+    errors.push(issue("validation_failed", "freedomrealm.validatedHardening must be an object.", path));
     return;
   }
 

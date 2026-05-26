@@ -11,7 +11,7 @@
 
 ## 背景和问题陈述
 
-当前 AI-HRMS 已经具备 CLI-first Demo Mode、模板 manifest、mock model、`ToolContract` 策略判断和 JSON-first `ExecutionReportCard`。但产品层仍不足以让用户评价：用户看不到清晰第一屏、无法比较模板、无法理解执行链路，也无法判断报告卡如何成为传播资产、能力证据和后续贡献入口。
+当前 FreedomRealm 已经具备 CLI-first Demo Mode、模板 manifest、mock model、`ToolContract` 策略判断和 JSON-first `ExecutionReportCard`。但产品层仍不足以让用户评价：用户看不到清晰第一屏、无法比较模板、无法理解执行链路，也无法判断报告卡如何成为传播资产、能力证据和后续贡献入口。
 
 本计划把 Phase 0.6 收敛为软件层传播型 MVP：先完成 Web Workbench、模板运行、报告卡展示和知识异议闭环的最小可评价版本。现实感知层和现实执行层只作为后续探索，不进入当前 MVP 前置条件。
 
@@ -85,7 +85,7 @@ Web Workbench 第一屏提供三类入口：
 - Knowledge Navigation / AnswerCard / DocChallenge 的后续占位，但明确不自动改文档。
 - `Ask maintained docs` 的半落地样例：展示问题、回答、来源引用、Challenge 入口和对应 JSON 输出。
 - 外部 agent connector 安全样例：展示 OpenClaw / Hermes Agent mock profile、policy decision、mock request/result 和 ApprovalGate。
-- 自我审查命令入口：说明 `pnpm self-review` 用于发现项目腐烂和漂移，并在 `ai-hrms.selfReview` 扩展中生成候选 WorkItem，不产生写副作用。
+- 自我审查命令入口：说明 `pnpm self-review` 用于发现项目腐烂和漂移，并在 `freedomrealm.selfReview` 扩展中生成候选 WorkItem，不产生写副作用。
 - HTML 总报告入口：说明 `pnpm report:html` 只汇总 JSON report cards，不替代 Markdown 文档。
 - 项目运行入口：展示当前 P0/P1/P2 任务、`WorkShard` 分派边界、`writeSet` 防冲突规则和持续推进停止条件。
 - 当前短期目标和一年目标的区别。
@@ -124,7 +124,7 @@ Web Workbench 第一屏提供三类入口：
 ```text
 pnpm demo
 pnpm demo -- --template repo_understanding_and_work_plan
-pnpm knowledge:demo -- --query "AI-HRMS 下一步应该做什么？"
+pnpm knowledge:demo -- --query "FreedomRealm 下一步应该做什么？"
 pnpm demo -- --template external_agent_connector_safety_demo
 pnpm self-review
 pnpm report:html
@@ -150,11 +150,11 @@ pnpm check
 
 Phase 0.6 完成度不只看 smoke test，还必须满足可评价证据：
 
-- 首屏证据：Web Workbench 第一屏能看到 FreedomRealm / AI-HRMS 双名定位、Demo Mode、mock route、JSON source、三类入口、推荐下一步和无 live side effects。
+- 首屏证据：Web Workbench 第一屏能看到 FreedomRealm 定位、Demo Mode、mock route、JSON source、三类入口、推荐下一步和无 live side effects。
 - 运行证据：`pnpm demo`、`pnpm demo -- --template repo_understanding_and_work_plan`、`pnpm web:demo` 和 `pnpm check` 都能在无模型 key、无真实连接器、无生产数据条件下通过。
 - 报告卡证据：Web 和 Markdown 都只渲染 JSON `ExecutionReportCard`；页面必须提供 canonical JSON 链接。
 - 模板治理证据：模板列表必须展示 risk、approval、route 和 share 边界，且这些 badges 只从 `ExecutionReportCard` JSON 字段派生。
-- 工作计划证据：`repo_understanding_and_work_plan` 必须在 `extensions["ai-hrms.workPlan"]` 中生成候选 `WorkItem` 和建议 `WorkShard`，并标记为需要 human review 的候选材料。
+- 工作计划证据：`repo_understanding_and_work_plan` 必须在 `extensions["freedomrealm.workPlan"]` 中生成候选 `WorkItem` 和建议 `WorkShard`，并标记为需要 human review 的候选材料。
 - 治理证据：Web Workbench 必须展示 `AgentWorkLease` 字段、`writeSet` policy、`MergeGate`、停止条件、P2 live connector 的 human owner / ApprovalGate 边界。
 - 交互证据：entry mode 选择应更新推荐模板，Knowledge Challenge 交互只能生成 draft review 提示，不得修改文档。
 - 浏览器证据：本地浏览器检查应确认无 console error、无横向溢出、关键入口和候选任务可见。

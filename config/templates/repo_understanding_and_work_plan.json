@@ -22,8 +22,8 @@
     {
       "toolName": "repo.read_local_snapshot",
       "description": "Read selected repository documents as local input references for Demo Mode.",
-      "inputSchemaRef": "schema://ai-hrms.demo.repo.read_local_snapshot.input.v1",
-      "outputSchemaRef": "schema://ai-hrms.demo.repo.read_local_snapshot.output.v1",
+      "inputSchemaRef": "schema://freedomrealm.demo.repo.read_local_snapshot.input.v1",
+      "outputSchemaRef": "schema://freedomrealm.demo.repo.read_local_snapshot.output.v1",
       "requiredPermissions": [
         "repo:read"
       ],
@@ -49,8 +49,8 @@
     {
       "toolName": "repo.propose_work_plan",
       "description": "Generate a work plan and optional WorkShard suggestions without writing files or creating assignments.",
-      "inputSchemaRef": "schema://ai-hrms.demo.repo.propose_work_plan.input.v1",
-      "outputSchemaRef": "schema://ai-hrms.demo.repo.propose_work_plan.output.v1",
+      "inputSchemaRef": "schema://freedomrealm.demo.repo.propose_work_plan.input.v1",
+      "outputSchemaRef": "schema://freedomrealm.demo.repo.propose_work_plan.output.v1",
       "requiredPermissions": [
         "reports:create"
       ],

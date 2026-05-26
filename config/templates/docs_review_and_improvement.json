@@ -3,7 +3,7 @@
   "templateVersion": "0.1.0",
   "displayName": "Docs Review And Improvement",
   "runtimeMode": "Demo Mode",
-  "taskGoal": "Review selected AI-HRMS docs and generate mock summary, findings, recommendations, failure review, and an ExecutionReportCard.",
+  "taskGoal": "Review selected FreedomRealm docs and generate mock summary, findings, recommendations, failure review, and an ExecutionReportCard.",
   "dataClassification": "internal",
   "redactionStatus": "redacted",
   "sharePermission": "private",
@@ -16,8 +16,8 @@
     {
       "toolName": "docs.read_local_files",
       "description": "Read selected repository documents as local input references for Demo Mode.",
-      "inputSchemaRef": "schema://ai-hrms.demo.docs.read_local_files.input.v1",
-      "outputSchemaRef": "schema://ai-hrms.demo.docs.read_local_files.output.v1",
+      "inputSchemaRef": "schema://freedomrealm.demo.docs.read_local_files.input.v1",
+      "outputSchemaRef": "schema://freedomrealm.demo.docs.read_local_files.output.v1",
       "requiredPermissions": [
         "docs:read"
       ],
@@ -43,8 +43,8 @@
     {
       "toolName": "docs.propose_review_card",
       "description": "Generate recommendations and report-card outputs without modifying source documents.",
-      "inputSchemaRef": "schema://ai-hrms.demo.docs.propose_review_card.input.v1",
-      "outputSchemaRef": "schema://ai-hrms.demo.docs.propose_review_card.output.v1",
+      "inputSchemaRef": "schema://freedomrealm.demo.docs.propose_review_card.input.v1",
+      "outputSchemaRef": "schema://freedomrealm.demo.docs.propose_review_card.output.v1",
       "requiredPermissions": [
         "reports:create"
       ],
@@ -93,7 +93,7 @@
     {
       "sampleId": "eval.docs_review_and_improvement.demo.v1",
       "purpose": "Verify that local documentation review can produce a governed ExecutionReportCard without editing source documents.",
-      "inputSummary": "Selected AI-HRMS repository documents are read as internal, redacted Demo Mode inputs.",
+      "inputSummary": "Selected FreedomRealm repository documents are read as internal, redacted Demo Mode inputs.",
       "inputRefs": [
         "README.md",
         "docs/zh-CN/README.md",

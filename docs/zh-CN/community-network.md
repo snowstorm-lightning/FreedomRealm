@@ -2,13 +2,13 @@
 
 ## 目标
 
-AI-HRMS 可以由一个人运行，也可以由多人共同运行。多个 AI-HRMS 实例可以在授权、信任、审计和数据分级约束下协作，但默认不互信、默认不共享私有数据、默认不允许远程实例直接调用本地高风险工具。
+FreedomRealm 可以由一个人运行，也可以由多人共同运行。多个 FreedomRealm 实例可以在授权、信任、审计和数据分级约束下协作，但默认不互信、默认不共享私有数据、默认不允许远程实例直接调用本地高风险工具。
 
 跨实例通信的稳定协议面以 [federation-protocol.md](federation-protocol.md) 为准。二次开发可以扩展能力和 payload，但不能修改 `FederationMessage` 标准封套语义。
 
 ## ProjectInstance
 
-`ProjectInstance` 是一个 AI-HRMS 运行实例，也可称为 `AI-HRMS Instance`。它可以表示：
+`ProjectInstance` 是一个 FreedomRealm 运行实例，也可称为 `FreedomRealm Instance`。它可以表示：
 
 - 个人工作系统。
 - 开源项目工作台。
@@ -65,7 +65,7 @@ AI-HRMS 可以由一个人运行，也可以由多人共同运行。多个 AI-HR
 
 ## FederationPeer
 
-`FederationPeer` 是另一个可协作的 AI-HRMS 实例。它只表示潜在协作对象，不代表默认信任。
+`FederationPeer` 是另一个可协作的 FreedomRealm 实例。它只表示潜在协作对象，不代表默认信任。
 
 信任等级建议：
 

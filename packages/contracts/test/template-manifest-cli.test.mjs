@@ -13,7 +13,7 @@ function runTemplateValidator(templateDir) {
     encoding: "utf8",
     env: {
       ...process.env,
-      AI_HRMS_TEMPLATE_DIR: templateDir
+      FREEDOMREALM_TEMPLATE_DIR: templateDir
     },
     shell: false
   });

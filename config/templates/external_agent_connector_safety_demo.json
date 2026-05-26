@@ -3,7 +3,7 @@
   "templateVersion": "0.1.0",
   "displayName": "External Agent Connector Safety Demo",
   "runtimeMode": "Demo Mode",
-  "taskGoal": "Demonstrate how AI-HRMS can govern OpenClaw and Hermes Agent style runtimes as ExternalConnector profiles without launching real external processes.",
+  "taskGoal": "Demonstrate how FreedomRealm can govern OpenClaw and Hermes Agent style runtimes as ExternalConnector profiles without launching real external processes.",
   "workItemTitle": "Demo external agent connector safety",
   "agentActorId": "agent-demo-open-agent-bridge",
   "agentRole": "DemoOpenAgentBridge",
@@ -26,8 +26,8 @@
     {
       "toolName": "external_agent.mock_request",
       "description": "Create a bounded mock request for an external agent runtime profile without launching the real runtime.",
-      "inputSchemaRef": "schema://ai-hrms.external-agent.run-request.v1",
-      "outputSchemaRef": "schema://ai-hrms.external-agent.run-result.v1",
+      "inputSchemaRef": "schema://freedomrealm.external-agent.run-request.v1",
+      "outputSchemaRef": "schema://freedomrealm.external-agent.run-result.v1",
       "requiredPermissions": [
         "external-agent:request",
         "reports:create"

@@ -21,7 +21,7 @@
 
 | 端点 | 用途 |
 | --- | --- |
-| `GET /.well-known/ai-hrms-instance.json` | 公开实例发现元数据，不包含私有数据 |
+| `GET /.well-known/freedomrealm-instance.json` | 公开实例发现元数据，不包含私有数据 |
 | `GET /api/v1/federation/manifest` | 返回实例支持的协议版本、能力、schema 和限制 |
 | `POST /api/v1/federation/messages` | 接收跨实例消息 envelope |
 | `GET /api/v1/federation/messages/{messageId}/receipt` | 查询消息处理回执 |
@@ -37,7 +37,7 @@
 
 ```json
 {
-  "protocol": "ai-hrms-federation",
+  "protocol": "freedomrealm-federation",
   "supportedProtocolVersions": ["1.0"],
   "projectInstanceId": "uuid",
   "instanceDisplayName": "string",
@@ -73,7 +73,7 @@ Manifest 只能发布公开元数据。私有能力、内部任务、成员画�
 
 ```json
 {
-  "protocol": "ai-hrms-federation",
+  "protocol": "freedomrealm-federation",
   "protocolVersion": "1.0",
   "messageId": "uuid",
   "messageType": "capability.request.created",
@@ -220,7 +220,7 @@ v1 标准消息类型：
 
 ## 最小互操作测试
 
-任何声称兼容 AI-HRMS FederationProtocol 的实现，至少要通过：
+任何声称兼容 FreedomRealm FederationProtocol 的实现，至少要通过：
 
 1. Manifest 可读取，且不泄漏私有数据。
 2. 不支持的 protocolVersion 被明确拒绝。

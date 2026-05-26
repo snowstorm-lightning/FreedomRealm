@@ -48,13 +48,13 @@
 
 后续实现阶段，环境相关资源必须使用稳定前缀或标签：
 
-- 数据库：`ai_hrms_{env}` 或独立实例名称。
-- Temporal namespace：`ai-hrms-{env}`。
-- Keycloak realm：`ai-hrms-{env}`。
+- 数据库：`freedomrealm_{env}` 或独立实例名称。
+- Temporal namespace：`freedomrealm-{env}`。
+- Keycloak realm：`freedomrealm-{env}`。
 - LiteLLM Proxy deployment：`litellm-{env}`。
-- Langfuse project：`ai-hrms-{env}`。
-- 对象存储 bucket 或前缀：`ai-hrms-{env}/`。
-- Kubernetes namespace：`ai-hrms-{env}`。
+- Langfuse project：`freedomrealm-{env}`。
+- 对象存储 bucket 或前缀：`freedomrealm-{env}/`。
+- Kubernetes namespace：`freedomrealm-{env}`。
 - telemetry 标签：`env={dev|ci|staging|prod}`。
 
 资源名称不能只靠显示名称区分，必须在机器可读配置中携带环境标签。

@@ -4,8 +4,8 @@
   "provider": "hermes-agent",
   "mode": "mock",
   "supportedDirections": [
-    "ai_hrms_to_external_agent",
-    "external_agent_to_ai_hrms"
+    "freedomrealm_to_external_agent",
+    "external_agent_to_freedomrealm"
   ],
   "allowedEnvironments": [
     "dev",
@@ -38,7 +38,7 @@
     "mock"
   ],
   "extensions": {
-    "ai-hrms.external-agent": {
+    "freedomrealm.external-agent": {
       "upstream": "Hermes Agent persistent-memory skills runtime",
       "realExecutionDefault": "disabled",
       "mockOnly": true

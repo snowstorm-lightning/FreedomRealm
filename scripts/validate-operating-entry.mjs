@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import { validateProjectOperatingEntry } from "../packages/contracts/src/index.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const manifestPathInput = process.env.AI_HRMS_OPERATING_ENTRY_PATH ?? "config/project-operating-entry.json";
+const manifestPathInput = process.env.FREEDOMREALM_OPERATING_ENTRY_PATH ?? "config/project-operating-entry.json";
 
 function normalizeWorkspacePath(value) {
   const absolutePath = path.resolve(repoRoot, value);

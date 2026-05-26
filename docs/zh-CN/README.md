@@ -1,6 +1,6 @@
 # 中文文档库
 
-本目录是 AI-HRMS 的中文解释文档库，也是后续实现阶段的主要知识入口。AI-HRMS 已扩展为 AI 时代的人类与智能体资源管理系统，但传统 HRMS 能力继续保留。文档按“愿景 -> 业务 -> 架构 -> 流程 -> 治理 -> 社区 -> 执行 -> 演化”的顺序组织。
+本目录是 FreedomRealm 的中文解释文档库，也是后续实现阶段的主要知识入口。FreedomRealm 已扩展为 AI 时代的人类与智能体资源管理系统，但传统 HRMS 能力继续保留。文档按“愿景 -> 业务 -> 架构 -> 流程 -> 治理 -> 社区 -> 执行 -> 演化”的顺序组织。
 
 ## 核心文档
 
@@ -52,8 +52,11 @@
 - [adr/ADR-0007-governance-ai-brain.md](adr/ADR-0007-governance-ai-brain.md)：治理型 AI 中枢。
 - [adr/ADR-0008-federation-protocol-compatibility.md](adr/ADR-0008-federation-protocol-compatibility.md)：跨实例通信协议兼容性。
 - [adr/ADR-0010-core-control-plane-language-direction.md](adr/ADR-0010-core-control-plane-language-direction.md)：Go 控制面与 Rust 治理内核语言方向，修正 ADR-0009 中控制面默认 Node.js / NestJS 的部分。
-- [execution-plans/active/phase-0-5-ai-hrms-repositioning.md](execution-plans/active/phase-0-5-ai-hrms-repositioning.md)：Phase 0.5 定位与自适应 Demo 基础计划。
+- [execution-plans/completed/phase-0-doc-foundation.md](execution-plans/completed/phase-0-doc-foundation.md)：Phase 0 文档底座已归档执行计划。
+- [execution-plans/completed/phase-0-5-freedomrealm-repositioning.md](execution-plans/completed/phase-0-5-freedomrealm-repositioning.md)：Phase 0.5 定位与自适应 Demo 基础已归档执行计划。
 - [execution-plans/completed/phase-0-6-web-workbench-mvp.md](execution-plans/completed/phase-0-6-web-workbench-mvp.md)：Phase 0.6 Web Workbench MVP 已归档执行计划。
+- [execution-plans/completed/phase-1-environment-isolation-guard.md](execution-plans/completed/phase-1-environment-isolation-guard.md)：Phase 1 环境隔离守卫最小实现已归档执行计划。
+- [execution-plans/active/phase-1-go-control-plane-skeleton.md](execution-plans/active/phase-1-go-control-plane-skeleton.md)：Phase 1 Go 控制面 skeleton 待决计划。
 
 ## 文档维护规则
 
@@ -64,8 +67,8 @@
 - MVP 阶段优先使用文档教学和最小模板跑通闭环；复杂能力发现、自适应教学和关键词弹窗不得阻塞 Demo Mode。
 - 敏感数据不得以原文作为训练资源保留；脱敏后的训练资源必须绑定来源、用途、审批、审计、保留期和撤回路径。
 - 领域对象、接口形状和基础回归场景统一沉淀到 `business-blueprint.md`、`api-contracts.md`、`quality-gates.md`。
-- 修改 AI-HRMS 定义、治理、开源策略、传播机制、社区协议、GovernanceBrain、模型能力治理或自适应运行时，必须同步更新相关文档。
-- 不要把 AI-HRMS 限定为传统 HRMS；也不要把它改写成泛泛 agent framework。
+- 修改 FreedomRealm 定义、治理、开源策略、传播机制、社区协议、GovernanceBrain、模型能力治理或自适应运行时，必须同步更新相关文档。
+- 不要把 FreedomRealm 限定为传统 HRMS；也不要把它改写成泛泛 agent framework。
 - 不要让跨实例协作绕过本地审批、审计和数据分级。
 - 不要通过二次开发修改 FederationMessage 标准封套语义；自定义跨实例能力必须通过 CapabilityOffer、schema 和 namespaced extensions 扩展。
 - 不要让资源降级绕过安全治理、预算控制、审批和审计。

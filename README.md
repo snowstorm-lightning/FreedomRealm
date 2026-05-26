@@ -1,12 +1,12 @@
-# AI-HRMS
+# FreedomRealm
 
-AI-HRMS 是 AI 时代的人类与智能体资源管理系统。它把 `HumanActor`、`AgentActor`、`WorkItem`、`ToolContract`、`ApprovalGate`、`PolicyRule`、`Observation`、`LearningArtifact`、`ProjectInstance`、`GovernanceBrain` 和 `DomainWorkflow` 统一管理，让标准化工作可以在明确约束下由 AI 执行，由人类设定目标、定义边界、审批高风险动作、审查结果和承担最终责任。
+FreedomRealm 是 AI 时代的人类与智能体资源管理系统。它把 `HumanActor`、`AgentActor`、`WorkItem`、`ToolContract`、`ApprovalGate`、`PolicyRule`、`Observation`、`LearningArtifact`、`ProjectInstance`、`GovernanceBrain` 和 `DomainWorkflow` 统一管理，让标准化工作可以在明确约束下由 AI 执行，由人类设定目标、定义边界、审批高风险动作、审查结果和承担最终责任。
 
 ## AI 时代 HRMS 的定义
 
 AI 时代的 HRMS 不只管理传统员工、组织、考勤、档案、审批和协作内容。它还要管理人类参与者、AI 智能体、技能、工具、任务、审批、策略、预算、审计、评测、学习沉淀、模板、实例成员和实例间协作关系。
 
-AI-HRMS 面向个人、多人协作组织、社区、开源项目、小型工作室、合作社、企业内部团队和更复杂组织。当前项目仍然叫 AI-HRMS，本轮不处理正式更名，也不把项目改写成泛泛的 agent framework。
+FreedomRealm 面向个人、多人协作组织、社区、开源项目、小型工作室、合作社、企业内部团队和更复杂组织。项目原名 AI-HRMS；从当前基线起正式使用 FreedomRealm，不把项目改写成泛泛的 agent framework。
 
 ## 愿景
 
@@ -37,7 +37,7 @@ AI-HRMS 面向个人、多人协作组织、社区、开源项目、小型工作
 - `PolicyRule`：身份、预算、工具、审批、数据访问和发布策略。
 - `Observation`：运行日志、指标、trace、反馈、输出和失败样本。
 - `LearningArtifact`：可进入评测、审批、灰度和回滚流程的学习沉淀。
-- `ProjectInstance`：一个 AI-HRMS 运行实例，可由个人、团队、社区或企业内部团队运行。
+- `ProjectInstance`：一个 FreedomRealm 运行实例，可由个人、团队、社区或企业内部团队运行。
 - `GovernanceBrain`：ProjectInstance 内长期陪伴项目演化的治理型 AI 中枢，用于项目理解、智能分派、多人协调、模型能力治理和受控自我迭代；它不能替代人类 owner，也不能绕过审批、审计、预算和数据分级。
 - `ModelCapabilityProfile`：用于描述模型在推理、代码、长上下文、结构化输出、工具调用、安全、成本和延迟等方面能力的评测画像，是 `ModelRoute` 选择和降级的依据。
 - `DomainWorkflow`：面向 HR、开源维护、社区运营、项目协作等领域的可复用工作流。
@@ -104,7 +104,7 @@ pnpm web:demo
 知识导航与异议闭环可单独运行：
 
 ```text
-pnpm knowledge:demo -- --query "AI-HRMS 下一步应该做什么？"
+pnpm knowledge:demo -- --query "FreedomRealm 下一步应该做什么？"
 ```
 
 该命令使用本地 deterministic mock semantic search，不需要 embedding、模型 key 或外部连接器，会生成 `AnswerCard`、`DocChallengeDraft` 和引用二者的 `ExecutionReportCard`。
@@ -123,7 +123,7 @@ pnpm knowledge:demo -- --query "AI-HRMS 下一步应该做什么？"
 
 ## 个人与社区优先
 
-AI-HRMS 优先服务个人、自由职业者、开源维护者、小团队、社区组织和多人协作体。商业公司可以参与和使用，但项目方向不能被商业公司重定向。
+FreedomRealm 优先服务个人、自由职业者、开源维护者、小团队、社区组织和多人协作体。商业公司可以参与和使用，但项目方向不能被商业公司重定向。
 
 每类贡献都应可署名、可追踪、可复用，包括 code、docs、templates、eval samples、tool contracts、failure reports、translations、design discussions、review notes 和 real-world usage reports。
 
@@ -144,7 +144,7 @@ AI-HRMS 优先服务个人、自由职业者、开源维护者、小团队、社
 
 ## 传播与模板生态
 
-AI-HRMS 的传播重点是让用户快速理解、试用、分享和贡献。可复用资产包括：
+FreedomRealm 的传播重点是让用户快速理解、试用、分享和贡献。可复用资产包括：
 
 - `Workflow Template`
 - `Skill Recipe`
@@ -157,7 +157,7 @@ AI-HRMS 的传播重点是让用户快速理解、试用、分享和贡献。可
 
 ## 开源与反商业捕获
 
-AI-HRMS 的反商业捕获策略是组合式的，而不是承诺许可证可以绝对阻止剽窃：
+FreedomRealm 的反商业捕获策略是组合式的，而不是承诺许可证可以绝对阻止剽窃：
 
 - 许可证候选包括 `AGPL-3.0`、`Apache-2.0`、`MIT`、`MPL-2.0` 和非标准 source-available 方案。
 - 推荐初稿是优先评估 `AGPL-3.0 + 商标规则 + 开放协议 + 社区治理 + Commons 资产治理`。
@@ -185,7 +185,7 @@ AI-HRMS 的反商业捕获策略是组合式的，而不是承诺许可证可以
 
 ## 路线图摘要
 
-- `Phase 0.5`：AI-HRMS repositioning and adaptive demo foundation。
+- `Phase 0.5`：FreedomRealm repositioning and adaptive demo foundation。
 - `Phase 0.6`：Template and report-card growth loop。
 - `Phase 0.7`：Community contribution foundation。
-- `Phase 1`：AI-HRMS Core 基础能力，保留传统 HRMS 能力，并最小实现 `AgentActor`、`WorkItem`、`ApprovalGate`、`GovernanceBrain`、`ModelCapabilityProfile`、`AdaptiveRuntimePolicy`、`ExecutionReportCard` 和 `ProjectInstance`。
+- `Phase 1`：FreedomRealm Core 基础能力，保留传统 HRMS 能力，并最小实现 `AgentActor`、`WorkItem`、`ApprovalGate`、`GovernanceBrain`、`ModelCapabilityProfile`、`AdaptiveRuntimePolicy`、`ExecutionReportCard` 和 `ProjectInstance`。

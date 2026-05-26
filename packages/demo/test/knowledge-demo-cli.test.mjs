@@ -27,7 +27,7 @@ test("Knowledge Demo CLI generates AnswerCard, DocChallengeDraft, and report car
     [
       "scripts/run-knowledge-demo.mjs",
       "--query",
-      "AI-HRMS 下一步应该做什么？",
+      "FreedomRealm 下一步应该做什么？",
       "--out",
       outDir,
       "--input",
@@ -60,7 +60,7 @@ test("Knowledge Demo CLI generates AnswerCard, DocChallengeDraft, and report car
   assert.equal(reportCard.templateId, "knowledge_navigation_and_challenge");
   assert.equal(reportCard.outputRefs.some((outputRef) => outputRef.kind === "AnswerCard"), true);
   assert.equal(reportCard.outputRefs.some((outputRef) => outputRef.kind === "DocChallengeDraft"), true);
-  assert.equal(reportCard.extensions["ai-hrms.knowledge"].searchMode, "local-mock-semantic");
+  assert.equal(reportCard.extensions["freedomrealm.knowledge"].searchMode, "local-mock-semantic");
 });
 
 test("Knowledge Demo CLI falls back to mock when live model is not enabled", async () => {
@@ -72,7 +72,7 @@ test("Knowledge Demo CLI falls back to mock when live model is not enabled", asy
       "--model",
       "live",
       "--query",
-      "AI-HRMS 如何保持治理边界？",
+      "FreedomRealm 如何保持治理边界？",
       "--out",
       outDir,
       "--input",
@@ -84,7 +84,7 @@ test("Knowledge Demo CLI falls back to mock when live model is not enabled", asy
       shell: false,
       env: {
         ...process.env,
-        AI_HRMS_LIVE_MODEL_ENABLED: "false"
+        FREEDOMREALM_LIVE_MODEL_ENABLED: "false"
       }
     }
   );
@@ -93,11 +93,11 @@ test("Knowledge Demo CLI falls back to mock when live model is not enabled", asy
   assert.match(result.stdout, /\[knowledge\] model route: mock \(mock\)/u);
   const reportPath = parsePath(result.stdout, "ExecutionReportCard");
   const reportCard = JSON.parse(await readFile(path.join(repoRoot, reportPath), "utf8"));
-  const modelRoute = reportCard.extensions["ai-hrms.demo"].modelRoute;
+  const modelRoute = reportCard.extensions["freedomrealm.demo"].modelRoute;
   assert.equal(modelRoute.requested, "live");
   assert.equal(modelRoute.actual, "mock");
   assert.equal(modelRoute.mock, true);
-  assert.equal(reportCard.extensions["ai-hrms.knowledge"].searchMode, "local-mock-semantic");
+  assert.equal(reportCard.extensions["freedomrealm.knowledge"].searchMode, "local-mock-semantic");
 });
 
 test("Knowledge Demo CLI help documents live fallback", () => {
@@ -109,7 +109,7 @@ test("Knowledge Demo CLI help documents live fallback", () => {
 
   assert.equal(result.status, 0, result.stderr);
   assert.match(result.stdout, /local-mock-semantic/u);
-  assert.match(result.stdout, /falls back to mock unless AI_HRMS_LIVE_MODEL_ENABLED=true/u);
+  assert.match(result.stdout, /falls back to mock unless FREEDOMREALM_LIVE_MODEL_ENABLED=true/u);
 });
 
 test("Knowledge Demo CLI rejects invalid option values", () => {

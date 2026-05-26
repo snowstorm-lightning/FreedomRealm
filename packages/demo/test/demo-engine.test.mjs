@@ -21,9 +21,9 @@ test("creates repo understanding report cards through the shared demo engine", a
   const validation = validateExecutionReportCard(execution.reportCard);
   assert.equal(validation.ok, true, JSON.stringify(validation.errors, null, 2));
   assert.equal(execution.reportCard.templateId, "repo_understanding_and_work_plan");
-  assert.equal(execution.reportCard.extensions["ai-hrms.demo"].modelRoute.mock, true);
+  assert.equal(execution.reportCard.extensions["freedomrealm.demo"].modelRoute.mock, true);
   assert.equal(execution.reportCard.approvalStatus, "requires_human_review");
-  const workPlan = execution.reportCard.extensions["ai-hrms.workPlan"];
+  const workPlan = execution.reportCard.extensions["freedomrealm.workPlan"];
   assert.equal(workPlan.noWriteSideEffects, true);
   assert.equal(workPlan.reviewRequired, true);
   assert.equal(workPlan.candidateWorkItems.length, 2);
@@ -58,8 +58,8 @@ test("surfaces template evaluation samples in demo report-card extensions", asyn
           {
             toolName: "template_eval.read_local_files",
             description: "Read local files for a template evaluation samples demo.",
-            inputSchemaRef: "schema://ai-hrms.demo.template-eval.read.input.v1",
-            outputSchemaRef: "schema://ai-hrms.demo.template-eval.read.output.v1",
+            inputSchemaRef: "schema://freedomrealm.demo.template-eval.read.input.v1",
+            outputSchemaRef: "schema://freedomrealm.demo.template-eval.read.output.v1",
             requiredPermissions: ["repo:read"],
             riskLevel: "low",
             allowedActorTypes: ["AgentActor"],
@@ -125,7 +125,7 @@ test("surfaces template evaluation samples in demo report-card extensions", asyn
 
   const validation = validateExecutionReportCard(execution.reportCard);
   assert.equal(validation.ok, true, JSON.stringify(validation.errors, null, 2));
-  const templateEvaluationSamples = execution.reportCard.extensions["ai-hrms.demo"].templateEvaluationSamples;
+  const templateEvaluationSamples = execution.reportCard.extensions["freedomrealm.demo"].templateEvaluationSamples;
   assert.equal(templateEvaluationSamples.source, "template.evaluationSamples");
   assert.equal(templateEvaluationSamples.status, "candidate");
   assert.equal(templateEvaluationSamples.reviewRequired, true);
@@ -201,7 +201,7 @@ test("creates external agent connector safety report cards without real external
   const validation = validateExecutionReportCard(execution.reportCard);
   assert.equal(validation.ok, true, JSON.stringify(validation.errors, null, 2));
   assert.equal(execution.reportCard.templateId, "external_agent_connector_safety_demo");
-  const externalAgent = execution.reportCard.extensions["ai-hrms.externalAgent"];
+  const externalAgent = execution.reportCard.extensions["freedomrealm.externalAgent"];
   assert.equal(externalAgent.mockOnly, true);
   assert.equal(externalAgent.realExecution, false);
   assert.equal(externalAgent.connectorCount, 2);
@@ -226,7 +226,7 @@ test("self-review generates a report card without modifying tracked docs", async
   assert.equal(execution.reportCard.templateId, "project_self_review_and_decay_prevention");
   assert.equal(validateExecutionReportCard(execution.reportCard).ok, true);
   assert.equal(execution.reportCard.status, "needs_review");
-  const selfReview = execution.reportCard.extensions["ai-hrms.selfReview"];
+  const selfReview = execution.reportCard.extensions["freedomrealm.selfReview"];
   assert.equal(selfReview.noWriteSideEffects, true);
   assert.equal(selfReview.reviewRequired, true);
   assert.equal(selfReview.promotionPolicy, "human_owner_review_required");
@@ -269,7 +269,7 @@ test("renders delivery-level HTML from valid JSON-first report cards", async () 
     title: "Delivery <Report>"
   });
 
-  assert.match(html, /AI-HRMS Delivery|Delivery &lt;Report&gt;/u);
+  assert.match(html, /FreedomRealm Delivery|Delivery &lt;Report&gt;/u);
   assert.match(html, /sorted newest first/u);
   assert.equal(html.indexOf("Newer delivery card") < html.indexOf("Older delivery card"), true);
   assert.match(html, /JSON ExecutionReportCard/u);

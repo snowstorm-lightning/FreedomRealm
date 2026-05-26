@@ -15,7 +15,7 @@ export const templateIds = [
 ];
 
 export const knowledgeQueries = [
-  "AI-HRMS 下一步应该做什么？",
+  "FreedomRealm 下一步应该做什么？",
   "用户提问时如何保证答案可信？",
   "大型项目什么时候应该拆成多个 WorkShard？"
 ];
@@ -37,7 +37,7 @@ const entryModes = [
       "无需固定身份，从兴趣、材料、约束和时间中选择一个小凭证。 / Start without a fixed identity. Use interests, materials, constraints, and time to choose a small proof.",
     primaryTemplateId: "knowledge_navigation_and_challenge",
     action: "询问维护文档 / Ask maintained docs",
-    command: "pnpm knowledge:demo -- --query \"AI-HRMS 下一步应该做什么？\""
+    command: "pnpm knowledge:demo -- --query \"FreedomRealm 下一步应该做什么？\""
   },
   {
     id: "demo",
@@ -96,7 +96,7 @@ const reviewPrompts = [
     label: "定位 / Positioning",
     prompt:
       "30 秒内是否能看出它不是传统 HRMS，也不是普通 agent framework？ / In 30 seconds, is it clear this is neither traditional HRMS nor a generic agent framework?",
-    focus: "FreedomRealm / AI-HRMS"
+    focus: "FreedomRealm"
   },
   {
     label: "治理 / Governance",
@@ -122,7 +122,7 @@ const feedbackTargets = [
   {
     label: "定位清晰 / Positioning clarity",
     cue: "30 秒内能否看懂项目不是传统 HRMS，也不是普通 agent framework？ / Can the reviewer tell in 30 seconds that this is not traditional HRMS or a generic agent framework?",
-    anchor: "FreedomRealm / AI-HRMS"
+    anchor: "FreedomRealm"
   },
   {
     label: "治理边界 / Governance boundary",
@@ -321,8 +321,8 @@ function toWebHref(repoRelativePath) {
 
 function toWorkbenchCard(execution, index) {
   const { template, reportCard, output } = execution;
-  const demo = reportCard.extensions["ai-hrms.demo"];
-  const knowledge = reportCard.extensions["ai-hrms.knowledge"];
+  const demo = reportCard.extensions["freedomrealm.demo"];
+  const knowledge = reportCard.extensions["freedomrealm.knowledge"];
   return {
     index,
     reportCardId: reportCard.reportCardId,
@@ -365,8 +365,8 @@ function toWorkbenchCard(execution, index) {
     executionTrace: demo.executionTrace,
     failureSample: reportCard.failure.sample,
     mockOutputNotice: demo.mockOutputNotice,
-    workPlan: reportCard.extensions["ai-hrms.workPlan"] ?? null,
-    selfReview: reportCard.extensions["ai-hrms.selfReview"] ?? null,
+    workPlan: reportCard.extensions["freedomrealm.workPlan"] ?? null,
+    selfReview: reportCard.extensions["freedomrealm.selfReview"] ?? null,
     answerCard: knowledge?.answerCard ?? null,
     docChallengeDraft: knowledge?.docChallengeDraft ?? null,
     answerCardHref: output.answerCardRelativePath ? toWebHref(output.answerCardRelativePath) : null,
@@ -377,7 +377,7 @@ function toWorkbenchCard(execution, index) {
 }
 
 function toKnowledgeExample(execution, index) {
-  const knowledge = execution.reportCard.extensions["ai-hrms.knowledge"];
+  const knowledge = execution.reportCard.extensions["freedomrealm.knowledge"];
   return {
     index,
     query: knowledge.query,

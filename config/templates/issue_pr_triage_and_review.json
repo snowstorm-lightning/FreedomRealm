@@ -22,8 +22,8 @@
     {
       "toolName": "issue_pr.read_pasted_context",
       "description": "Read pasted issue or PR context from local demo inputs.",
-      "inputSchemaRef": "schema://ai-hrms.demo.issue_pr.read_pasted_context.input.v1",
-      "outputSchemaRef": "schema://ai-hrms.demo.issue_pr.read_pasted_context.output.v1",
+      "inputSchemaRef": "schema://freedomrealm.demo.issue_pr.read_pasted_context.input.v1",
+      "outputSchemaRef": "schema://freedomrealm.demo.issue_pr.read_pasted_context.output.v1",
       "requiredPermissions": [
         "issue_pr:read"
       ],
@@ -50,8 +50,8 @@
     {
       "toolName": "issue_pr.propose_triage",
       "description": "Generate triage and review recommendations without posting comments, changing labels, or merging code.",
-      "inputSchemaRef": "schema://ai-hrms.demo.issue_pr.propose_triage.input.v1",
-      "outputSchemaRef": "schema://ai-hrms.demo.issue_pr.propose_triage.output.v1",
+      "inputSchemaRef": "schema://freedomrealm.demo.issue_pr.propose_triage.input.v1",
+      "outputSchemaRef": "schema://freedomrealm.demo.issue_pr.propose_triage.output.v1",
       "requiredPermissions": [
         "reports:create"
       ],

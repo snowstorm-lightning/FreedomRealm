@@ -75,7 +75,7 @@ function renderOperatingSnapshot() {
   const ownerDecisions = (state.activePlans || []).reduce(function (count, plan) {
     return count + Number(plan.humanDecisionCount || 0);
   }, 0);
-  const activeBacklog = state.operatingEntry.extensions?.["ai-hrms.decayPreventionBacklog"]?.items?.find(function (item) {
+  const activeBacklog = state.operatingEntry.extensions?.["freedomrealm.decayPreventionBacklog"]?.items?.find(function (item) {
     return item.status === "active";
   });
 
@@ -226,7 +226,7 @@ function compactJoin(items, fallback) {
 }
 
 function renderDecayPreventionBacklog(entry) {
-  const backlog = entry.extensions?.["ai-hrms.decayPreventionBacklog"];
+  const backlog = entry.extensions?.["freedomrealm.decayPreventionBacklog"];
   if (!backlog || !Array.isArray(backlog.items)) {
     return '<div class="section-heading">' +
       '<p class="eyebrow">衰减预防 / Decay prevention</p>' +
@@ -306,7 +306,7 @@ function renderOwnerDecisionQueue() {
   const plansWithDecisions = (state.activePlans || []).filter(function (plan) {
     return plan.humanDecisionCount > 0;
   });
-  const decayBacklog = state.operatingEntry.extensions?.["ai-hrms.decayPreventionBacklog"];
+  const decayBacklog = state.operatingEntry.extensions?.["freedomrealm.decayPreventionBacklog"];
   const activeBacklogItem = decayBacklog?.items?.find(function (item) {
     return item.status === "active";
   });

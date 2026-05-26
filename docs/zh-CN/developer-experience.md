@@ -2,7 +2,7 @@
 
 ## 目标
 
-开发体验的目标是让个人、社区贡献者和企业内部开发者都能快速进入 AI-HRMS，不被宿主机差异、脚本差异、目录混乱或服务依赖复杂度阻塞。
+开发体验的目标是让个人、社区贡献者和企业内部开发者都能快速进入 FreedomRealm，不被宿主机差异、脚本差异、目录混乱或服务依赖复杂度阻塞。
 
 本项目不要求所有开发者使用同一种操作系统。Windows、Linux、macOS 和 WSL 都是一等开发环境。项目应优先保证命令、脚本、路径和依赖管理是跨平台的；只有复杂服务依赖需要用 Docker、Compose 或 devcontainer 兜底。
 
@@ -44,7 +44,7 @@ pnpm run doctor
 ```text
 pnpm test
 pnpm demo
-pnpm knowledge:demo -- --query "AI-HRMS 下一步应该做什么？"
+pnpm knowledge:demo -- --query "FreedomRealm 下一步应该做什么？"
 pnpm self-review
 pnpm report:html
 pnpm validate:operating-entry

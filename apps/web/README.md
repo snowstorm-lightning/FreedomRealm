@@ -1,4 +1,4 @@
-# AI-HRMS Project Learning System and Web Workbench
+# FreedomRealm Project Learning System and Web Workbench
 
 This app is the Web-first onboarding and learning surface for Demo Mode.
 
@@ -73,4 +73,4 @@ The build also renders three built-in `Ask maintained docs` examples. Each examp
 
 `external_agent_connector_safety_demo` displays OpenClaw / Hermes Agent style runtimes as mock `ExternalConnector` profiles. It does not launch real external CLIs, read messaging accounts, load skills, access memory, call MCP servers, or read secrets.
 
-`project_self_review_and_decay_prevention` displays self-review findings and candidate WorkItems in `ai-hrms.selfReview`. It does not create issues, PRs, assignments, or repository changes.
+`project_self_review_and_decay_prevention` displays self-review findings and candidate WorkItems in `freedomrealm.selfReview`. It does not create issues, PRs, assignments, or repository changes.

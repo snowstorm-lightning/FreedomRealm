@@ -37,7 +37,7 @@ test("Demo Mode CLI generates a valid report card with reusable asset candidates
     "--input",
     "docs/zh-CN/runbooks/demo-mode.md"
   ], {
-    AI_HRMS_LIVE_MODEL_ENABLED: "false"
+    FREEDOMREALM_LIVE_MODEL_ENABLED: "false"
   });
 
   assert.equal(result.status, 0, result.stderr);
@@ -46,7 +46,7 @@ test("Demo Mode CLI generates a valid report card with reusable asset candidates
   const validation = validateExecutionReportCard(card);
   assert.equal(validation.ok, true, JSON.stringify(validation.errors, null, 2));
 
-  const demo = card.extensions["ai-hrms.demo"];
+  const demo = card.extensions["freedomrealm.demo"];
   assert.equal(demo.modelRoute.requested, "live");
   assert.equal(demo.modelRoute.actual, "mock");
   assert.equal(demo.modelRoute.mock, true);
@@ -68,7 +68,7 @@ test("Demo Mode CLI help documents live fallback", () => {
 
   assert.equal(result.status, 0, result.stderr);
   assert.match(result.stdout, /default model route is mock/u);
-  assert.match(result.stdout, /falls back to mock unless AI_HRMS_LIVE_MODEL_ENABLED=true/u);
+  assert.match(result.stdout, /falls back to mock unless FREEDOMREALM_LIVE_MODEL_ENABLED=true/u);
 });
 
 test("Demo Mode CLI rejects missing option values", () => {

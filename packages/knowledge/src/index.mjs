@@ -8,11 +8,11 @@ import {
   validateDocChallengeDraft
 } from "../../contracts/src/index.mjs";
 
-export const DEFAULT_KNOWLEDGE_QUERY = "AI-HRMS 下一步应该做什么？";
+export const DEFAULT_KNOWLEDGE_QUERY = "FreedomRealm 下一步应该做什么？";
 export const KNOWLEDGE_SEARCH_MODE = "local-mock-semantic";
 
 const KNOWLEDGE_VOCABULARY = Object.freeze({
-  "ai-hrms": ["ai hrms", "hrms", "人类与智能体资源管理系统"],
+  "freedomrealm": ["ai hrms", "hrms", "人类与智能体资源管理系统"],
   "mvp": ["最小可行产品", "最小闭环", "demo mode", "workbench"],
   "demo": ["demo mode", "演示", "mock", "样例"],
   "web": ["workbench", "web-first", "onboarding", "页面"],
@@ -370,7 +370,7 @@ export function buildAnswerCard({
     redactionStatus,
     sharePermission,
     extensions: {
-      "ai-hrms.knowledge": {
+      "freedomrealm.knowledge": {
         searchMode: KNOWLEDGE_SEARCH_MODE,
         sourceHitCount: hits.length,
         mock: true

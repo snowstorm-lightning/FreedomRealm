@@ -1,6 +1,6 @@
 # Architecture Summary
 
-AI-HRMS 采用“Core Control Plane + GovernanceBrain + Agent Runtime + Workflow Backbone + Adaptive Runtime + Federation/Commons 扩展层”的结构。它保留传统 HRMS 的组织、账号、员工档案、考勤、权限和协作内容能力，同时扩展为 AI 时代的人类与智能体资源管理系统。
+FreedomRealm 采用“Core Control Plane + GovernanceBrain + Agent Runtime + Workflow Backbone + Adaptive Runtime + Federation/Commons 扩展层”的结构。它保留传统 HRMS 的组织、账号、员工档案、考勤、权限和协作内容能力，同时扩展为 AI 时代的人类与智能体资源管理系统。
 
 ## Why This Shape
 
@@ -14,7 +14,7 @@ AI-HRMS 采用“Core Control Plane + GovernanceBrain + Agent Runtime + Workflow
 ## Core Components
 
 - Web 控制台：Next.js 16.2 + React 19 + TypeScript 6.0
-- AI-HRMS Core Control Plane：长期生产方向采用 Go 服务主干，承载事实、权限、审批、审计、ProjectInstance、WorkItem、ReportCard 和 Federation Gateway；当前 Node.js / pnpm 仍用于 Web、Demo 和仓库脚本
+- FreedomRealm Core Control Plane：长期生产方向采用 Go 服务主干，承载事实、权限、审批、审计、ProjectInstance、WorkItem、ReportCard 和 Federation Gateway；当前 Node.js / pnpm 仍用于 Web、Demo 和仓库脚本
 - Policy / Contract / Protocol Kernel：采用 Rust，用于 `ToolContract`、`PolicyRule`、`DataClassification`、`FederationMessage` 和 `ExecutionReportCard` 等高治理契约校验
 - Agent Runtime：Python 可用于 LangGraph、AI adapter、evals 和模型实验，但不默认拥有核心事实写入权
 - Workflow Backbone：Temporal

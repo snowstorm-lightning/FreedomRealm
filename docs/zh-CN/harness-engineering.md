@@ -54,7 +54,7 @@
 
 ### 9. 大型项目按 WorkShard 协作
 
-当项目超过单个 agent 的稳定上下文、注意力和验证能力时，AI-HRMS 应把项目拆成多个 `WorkShard`，由不同 `AgentActor` 或 `HumanActor` 在明确边界内处理。这里借鉴操作系统思想：`WorkItem` 类似进程，`ToolContract` 类似受控系统调用，`ProjectInstance` 类似命名空间，`Adaptive Task Scheduler` 类似调度器，`ApprovalGate` 类似特权边界，`Observation` 类似运行日志和审计 journal。
+当项目超过单个 agent 的稳定上下文、注意力和验证能力时，FreedomRealm 应把项目拆成多个 `WorkShard`，由不同 `AgentActor` 或 `HumanActor` 在明确边界内处理。这里借鉴操作系统思想：`WorkItem` 类似进程，`ToolContract` 类似受控系统调用，`ProjectInstance` 类似命名空间，`Adaptive Task Scheduler` 类似调度器，`ApprovalGate` 类似特权边界，`Observation` 类似运行日志和审计 journal。
 
 多 agent 协作不应靠“大家都看完整仓库”来维持秩序，而应靠以下机制：
 

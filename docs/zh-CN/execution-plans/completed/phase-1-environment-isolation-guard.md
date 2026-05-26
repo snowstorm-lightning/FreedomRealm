@@ -1,5 +1,14 @@
 # Phase 1: 环境隔离守卫最小实现计划
 
+## 归档记录
+
+- 完成日期：2026-05-19。
+- 验收依据：本轮 human owner 批准清理 active execution plans；归档前执行 `pnpm check`，覆盖 workspace、环境样例、运行入口、模板 manifest 和 Node 内置测试。
+- 实际交付物：`packages/contracts`、`packages/policy`、环境样例、环境配置校验、ToolContract 策略、外部 agent mock connector 策略、仓库级 `pnpm check` / `pnpm run doctor` / `pnpm validate:workspace` / `pnpm validate:env:all` 和 Linux / Windows CI 检查。
+- 与原计划偏差：实际还保留了不接入生产控制面的 Rust policy kernel skeleton，用于验证术语、风险和审批边界；它不启动生产服务，不访问真实 connector、secret、数据库或模型供应商 key。
+- 未解决风险：首次真实 Go 控制面、数据库、Temporal、LiteLLM、Keycloak、Docker/Compose/devcontainer 或生产模型网关仍需要独立执行计划、审批、审计和回滚设计。
+- 后续事项：Phase 1 服务初始化继续以 [../README.md](../README.md) 中保留的 Go 控制面 skeleton 计划为入口。
+
 ## 背景和问题陈述
 
 仓库已完成 Phase 0 文档底座，但进入 Phase 1 前需要先把可机械检查的环境隔离规则编码化，避免后续控制面、运行面和模型网关实现阶段只依赖人工阅读文档。

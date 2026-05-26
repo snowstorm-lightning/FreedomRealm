@@ -76,7 +76,7 @@
 - `conflictRules.defaultWriteSetPolicy` 是否保持 `non-overlapping`。
 - `conflictRules.rules` 是否声明 subagent 不得自行扩大 `writeSet`、冲突时等待或缩小范围、以及无法裁决时回到 human owner。
 - `continuationRules.allowStopWhen` 是否包含 `ApprovalGate` 和 `dataClassification` 触发条件。
-- `extensions["ai-hrms.validatedHardening"]` 如存在，是否为每条记录保留 `commitRef`、`scope`、`writeSet` 和 `verificationCommands`，并通过 `validateProjectOperatingEntry` 机械校验。
+- `extensions["freedomrealm.validatedHardening"]` 如存在，是否为每条记录保留 `commitRef`、`scope`、`writeSet` 和 `verificationCommands`，并通过 `validateProjectOperatingEntry` 机械校验。
 - Web Workbench 是否读取同一 manifest，而不是复制一份任务清单。
 - `pnpm validate:operating-entry` 和 `pnpm check` 是否通过。
 
@@ -167,7 +167,7 @@
 
 任何进入 MVP 的能力必须回答：
 
-- 是否能帮助新用户在 30 秒内理解 AI-HRMS 的差异化定位。
+- 是否能帮助新用户在 30 秒内理解 FreedomRealm 的差异化定位。
 - 是否能帮助新用户在 5 到 10 分钟内跑通 Demo Mode。
 - 是否有 document-first 的学习材料，而不是依赖口头解释。
 - 是否可以使用 mock model、mock/stub 工具或用户自带 API key 跑通。
@@ -183,7 +183,7 @@
 
 MVP 不再只以“命令能跑通”为完成标准。进入 Phase 0.6 验收时，还必须提供以下证据：
 
-- `understandingEvidence`：首屏、README 或 Web Workbench 能在 30 秒内表达 AI-HRMS / FreedomRealm 定位和治理链路。
+- `understandingEvidence`：首屏、README 或 Web Workbench 能在 30 秒内表达 FreedomRealm 定位和治理链路。
 - `runnableEvidence`：`pnpm demo`、`pnpm web:demo`、`pnpm check` 在 mock mode 下通过，不依赖 live model、真实连接器、secret 或生产数据。
 - `workProofEvidence`：至少一个 `ExecutionReportCard` JSON 可被打开、复盘、渲染为 Markdown/Web，并包含候选 nextActions。
 - `workPlanEvidence`：`repo_understanding_and_work_plan` 输出候选 `WorkItem`、建议 `WorkShard`、风险、验证命令和来源引用，且全部是 review material。
@@ -300,13 +300,13 @@ MVP 不再只以“命令能跑通”为完成标准。进入 Phase 0.6 验收�
 涉及项目自我审查、腐烂预防、治理复盘或自动发现改进点的能力必须回答：
 
 - 是否只生成发现、风险、候选 WorkItem 和报告卡，不自动修改文档、代码、issue、PR 或配置。
-- 候选 WorkItem 是否写入 `extensions["ai-hrms.selfReview"].candidateWorkItems`，并包含来源、owner、风险、`readSet`、`writeSet`、验收标准和验证命令。
+- 候选 WorkItem 是否写入 `extensions["freedomrealm.selfReview"].candidateWorkItems`，并包含来源、owner、风险、`readSet`、`writeSet`、验收标准和验证命令。
 - 是否引用维护文档、模板、契约、测试或 runbook 作为来源，不把模型输出当作正式事实。
 - 是否检查文档与实现漂移、术语不一致、范围膨胀、缺失测试、缺失审批、缺失审计和过期 runbook。
 - 是否把失败样本和 `needs_review` 状态保留下来，而不是隐藏治理摩擦。
 - 是否默认输出 JSON-first `ExecutionReportCard` 和 Markdown render。
 - 是否在整体交付需要可视化时才生成 HTML 汇总报告，且 HTML 只能从有效 JSON report cards 渲染。
-- 人工复核后的衰减预防 backlog 是否只写入 `project-operating-entry.v1` 的 namespaced extension，例如 `extensions["ai-hrms.decayPreventionBacklog"]`。
+- 人工复核后的衰减预防 backlog 是否只写入 `project-operating-entry.v1` 的 namespaced extension，例如 `extensions["freedomrealm.decayPreventionBacklog"]`。
 - backlog item 是否保留 `candidateWorkItemId`、正式任务 id、状态、owner、风险、source finding / recommendation ids、`readSet`、`writeSet`、验证命令、人工批准引用和实现引用。
 - backlog 是否明确禁止自动创建 issue / PR、公开资产、成员义务或任何绕过 `ApprovalGate` 的写入。
 
@@ -417,8 +417,8 @@ MVP 不再只以“命令能跑通”为完成标准。进入 Phase 0.6 验收�
 - 不为尚未实现的服务创建空目录；未来目标结构先沉淀到 developer-experience 文档。
 - 正式 API 契约、术语和治理规则只以当前蓝图为准。
 - 范围外能力已经在业务蓝图和路线图中明确约束。
-- AI-HRMS 不被改写成泛泛 agent framework。
-- 本轮不处理正式更名。
+- FreedomRealm 不被改写成泛泛 agent framework。
+- 项目正式更名已经由 ADR-0011 记录；后续命名变更仍必须新增 ADR 并同步更新文档、契约、测试和运行入口。
 
 ## 演化安全门禁
 

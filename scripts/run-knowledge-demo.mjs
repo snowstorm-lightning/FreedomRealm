@@ -56,7 +56,7 @@ function printHelp() {
 
 Knowledge Demo writes JSON AnswerCard, DocChallengeDraft, and ExecutionReportCard outputs.
 The default search mode is local-mock-semantic. It does not need embeddings, model keys, external connectors, or real HR data.
-The live route is optional and falls back to mock unless AI_HRMS_LIVE_MODEL_ENABLED=true.`);
+The live route is optional and falls back to mock unless FREEDOMREALM_LIVE_MODEL_ENABLED=true.`);
 }
 
 async function main() {
@@ -74,8 +74,8 @@ async function main() {
     outputDir: options.out
   });
 
-  const knowledge = execution.reportCard.extensions["ai-hrms.knowledge"];
-  const modelRoute = execution.reportCard.extensions["ai-hrms.demo"].modelRoute;
+  const knowledge = execution.reportCard.extensions["freedomrealm.knowledge"];
+  const modelRoute = execution.reportCard.extensions["freedomrealm.demo"].modelRoute;
   console.log("[knowledge] ok");
   console.log(`[knowledge] query: ${knowledge.query}`);
   console.log(`[knowledge] AnswerCard: ${execution.output.answerCardRelativePath}`);

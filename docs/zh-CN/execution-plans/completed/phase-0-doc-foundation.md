@@ -1,8 +1,17 @@
 # Phase 0: 文档底座建设计划
 
+## 归档记录
+
+- 完成日期：2026-05-19。
+- 验收依据：本轮 human owner 批准清理 active execution plans；归档前执行 `pnpm check`，并确认根入口、中文知识库、ADR、执行计划索引和评测基线均已存在。
+- 实际交付物：`README.md`、`AGENTS.md`、`ARCHITECTURE.md`、`docs/zh-CN/` 专题文档、ADR 索引、执行计划索引和评测基线。
+- 与原计划偏差：原计划没有显式 `## 状态` 段，长期保留在 `active/` 属于状态台账遗留；本阶段没有删除旧目录、没有编写生产业务代码，符合非目标。
+- 未解决风险：后续实现阶段仍必须继续同步文档、ADR、质量门禁和接口契约，避免实现与文档漂移。
+- 后续事项：后续复杂工作继续以 [../README.md](../README.md) 的 active 计划和 [../../project-operating-entry.md](../../project-operating-entry.md) 的当前任务清单为入口。
+
 ## 目标
 
-把 AI-HRMS 的仓库从“旧玩具项目目录”转成“新 agent-first 系统的文档真相来源”。
+把 FreedomRealm 的仓库从“旧玩具项目目录”转成“新 agent-first 系统的文档真相来源”。
 
 ## 范围
 

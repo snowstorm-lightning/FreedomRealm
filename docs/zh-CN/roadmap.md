@@ -14,7 +14,7 @@
 - 质量门禁能约束后续实现，不只描述愿景。
 - 环境隔离和安全治理已作为正式发布约束进入文档索引。
 
-## Phase 0.5: AI-HRMS repositioning and adaptive demo foundation
+## Phase 0.5: FreedomRealm repositioning and adaptive demo foundation
 
 - 扩展 AI 时代 HRMS 定义。
 - 定义个人与社区优先原则。
@@ -31,7 +31,7 @@
 
 退出标准：
 
-- README 首屏能在 30 秒内解释 AI-HRMS 是什么、AI 时代 HRMS 管理什么、个人和多人如何使用、AI 如何执行标准化工作、人类如何审批和治理。
+- README 首屏能在 30 秒内解释 FreedomRealm 是什么、AI 时代 HRMS 管理什么、个人和多人如何使用、AI 如何执行标准化工作、人类如何审批和治理。
 - `business-blueprint.md` 出现 ProjectInstance、GovernanceBrain、MemberCapabilityProfile、TaskFitAssessment、ModelCapabilityProfile、FederationLink、CapabilityOffer、CapabilityRequest、SharedTemplate、SharedEvalSummary、ExecutionReportCard、ResourceProfile、AdaptiveRuntimePolicy、DomainWorkflow 和 DomainPack。
 - `architecture-blueprint.md` 出现 Adaptive Runtime Layer、Federation Gateway、FederationProtocol、Execution Report Generator、Resource Profile Detector、Adaptive Model Router 和 Adaptive Task Scheduler。
 - `open-source-strategy.md`、`adoption-and-growth.md`、`community-network.md`、`adaptive-runtime.md` 和 `community-governance.md` 已进入索引。
@@ -114,7 +114,7 @@
 - 企业参与规则无法保护个人和社区优先原则。
 - Commons 资产规则无法区分公开贡献和用户私有数据。
 
-## Phase 1: AI-HRMS Core 基础能力
+## Phase 1: FreedomRealm Core 基础能力
 
 - 建立控制面与工作台。
 - 建立 `ProjectInstance`、`InstanceMember`、`WorkItem`、`ApprovalGate`、`AgentActor`、`PolicyRule` 最小闭环。
@@ -189,7 +189,7 @@
 
 ## 当前短期目标
 
-从当前 MVP 起算，AI-HRMS 的短期目标应优先证明三件事。这不是一年目标；在当前 AI 模型能力和 agent 工程工具已经足够强的前提下，这三项应作为接下来连续迭代的近期验收线：
+从当前 MVP 起算，FreedomRealm 的短期目标应优先证明三件事。这不是一年目标；在当前 AI 模型能力和 agent 工程工具已经足够强的前提下，这三项应作为接下来连续迭代的近期验收线：
 
 1. 可传播：非核心开发者能通过 Web-first onboarding 在 30 分钟内完成第一份 AI-assisted work proof。
 2. 可协作：大型项目可以通过 `WorkShard`、`AgentWorkLease`、`ChangePacket` 和 `MergeGate` 由多人和多 agent 安全推进。
@@ -199,7 +199,7 @@
 
 ## 一年发展目标
 
-一年目标不应停留在“能传播、能协作、能复用”。一年内 AI-HRMS 应在软件层形成可以持续增长的工作执行与治理底座：
+一年目标不应停留在“能传播、能协作、能复用”。一年内 FreedomRealm 应在软件层形成可以持续增长的工作执行与治理底座：
 
 1. 产品形态成型：Web Workbench 成为默认入口，CLI 作为可测试内核继续存在；用户可以从固定入口、目标入口或自由探索入口创建 WorkItem、运行模板、触发审批、查看 Observation 并导出 ExecutionReportCard。
 2. 模板生态成型：至少形成一批可运行、可评测、可贡献的 Workflow Template、Skill Recipe、ToolContract、Failure case 和 Review note，覆盖开发者、设计师、写作者、创作者、小团队和开源维护者的高频软件层工作。
@@ -236,7 +236,7 @@
 - FederationLink 无显式授权、审计或撤销方式。
 - 跨实例通信依赖未登记内部 API，或二次开发修改 FederationMessage 标准封套语义。
 
-## Phase 4: AI-HRMS 跨域扩展
+## Phase 4: FreedomRealm 跨域扩展
 
 - 将 agent-first 能力扩展到 HR 之外的业务域。
 - 建立跨域运营台、知识共享与统一治理面。

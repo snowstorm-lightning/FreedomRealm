@@ -2,9 +2,9 @@
 
 ## 传播目标
 
-AI-HRMS 需要让用户在 30 秒内理解它是什么，在 5 到 10 分钟内跑通最小闭环，并能把一次执行结果转化为可分享、可复用、可贡献的资产。
+FreedomRealm 需要让用户在 30 秒内理解它是什么，在 5 到 10 分钟内跑通最小闭环，并能把一次执行结果转化为可分享、可复用、可贡献的资产。
 
-传播不是单纯营销。它要帮助个人、社区和组织更快理解 AI 时代 HRMS 的新定义：AI-HRMS 管理 HumanActor、AgentActor、WorkItem、ToolContract、ApprovalGate、PolicyRule、Observation、LearningArtifact、ProjectInstance、GovernanceBrain 和 DomainWorkflow，让标准化工作在明确约束下由 AI 执行，由人类设定目标、定义边界、审批高风险动作、审查结果和承担最终责任。
+传播不是单纯营销。它要帮助个人、社区和组织更快理解 AI 时代 HRMS 的新定义：FreedomRealm 管理 HumanActor、AgentActor、WorkItem、ToolContract、ApprovalGate、PolicyRule、Observation、LearningArtifact、ProjectInstance、GovernanceBrain 和 DomainWorkflow，让标准化工作在明确约束下由 AI 执行，由人类设定目标、定义边界、审批高风险动作、审查结果和承担最终责任。
 
 ## 最小可传播 Demo
 
@@ -52,7 +52,7 @@ MVP 采用 CLI-first、Web UI-follow：
 - 目标入口：用户直接描述“我想完成什么”“我想证明什么能力”“我想把什么现实任务做成可交付结果”。
 - 探索入口：用户不需要先选择身份，只提供兴趣、已有材料、可用时间、设备和约束，由系统生成候选 `LearningPath`、`GrowthWorkItem` 和模板建议。
 
-身份标签只能作为导航和解释工具，不能成为权限、能力、贡献价值或发展路径的硬分类。AI-HRMS 应允许用户在不同任务中使用不同身份叙事，并允许用户撤回、修改或降低相关画像的可见范围。
+身份标签只能作为导航和解释工具，不能成为权限、能力、贡献价值或发展路径的硬分类。FreedomRealm 应允许用户在不同任务中使用不同身份叙事，并允许用户撤回、修改或降低相关画像的可见范围。
 
 ## Web-first Onboarding
 
@@ -81,7 +81,7 @@ Generate your first AI-assisted work proof.
 
 首屏结构：
 
-- 顶部一句话说明：AI-HRMS 把 AI 协作变成可复核、可审批、可分享的工作证明。
+- 顶部一句话说明：FreedomRealm 把 AI 协作变成可复核、可审批、可分享的工作证明。
 - 三个入口并列展示：
   - 我有目标：用户直接描述想完成的任务。
   - 我想探索：用户提供兴趣、材料、时间和约束，由系统推荐路径。
@@ -110,7 +110,7 @@ Web UI 必须读取与 CLI 相同的模板 manifest、执行数据和报告卡 s
 定位：
 
 ```text
-AI-HRMS Workbench: turn AI-assisted work into a reviewable proof.
+FreedomRealm Workbench: turn AI-assisted work into a reviewable proof.
 ```
 
 首发体验必须满足：
@@ -151,7 +151,7 @@ AI-HRMS Workbench: turn AI-assisted work into a reviewable proof.
 - 报告卡分享或下载率。
 - 反馈 issue 数量和质量。
 - 模板贡献或改进建议数量。
-- 用户是否能复述“AI-HRMS 管理 AI 协作的任务、工具、审批、审计和报告卡”。
+- 用户是否能复述“FreedomRealm 管理 AI 协作的任务、工具、审批、审计和报告卡”。
 
 ## 能力证明型 Workbench
 
@@ -193,7 +193,7 @@ AI-HRMS Workbench: turn AI-assisted work into a reviewable proof.
 
 MVP 文档教学入口必须覆盖：
 
-- AI-HRMS 是什么，以及它与传统 HRMS、泛泛 agent framework 的区别。
+- FreedomRealm 是什么，以及它与传统 HRMS、泛泛 agent framework 的区别。
 - Demo Mode 如何启动。
 - 首个模板如何运行。
 - `WorkItem`、`AgentActor`、`ToolContract`、`ApprovalGate`、`Observation` 和 `ExecutionReportCard` 的关系。
@@ -232,13 +232,13 @@ HTML 展示策略：
 
 ## 外部 Agent 生态接入
 
-为了让项目更容易被正在使用 agent 生态的开发者理解，AI-HRMS 可以展示对 OpenClaw、Hermes Agent 等外部 agent runtime 的受控接入接口。但传播话术必须强调：这不是把 AI-HRMS 变成泛泛 agent launcher，而是把外部 agent 的能力纳入 WorkItem、ToolContract、ApprovalGate、审计、预算、数据分级和报告卡。
+为了让项目更容易被正在使用 agent 生态的开发者理解，FreedomRealm 可以展示对 OpenClaw、Hermes Agent 等外部 agent runtime 的受控接入接口。但传播话术必须强调：这不是把 FreedomRealm 变成泛泛 agent launcher，而是把外部 agent 的能力纳入 WorkItem、ToolContract、ApprovalGate、审计、预算、数据分级和报告卡。
 
 首版传播资产：
 
 - `external_agent_connector_safety_demo`：展示 OpenClaw / Hermes Agent mock connector profile、策略判断、候选结果和报告卡。
 - `config/connectors/openclaw.mock.json` 与 `config/connectors/hermes-agent.mock.json`：展示 provider profile 的最小安全形状。
-- `ExecutionReportCard.extensions["ai-hrms.externalAgent"]`：记录 connector、policy decision、mock request 和 mock result。
+- `ExecutionReportCard.extensions["freedomrealm.externalAgent"]`：记录 connector、policy decision、mock request 和 mock result。
 
 限制：
 
@@ -286,7 +286,7 @@ HTML 展示策略：
 
 ## 案例库
 
-案例库用于展示真实或合成场景下的 AI-HRMS 运行闭环。公开案例必须脱敏，且不能包含用户私有数据、敏感字段、内部任务内容或原始模型上下文。
+案例库用于展示真实或合成场景下的 FreedomRealm 运行闭环。公开案例必须脱敏，且不能包含用户私有数据、敏感字段、内部任务内容或原始模型上下文。
 
 案例至少记录：
 
@@ -357,7 +357,7 @@ HTML 展示策略：
 
 | 用户 | 解释重点 |
 | --- | --- |
-| 个人开发者 | 用 AI-HRMS 管理自己的任务、工具、审批和学习资产，避免把工作流锁在封闭平台里 |
+| 个人开发者 | 用 FreedomRealm 管理自己的任务、工具、审批和学习资产，避免把工作流锁在封闭平台里 |
 | 自由职业者 | 用模板和报告卡复用标准化交付，保留人工验收和客户边界 |
 | 开源维护者 | 用 WorkItem、AgentActor 和 ApprovalGate 分流 issue、生成草稿、沉淀失败样本 |
 | 小团队 | 多人共用一个 ProjectInstance，用 GovernanceBrain 辅助任务分派、权限边界、审批和模板复用 |
@@ -370,7 +370,7 @@ HTML 展示策略：
 
 ## 现实任务闭环后续探索
 
-AI-HRMS 的长期增长不能只依赖“生成代码”或“生成内容”。但现实感知层和现实执行层当前仍不明朗，不能挤占软件层 MVP 的实现和传播资源。
+FreedomRealm 的长期增长不能只依赖“生成代码”或“生成内容”。但现实感知层和现实执行层当前仍不明朗，不能挤占软件层 MVP 的实现和传播资源。
 
 后续如果软件层 MVP 证明有真实采用，再评估是否把手机和普通设备变成受控输入源：
 

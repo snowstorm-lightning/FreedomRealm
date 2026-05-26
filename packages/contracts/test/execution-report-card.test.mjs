@@ -38,7 +38,7 @@ function validCard() {
     metrics: {},
     failure: null,
     extensions: {
-      "ai-hrms.demo": {
+      "freedomrealm.demo": {
         modelRoute: { actual: "mock", mock: true }
       }
     }

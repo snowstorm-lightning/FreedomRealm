@@ -2,11 +2,11 @@
 
 ## 新定义
 
-AI-HRMS 是 AI 时代的人类与智能体资源管理系统。它为个人、多人协作组织、社区、开源项目、小型工作室、合作社、企业内部团队和更复杂组织提供统一的工作执行与治理底座。
+FreedomRealm 是 AI 时代的人类与智能体资源管理系统。它为个人、多人协作组织、社区、开源项目、小型工作室、合作社、企业内部团队和更复杂组织提供统一的工作执行与治理底座。
 
-AI-HRMS 把 `HumanActor`、`AgentActor`、`WorkItem`、`ToolContract`、`ApprovalGate`、`PolicyRule`、`Observation`、`LearningArtifact`、`ProjectInstance`、`GovernanceBrain` 和 `DomainWorkflow` 统一管理，让标准化工作可以在明确约束下由 AI 执行，由人类设定目标、定义边界、审批高风险动作、审查结果和承担最终责任。
+FreedomRealm 把 `HumanActor`、`AgentActor`、`WorkItem`、`ToolContract`、`ApprovalGate`、`PolicyRule`、`Observation`、`LearningArtifact`、`ProjectInstance`、`GovernanceBrain` 和 `DomainWorkflow` 统一管理，让标准化工作可以在明确约束下由 AI 执行，由人类设定目标、定义边界、审批高风险动作、审查结果和承担最终责任。
 
-当前项目仍然叫 AI-HRMS，本轮不处理正式更名。
+项目原名 AI-HRMS；从当前基线起正式使用 FreedomRealm。更名只改变项目名称和命名空间，不改变 AI 时代 HRMS 的定义、传统 HRMS 能力保留、个人与社区优先原则、审批审计边界或安全治理要求。
 
 ## AI 时代 HRMS 的边界扩展
 
@@ -27,7 +27,7 @@ AI-HRMS 把 `HumanActor`、`AgentActor`、`WorkItem`、`ToolContract`、`Approva
 
 绝大多数标准化工作都可以逐步交给 AI 在明确约束下完成。人类应减少重复执行工作，保留目标设定、边界定义、高风险审批、结果验收、系统修正、社区治理和最终责任。
 
-AI-HRMS 要成为这样的系统底座：
+FreedomRealm 要成为这样的系统底座：
 
 - AI 执行、分析、生成候选、调用工具、整理反馈、沉淀样本。
 - 人类设定目标、判断价值、定义边界、审批高风险动作、治理社区和承担责任。
@@ -39,7 +39,7 @@ AI-HRMS 要成为这样的系统底座：
 - 每个 ProjectInstance 可由一个人运行，也可由多个人共同运行。
 - 多个 ProjectInstance 可以在授权、信任、审计和数据分级约束下协作。
 
-长期看，AI-HRMS 还应成为能力发展系统：它帮助成员发现显性能力和潜在能力，为不同成员提供合适的学习材料和教学方式，让工作不只是输出，也成为输入、学习和能力证明。多个 ProjectInstance 协同时，价值应优先沉淀为开放协议、模板、评测、失败案例、复盘和 Commons 资产，而不是被封闭商业平台捕获。
+长期看，FreedomRealm 还应成为能力发展系统：它帮助成员发现显性能力和潜在能力，为不同成员提供合适的学习材料和教学方式，让工作不只是输出，也成为输入、学习和能力证明。多个 ProjectInstance 协同时，价值应优先沉淀为开放协议、模板、评测、失败案例、复盘和 Commons 资产，而不是被封闭商业平台捕获。
 
 当前阶段必须先让项目生存下来。MVP 优先使用文档教学、最小模板和 Demo Mode 跑通闭环，先证明“可理解、可运行、可复盘、可分享、可贡献”，再逐步扩展能力发现、自适应教学和跨实例资源协作。
 
@@ -58,7 +58,7 @@ AI-HRMS 要成为这样的系统底座：
 
 ## v1 范围
 
-- 聚焦 AI-HRMS Core、ProjectInstance、最小人机协作闭环和强治理边界。
+- 聚焦 FreedomRealm Core、ProjectInstance、最小人机协作闭环和强治理边界。
 - 先建设控制面、运行面、审批面、审计面、学习飞轮、自适应运行和传播闭环。
 - 治理型 AI 中枢只负责解释、建议、协调和生成候选，不能替代人类 owner 或绕过治理边界。
 - 保留传统 HRMS 能力，特别是组织、账号、员工档案、考勤、权限和协作内容。
@@ -104,7 +104,7 @@ AI-HRMS 要成为这样的系统底座：
 - v1 不让跨实例协作绕过审批和审计。
 - v1 不从零构建全套 ERP/CRM/财务系统。
 - MVP 不实现完整自适应教学引擎、关键词弹窗或复杂潜能挖掘。
-- 本轮不处理项目正式更名。
+- 项目正式更名已经由 ADR-0011 记录；后续不再使用 AI-HRMS 作为当前项目名。
 
 ## 核心原则
 

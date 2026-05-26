@@ -2,7 +2,7 @@
 
 ## 定位
 
-AI-HRMS 管理 HR 事实、协作内容、模型上下文、运行观察、评测样本、学习沉淀、模板资产和跨实例共享摘要。不同数据不能因为进入 AI 流程就失去来源、权限、用途、保留期和删除路径。
+FreedomRealm 管理 HR 事实、协作内容、模型上下文、运行观察、评测样本、学习沉淀、模板资产和跨实例共享摘要。不同数据不能因为进入 AI 流程就失去来源、权限、用途、保留期和删除路径。
 
 本文件补充 [security-and-governance.md](security-and-governance.md)、[environment-isolation.md](environment-isolation.md)、[learning-flywheel.md](learning-flywheel.md) 和 [evals/baseline-v1.md](evals/baseline-v1.md)，用于定义数据从采集、使用、脱敏、保留、训练、共享、撤回到删除的治理边界。
 

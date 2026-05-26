@@ -60,8 +60,8 @@ export const EXTERNAL_AGENT_CONNECTOR_MODES = Object.freeze([
 ]);
 
 export const EXTERNAL_AGENT_DIRECTIONS = Object.freeze([
-  "ai_hrms_to_external_agent",
-  "external_agent_to_ai_hrms"
+  "freedomrealm_to_external_agent",
+  "external_agent_to_freedomrealm"
 ]);
 
 export const EXTERNAL_AGENT_RUN_RESULT_STATUSES = Object.freeze([

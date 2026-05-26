@@ -3,14 +3,14 @@
   "service": "control-plane",
   "version": "0.1.0",
   "resources": {
-    "database": { "name": "ai_hrms_dev" },
-    "temporal": { "namespace": "ai-hrms-dev" },
-    "keycloak": { "realm": "ai-hrms-dev" },
+    "database": { "name": "freedomrealm_dev" },
+    "temporal": { "namespace": "freedomrealm-dev" },
+    "keycloak": { "realm": "freedomrealm-dev" },
     "litellm": { "deployment": "litellm-dev" },
-    "langfuse": { "project": "ai-hrms-dev" },
-    "objectStorage": { "bucketOrPrefix": "ai-hrms-dev/uploads/" },
-    "kubernetes": { "namespace": "ai-hrms-dev" },
-    "secretPath": "ai-hrms/dev/"
+    "langfuse": { "project": "freedomrealm-dev" },
+    "objectStorage": { "bucketOrPrefix": "freedomrealm-dev/uploads/" },
+    "kubernetes": { "namespace": "freedomrealm-dev" },
+    "secretPath": "freedomrealm/dev/"
   },
   "telemetry": {
     "labels": {
