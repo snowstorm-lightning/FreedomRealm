@@ -361,6 +361,9 @@ MVP 不再只以“命令能跑通”为完成标准。进入 Phase 0.6 验收�
 - 是否有署名和追踪机制。
 - 是否区分公开贡献和用户私有数据。
 - 是否支持修正、撤回或版本标记。
+- 是否保留根目录 `CONTRIBUTING.md`、`CODE_OF_CONDUCT.md`、`SECURITY.md` 和 `LICENSE-CANDIDATES.md` 入口。
+- 是否通过 `pnpm validate:open-source` 校验 issue / PR 模板和开源资产中的 secret、生产数据、敏感原文与治理边界提示。
+- 是否避免由 agent 自动定稿最终 LICENSE、商标策略或官方兼容认证。
 
 ## 环境隔离门禁
 

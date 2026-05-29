@@ -6,7 +6,9 @@ const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), ".."
 
 const steps = [
   ["validate:workspace", ["scripts/validate-workspace.mjs"]],
+  ["go", ["scripts/check-go.mjs"]],
   ["validate:env:all", ["scripts/validate-env-all.mjs"]],
+  ["validate:open-source", ["scripts/validate-open-source-assets.mjs"]],
   ["validate:operating-entry", ["scripts/validate-operating-entry.mjs"]],
   ["validate:templates", ["scripts/validate-templates.mjs"]],
   ["test", ["scripts/run-tests.mjs"]]

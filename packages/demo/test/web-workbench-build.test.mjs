@@ -133,23 +133,12 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   const state = JSON.parse(stateMatch[1]);
   assert.deepEqual(state.operatingEntry, operatingEntry);
   assert.equal(validateProjectOperatingEntry(state.operatingEntry).ok, true);
-  assert.equal(state.activePlans.length >= 1, true);
+  assert.equal(state.activePlans.length, 0);
   const activePlanFiles = new Set(state.activePlans.map((plan) => plan.filename));
   assert.equal(activePlanFiles.has("phase-0-5-freedomrealm-repositioning.md"), false);
   assert.equal(activePlanFiles.has("phase-0-doc-foundation.md"), false);
   assert.equal(activePlanFiles.has("phase-1-environment-isolation-guard.md"), false);
-  assert.equal(activePlanFiles.has("phase-1-go-control-plane-skeleton.md"), true);
-  const goControlPlanePlan = state.activePlans.find(
-    (plan) => plan.filename === "phase-1-go-control-plane-skeleton.md"
-  );
-  assert.equal(goControlPlanePlan?.status, "Active");
-  assert.equal(goControlPlanePlan?.statusSource, "explicit");
-  assert.equal(goControlPlanePlan?.planOnly, true);
-  assert.equal(goControlPlanePlan?.humanDecisionCount, 5);
-  assert.equal(goControlPlanePlan?.humanDecisionPreview.length, 5);
-  assert.equal(goControlPlanePlan?.humanDecisionPreview.some((item) => /本地存储/u.test(item)), true);
-  assert.match(goControlPlanePlan?.title || "", /Go Core Control Plane Skeleton/u);
-  assert.match(goControlPlanePlan?.href || "", /phase-1-go-control-plane-skeleton\.md/u);
+  assert.equal(activePlanFiles.has("phase-1-go-control-plane-skeleton.md"), false);
   const decayBacklog = state.operatingEntry.extensions["freedomrealm.decayPreventionBacklog"];
   assert.ok(decayBacklog);
   assert.equal(decayBacklog.promotionPolicy, "human_owner_review_required");
@@ -411,7 +400,6 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   assert.match(html, /No model key, connector, HR data, external write, or hidden training resource/u);
   assert.match(html, /无模型 key、连接器、HR 数据、外部写入或隐藏训练资源/u);
   for (const readOnlyBoundary of [
-    /Read-only plan entry, not automatic implementation authorization/u,
     /Candidate decisions, not automatic assignments/u,
     /Tracking only, no automatic execution/u,
     /High-risk live connector work still requires ApprovalGate/u,
@@ -439,8 +427,6 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   assert.match(html, /从 Windows 个人试用到强治理组织/u);
   assert.match(html, /Next Workbench/u);
   assert.match(html, /下一步工作台 \/ Next Workbench/u);
-  assert.match(app, /Plan entry/u);
-  assert.match(app, /计划入口 \/ Plan entry/u);
   assert.match(app, /定位 \/ Positioning/u);
   assert.match(app, /In 30 seconds, is it clear this is neither traditional HRMS nor a generic agent framework/u);
   assert.match(app, /Where should ApprovalGate, data classification, audit, or rollback be clearer/u);
@@ -470,8 +456,10 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   assert.match(app, /private data is not shared by default/u);
   assert.match(app, /Human decisions/u);
   assert.match(app, /决策点 \/ Human decisions/u);
-  assert.match(app, /Read-only plan entry, not automatic implementation authorization/u);
-  assert.match(app, /只读计划入口，不是自动实现授权/u);
+  assert.match(app, /No active execution plan/u);
+  assert.match(app, /暂无 active execution plan/u);
+  assert.match(app, /The Go control-plane skeleton, mock v1 WorkItem endpoints, and ApprovalGate endpoints are archived/u);
+  assert.match(app, /Go 控制面 skeleton、mock v1 WorkItem 与 ApprovalGate endpoints 已归档/u);
   assert.match(app, /Missing explicit status; currently inferred as active/u);
   assert.match(app, /缺少显式状态，当前按 active 推断/u);
   assert.match(app, /Owner Decision Queue/u);
@@ -480,8 +468,6 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   assert.match(app, /候选决策，不是自动分派/u);
   assert.match(app, /Refusal, delay, scope reduction, or transfer must not become a negative contribution signal/u);
   assert.match(app, /拒绝、延后、缩小范围或转交都不能成为负面贡献信号/u);
-  assert.match(app, /Plan decision/u);
-  assert.match(app, /计划决策 \/ Plan decision/u);
   assert.match(app, /High-risk candidate/u);
   assert.match(app, /高风险候选 \/ High-risk candidate/u);
   assert.match(app, /Requires human owner decision, ApprovalGate, secret boundary, and data lifecycle design/u);
@@ -490,8 +476,7 @@ test("web demo builds a multi-template static workbench from shared demo data", 
   assert.match(app, /人工复核 \/ Human review/u);
   assert.match(app, /This plan includes non-goals or decision boundaries/u);
   assert.match(app, /该计划包含非目标或待决策边界/u);
-  assert.match(app, /phase-1-go-control-plane-skeleton\.md/u);
-  assert.match(app, /Go Core Control Plane Skeleton/u);
+  assert.doesNotMatch(app, /phase-1-go-control-plane-skeleton\.md/u);
   assert.match(html, /Knowledge Loop/u);
   assert.match(html, /知识循环 \/ Knowledge Loop/u);
   assert.match(html, /Ask Maintained Docs/u);

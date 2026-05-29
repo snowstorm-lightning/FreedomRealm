@@ -90,7 +90,7 @@ function renderOperatingSnapshot() {
     {
       label: "待决策 / Decisions",
       title: String(ownerDecisions) + " human owner checkpoints",
-      detail: "Go 控制面和 live connector 仍需要人工确认。 / Go control plane and live connectors still need human confirmation."
+      detail: "当前 active plan 为 " + String((state.activePlans || []).length) + "；live connector 仍需要人工确认。 / Active plans: " + String((state.activePlans || []).length) + "; live connectors still need human confirmation."
     },
     {
       label: "衰减预防 / Decay prevention",
@@ -270,7 +270,11 @@ function renderDecayPreventionBacklog(entry) {
 function renderActivePlans() {
   const plans = state.activePlans || [];
   if (plans.length === 0) {
-    document.getElementById("activePlans").innerHTML = "";
+    document.getElementById("activePlans").innerHTML =
+      '<article class="plan-card">' +
+        '<header><strong>暂无 active execution plan / No active execution plan</strong><span class="status-pill compact">clear</span></header>' +
+        '<p>Go 控制面 skeleton、mock v1 WorkItem 与 ApprovalGate endpoints 已归档；下一轮复杂工程任务需要先创建新的 active plan。 / The Go control-plane skeleton, mock v1 WorkItem endpoints, and ApprovalGate endpoints are archived; the next complex engineering task needs a new active plan first.</p>' +
+      '</article>';
     return;
   }
 

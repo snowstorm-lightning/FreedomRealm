@@ -27,6 +27,7 @@
 
 ## 开源、社区与增长
 
+- 根目录开源入口：[../../CONTRIBUTING.md](../../CONTRIBUTING.md)、[../../CODE_OF_CONDUCT.md](../../CODE_OF_CONDUCT.md)、[../../SECURITY.md](../../SECURITY.md)、[../../LICENSE-CANDIDATES.md](../../LICENSE-CANDIDATES.md)。
 - [open-source-strategy.md](open-source-strategy.md)：开源战略、许可证候选、商标、Commons 资产和反商业捕获。
 - [adoption-and-growth.md](adoption-and-growth.md)：传播目标、最小 Demo、ExecutionReportCard、模板传播和贡献者声誉。
 - [community-network.md](community-network.md)：ProjectInstance、FederationLink、CapabilityOffer、CapabilityRequest、SharedTemplate 和 SharedEvalSummary。
@@ -55,8 +56,12 @@
 - [execution-plans/completed/phase-0-doc-foundation.md](execution-plans/completed/phase-0-doc-foundation.md)：Phase 0 文档底座已归档执行计划。
 - [execution-plans/completed/phase-0-5-freedomrealm-repositioning.md](execution-plans/completed/phase-0-5-freedomrealm-repositioning.md)：Phase 0.5 定位与自适应 Demo 基础已归档执行计划。
 - [execution-plans/completed/phase-0-6-web-workbench-mvp.md](execution-plans/completed/phase-0-6-web-workbench-mvp.md)：Phase 0.6 Web Workbench MVP 已归档执行计划。
+- [execution-plans/completed/phase-0-7-open-source-contribution-foundation.md](execution-plans/completed/phase-0-7-open-source-contribution-foundation.md)：Phase 0.7 开源贡献底座已归档执行计划。
 - [execution-plans/completed/phase-1-environment-isolation-guard.md](execution-plans/completed/phase-1-environment-isolation-guard.md)：Phase 1 环境隔离守卫最小实现已归档执行计划。
-- [execution-plans/active/phase-1-go-control-plane-skeleton.md](execution-plans/active/phase-1-go-control-plane-skeleton.md)：Phase 1 Go 控制面 skeleton 待决计划。
+- [execution-plans/completed/phase-1-go-control-plane-skeleton.md](execution-plans/completed/phase-1-go-control-plane-skeleton.md)：Phase 1 Go 控制面 skeleton 已归档计划。
+- [execution-plans/completed/phase-1-mock-v1-workitem-contract-endpoints.md](execution-plans/completed/phase-1-mock-v1-workitem-contract-endpoints.md)：Phase 1 mock v1 WorkItem contract endpoints 已归档计划。
+- [execution-plans/completed/phase-1-control-plane-contract-primitives.md](execution-plans/completed/phase-1-control-plane-contract-primitives.md)：Phase 1 控制面共享契约原语重构已归档计划。
+- [execution-plans/completed/phase-1-mock-approvalgate-contract-endpoints.md](execution-plans/completed/phase-1-mock-approvalgate-contract-endpoints.md)：Phase 1 mock ApprovalGate contract endpoints 已归档计划。
 
 ## 文档维护规则
 

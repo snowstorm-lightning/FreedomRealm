@@ -1,0 +1,52 @@
+name: Template contribution
+description: Propose or improve a Workflow Template, failure sample, or eval sample.
+title: "[Template]: "
+labels:
+  - template
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Templates must be mock-safe by default. Do not include secrets, production data, sensitive raw user data, or real connector credentials.
+  - type: input
+    id: template_id
+    attributes:
+      label: Template ID
+      placeholder: repo_understanding_and_work_plan
+    validations:
+      required: true
+  - type: textarea
+    id: purpose
+    attributes:
+      label: Purpose
+    validations:
+      required: true
+  - type: dropdown
+    id: risk
+    attributes:
+      label: Risk level
+      options:
+        - low
+        - medium
+        - high
+        - critical
+    validations:
+      required: true
+  - type: dropdown
+    id: data
+    attributes:
+      label: Data classification
+      options:
+        - public
+        - internal
+        - restricted
+        - sensitive
+    validations:
+      required: true
+  - type: textarea
+    id: evals
+    attributes:
+      label: Evaluation and failure coverage
+      description: Reference eval samples and failure cases using redacted or synthetic data.
+    validations:
+      required: true

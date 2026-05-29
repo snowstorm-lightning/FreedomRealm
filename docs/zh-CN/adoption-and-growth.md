@@ -199,6 +199,7 @@ MVP 文档教学入口必须覆盖：
 - `WorkItem`、`AgentActor`、`ToolContract`、`ApprovalGate`、`Observation` 和 `ExecutionReportCard` 的关系。
 - 失败后如何查看复盘和报告卡。
 - 如何贡献模板、失败案例或文档修正。
+- 如何通过 [../../CONTRIBUTING.md](../../CONTRIBUTING.md)、GitHub issue 模板和 PR 模板提交贡献，同时不提交 secret、生产数据、敏感原文或真实 connector 配置。
 
 `KeywordHelpOverlay` 可作为后续体验增强，通过快捷键或聚焦关键词弹窗展示术语解释、来源文档、示例和下一步链接，但它不应成为 MVP 跑通的前置条件。
 

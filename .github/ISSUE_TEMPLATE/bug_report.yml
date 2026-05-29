@@ -1,0 +1,49 @@
+name: Bug report
+description: Report a reproducible problem using mock or redacted data.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not include secrets, production data, sensitive raw user data, real connector config, or private account details.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What happened?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction
+      description: Use mock, synthetic, or redacted inputs only.
+      placeholder: |
+        1. Run ...
+        2. Observe ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: validation
+    attributes:
+      label: Validation run
+      placeholder: pnpm check
+  - type: dropdown
+    id: governance
+    attributes:
+      label: Governance impact
+      options:
+        - No ApprovalGate, data classification, audit, budget, ModelRoute, Federation, or adaptive runtime impact
+        - May affect ApprovalGate or audit
+        - May affect data classification or sensitive data handling
+        - May affect ModelRoute, Federation, or adaptive runtime
+    validations:
+      required: true

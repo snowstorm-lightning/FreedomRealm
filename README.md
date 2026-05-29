@@ -1,191 +1,214 @@
 # FreedomRealm
 
-FreedomRealm 是 AI 时代的人类与智能体资源管理系统。它把 `HumanActor`、`AgentActor`、`WorkItem`、`ToolContract`、`ApprovalGate`、`PolicyRule`、`Observation`、`LearningArtifact`、`ProjectInstance`、`GovernanceBrain` 和 `DomainWorkflow` 统一管理，让标准化工作可以在明确约束下由 AI 执行，由人类设定目标、定义边界、审批高风险动作、审查结果和承担最终责任。
+FreedomRealm 是 AI 时代的人类与智能体资源管理系统。它把人类参与者、AI 智能体、任务、工具、审批、策略、预算、审计、评测、模板、学习沉淀和跨实例协作统一到一个可治理的项目运行平面中。
 
-## AI 时代 HRMS 的定义
+FreedomRealm 不是传统 HRMS 的简单改名，也不是泛化的 agent framework。它保留组织、成员、权限、协作与传统 HRMS 能力，同时扩展出 `HumanActor`、`AgentActor`、`WorkItem`、`ToolContract`、`ApprovalGate`、`ProjectInstance`、`GovernanceBrain` 和 `ExecutionReportCard` 等面向人机协作的新契约。
 
-AI 时代的 HRMS 不只管理传统员工、组织、考勤、档案、审批和协作内容。它还要管理人类参与者、AI 智能体、技能、工具、任务、审批、策略、预算、审计、评测、学习沉淀、模板、实例成员和实例间协作关系。
+## Project Status
 
-FreedomRealm 面向个人、多人协作组织、社区、开源项目、小型工作室、合作社、企业内部团队和更复杂组织。项目原名 AI-HRMS；从当前基线起正式使用 FreedomRealm，不把项目改写成泛泛的 agent framework。
+| 项目项 | 当前状态 |
+| --- | --- |
+| 阶段 | 早期工程与开源化准备阶段 |
+| 事实源 | `docs/zh-CN/` 是设计、治理、流程和后续实现的 system of record |
+| 可运行内容 | Demo Mode CLI、静态 Web Workbench、知识导航 demo、自我审查报告、Go control-plane mock endpoints |
+| 生产可用性 | 尚不交付生产 HRMS、真实连接器、真实模型路由、数据库、Temporal、Keycloak 或完整 ApprovalGate |
+| 许可证 | 最终许可证未定，见 [LICENSE-CANDIDATES.md](LICENSE-CANDIDATES.md) |
+| 贡献入口 | [CONTRIBUTING.md](CONTRIBUTING.md)、[CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)、[SECURITY.md](SECURITY.md) |
 
-## 愿景
+当前仓库优先把架构、治理边界、接口契约、Demo Mode、报告卡、模板、评测和最小控制面骨架沉淀为可验证资产。所有 mock endpoint 都只用于契约验证和本地演示，不写生产事实，不触发真实工作流，不访问 secret、生产数据或外部账号。
 
-- AI 执行、分析、生成候选、调用工具、整理反馈、沉淀样本。
-- 人类设定目标、判断价值、定义边界、审批高风险动作、治理社区和承担责任。
-- 每个动作可追溯。
-- 每个高风险动作可审批。
-- 每次失败可复盘。
-- 每个改进可评测。
-- 每次发布可灰度和回滚。
-- 每个实例可由一个人运行，也可由多个人共同运行。
-- 多个实例可以在授权、信任、审计和数据分级约束下协作。
+## Core Ideas
 
-## 当前状态
+- 人类设定目标、定义边界、审批高风险动作、审查结果并承担最终责任。
+- AI 在策略、预算、工具、数据分级和审计约束下执行、分析、生成候选和沉淀反馈。
+- 每个 `WorkItem`、`ToolContract`、`ApprovalGate` 和 `ExecutionReportCard` 都应可追溯、可评测、可复盘。
+- `GovernanceBrain` 只能生成项目理解、智能分派、多人协调、模型能力治理和自我迭代候选，不能替代人类 owner。
+- 多个 `ProjectInstance` 可以通过授权的 `FederationLink` 协作，但默认不互信、不共享私有数据、不绕过本地审批。
+- 个人、开源维护者、小团队、社区和多人协作体优先；商业参与不能重定向项目基本方向。
 
-- 当前仓库仍以文档、ADR、执行计划、评测基线和最小工程守卫为主，不交付生产 HR 业务代码。
-- 已保留 `packages/contracts`、`packages/demo`、`packages/knowledge`、`packages/policy`、`config/environments` 和 `config/templates`，用于把报告卡契约、Demo Mode、知识导航、环境隔离和 `ToolContract` 高风险边界转成可测试规则。
-- `docs/zh-CN/` 是设计与后续实现阶段的主要 system of record。
-- 传统 HRMS 能力继续保留，企业私有化部署作为 `Enterprise Mode` 保留。
+## What Works Today
 
-## 核心抽象
+- `pnpm demo`：运行本地 deterministic Demo Mode，生成 `ExecutionReportCard` JSON 和 Markdown。
+- `pnpm web:demo`：生成静态项目学习系统和治理工作台。
+- `pnpm knowledge:demo`：运行本地 mock 知识导航与异议闭环。
+- `pnpm self-review`：生成项目自我审查与衰减预防报告卡。
+- `pnpm check`：运行仓库级验证，包括模板、环境、文档入口、开源资产、测试和 Go control-plane 检查。
+- `apps/control-plane`：提供 Go 标准库 HTTP skeleton 和 mock v1 `WorkItem` / `ApprovalGate` endpoints。
+
+Go control-plane 当前暴露以下 mock-only 接口：
+
+```text
+GET  /healthz
+GET  /metadata
+POST /api/v1/work-items
+GET  /api/v1/work-items/{workItemId}
+POST /api/v1/work-items/{workItemId}/transition
+POST /api/v1/approvals
+GET  /api/v1/approvals/{approvalId}
+POST /api/v1/approvals/{approvalId}/decide
+```
+
+这些接口返回 deterministic mock 响应和审计引用。高风险或敏感请求只会返回 `approval_required` 与事件预览，不会创建真实审批队列、通知、Temporal workflow 或持久化事实。
+
+## Quick Start
+
+Prerequisites:
+
+- Node.js `>=24.0.0 <26.0.0`
+- pnpm `10.x`
+- Go，用于验证或运行 `apps/control-plane`
+
+Install dependencies:
+
+```text
+pnpm install --frozen-lockfile=false
+```
+
+Run the full repository check:
+
+```text
+pnpm check
+```
+
+Run the local demo loop:
+
+```text
+pnpm demo
+```
+
+Generate the static web experience:
+
+```text
+pnpm web:demo
+```
+
+Run knowledge navigation:
+
+```text
+pnpm knowledge:demo -- --query "FreedomRealm 下一步应该做什么？"
+```
+
+Run project self-review:
+
+```text
+pnpm self-review
+```
+
+Run the Go control plane locally:
+
+```text
+cd apps/control-plane
+go test ./...
+go vet ./...
+go run ./cmd/control-plane
+```
+
+The default control-plane address is `127.0.0.1:8080`. Override it with `FREEDOMREALM_CONTROL_PLANE_ADDR`.
+
+## Outputs
+
+| Command | Main output |
+| --- | --- |
+| `pnpm demo` | `dist/demo-mode/` |
+| `pnpm web:demo` | `dist/web/index.html` and `dist/web/workbench.html` |
+| `pnpm knowledge:demo` | `AnswerCard`、`DocChallengeDraft` and linked `ExecutionReportCard` |
+| `pnpm self-review` | `project_self_review_and_decay_prevention` report card |
+| `pnpm report:html` | `dist/reports/delivery-report.html` |
+
+`ExecutionReportCard` 的 canonical source 是带 `schemaVersion` 的 JSON。Markdown、HTML 和 Web UI 都只是渲染物。
+
+## Repository Layout
+
+```text
+apps/
+  control-plane/        Go control-plane skeleton and mock v1 endpoints
+  web/                  Static web learning system and governance workbench builder
+config/
+  environments/         Environment profiles and isolation policy inputs
+  templates/            Demo templates, failure samples and evaluation samples
+docs/zh-CN/             Canonical Chinese documentation and execution plans
+packages/
+  contracts/            Shared report-card and contract helpers
+  demo/                 Demo Mode engine and tests
+  knowledge/            Local deterministic knowledge navigation
+  policy/               Policy and environment validation helpers
+scripts/                Repository validation, demo and report commands
+```
+
+## Core Concepts
 
 - `HumanActor`：设定目标、审批高风险动作、验收结果并承担最终责任的人类参与者。
 - `AgentActor`：在策略、预算、工具和审计约束下执行工作的 AI 执行者。
-- `WorkItem`：最小可管理工作单元，可被人类或智能体领取、拆解、执行、暂停、升级或关闭。
+- `WorkItem`：最小可管理工作单元，可被领取、拆解、执行、暂停、升级或关闭。
 - `ToolContract`：工具的结构化权限边界、输入输出 schema、风险等级和审计标签。
 - `ApprovalGate`：高风险动作前的显式人工闸门。
 - `PolicyRule`：身份、预算、工具、审批、数据访问和发布策略。
 - `Observation`：运行日志、指标、trace、反馈、输出和失败样本。
 - `LearningArtifact`：可进入评测、审批、灰度和回滚流程的学习沉淀。
 - `ProjectInstance`：一个 FreedomRealm 运行实例，可由个人、团队、社区或企业内部团队运行。
-- `GovernanceBrain`：ProjectInstance 内长期陪伴项目演化的治理型 AI 中枢，用于项目理解、智能分派、多人协调、模型能力治理和受控自我迭代；它不能替代人类 owner，也不能绕过审批、审计、预算和数据分级。
-- `ModelCapabilityProfile`：用于描述模型在推理、代码、长上下文、结构化输出、工具调用、安全、成本和延迟等方面能力的评测画像，是 `ModelRoute` 选择和降级的依据。
-- `DomainWorkflow`：面向 HR、开源维护、社区运营、项目协作等领域的可复用工作流。
+- `GovernanceBrain`：辅助项目理解、智能分派、多人协调、模型能力治理和受控自我迭代的治理型 AI 中枢。
+- `ModelCapabilityProfile`：描述模型能力、适用边界、评测结果、成本和降级依据的画像。
+- `ExecutionReportCard`：记录一次执行的目标、输入输出引用、风险、审批、发现、失败、修正和分享许可。
 
-## 最小可运行闭环
+## Running Modes
 
-5 到 10 分钟 Demo Mode 的目标是跑通：
-
-1. 创建 `WorkItem`。
-2. 分派给 `AgentActor`。
-3. `AgentActor` 调用 `ToolContract`。
-4. 命中高风险动作后进入 `ApprovalGate`。
-5. `HumanActor` 批准、拒绝或修改。
-6. 生成 `Observation`。
-7. 形成 `LearningArtifact` 或 `Eval sample`。
-8. 导出 `ExecutionReportCard`。
-
-`ExecutionReportCard` 用于展示任务目标、输入输出引用、执行者、使用的 Skill、调用的 ToolContract、风险等级、审批结果、发现、建议、失败与人工修正、脱敏状态和公开分享许可。它的事实源是带 `schemaVersion` 的 JSON；Markdown、HTML 和 Web UI 都只是渲染物。
-
-MVP 执行顺序采用 CLI-first、Web UI-follow。首版 CLI 用于跑通最小闭环，保存 JSON `ExecutionReportCard` 并默认导出 Markdown；极简 Web UI 在 CLI 闭环稳定后读取同一份执行数据，用于展示工作台、审批台、报告卡和文档教学入口。
-
-Demo Mode 默认使用 `mock` 模式，无需真实模型 key；`live` 模式只作为用户自带模型 API key 或本地模型的增强路径，不能改变 schema、审批、审计、数据分级或报告卡结构。
-
-首版 CLI 已提供 `docs_review_and_improvement` 模板：
-
-```text
-pnpm demo
-```
-
-默认输出写入 `dist/demo-mode/`：JSON 是 `ExecutionReportCard` 的 canonical source，Markdown 是从 JSON 渲染出的默认阅读版本。更多参数见 [docs/zh-CN/runbooks/demo-mode.md](docs/zh-CN/runbooks/demo-mode.md)。
-
-外部 agent 安全接入演示：
-
-```text
-pnpm demo -- --template external_agent_connector_safety_demo
-```
-
-该模板把 OpenClaw / Hermes Agent 类运行时建模为受控 `ExternalConnector` mock profile，只生成 `ExternalAgentRunRequest`、`ExternalAgentRunResult` 和策略判断，不启动真实外部 CLI，不读取消息账号、skills、memory、MCP 配置或 secret。
-
-项目自我审查与腐烂预防：
-
-```text
-pnpm self-review
-```
-
-该命令生成 `project_self_review_and_decay_prevention` 报告卡，只输出发现、风险和候选后续 WorkItem，不自动修改文档或代码。
-
-整体交付 HTML 报告：
-
-```text
-pnpm report:html
-```
-
-该命令从有效 JSON `ExecutionReportCard` 汇总生成 `dist/reports/delivery-report.html`。HTML 只用于整体交付展示；单次报告卡仍默认 JSON + Markdown，长期维护文档仍以 Markdown 为主。
-
-静态项目学习系统与 Web Workbench 可通过同一 Demo engine 生成：
-
-```text
-pnpm web:demo
-```
-
-默认输出包含两个静态入口：`dist/web/index.html` 是项目学习系统首页，优先展示项目结构、学习任务、页面入口和当前运行快照；`dist/web/workbench.html` 是完整治理工作台，展示 `repo_understanding_and_work_plan`、`knowledge_navigation_and_challenge`、`external_agent_connector_safety_demo`、`issue_pr_triage_and_review`、`personal_work_proof`、`project_self_review_and_decay_prevention` 和 `docs_review_and_improvement`，并包含 3 个内置知识问答样例。Workbench 通过视图切换进入 `Review Prompts`、`Running Modes`、`Owner Decision Queue`、`Next Workbench`、active execution plans、人工复核的 decay prevention backlog、报告卡预览和 human decision checkpoint；这些面板只读取本地 mock/demo 数据、manifest 和 Markdown 计划，不授权真实 connector、secret、生产数据、外部 issue / PR、Commons 发布或自动分派。
-
-知识导航与异议闭环可单独运行：
-
-```text
-pnpm knowledge:demo -- --query "FreedomRealm 下一步应该做什么？"
-```
-
-该命令使用本地 deterministic mock semantic search，不需要 embedding、模型 key 或外部连接器，会生成 `AnswerCard`、`DocChallengeDraft` 和引用二者的 `ExecutionReportCard`。
-
-## 运行档位
-
-| 档位 | 用途 | 特征 |
+| Mode | Purpose | Boundary |
 | --- | --- | --- |
-| `Tiny Mode` | 低配设备、旧电脑、轻量试用和教学 | 文件存储或 SQLite，mock model、远程低成本模型或手动执行模式，单用户、低并发、最小 UI 或 CLI |
-| `Demo Mode` | 首次体验 | 5 到 10 分钟跑通最小闭环，可用 SQLite、mock 工具和用户自带模型 API key |
-| `Local Mode` | 个人长期使用 | 本地数据库，可选 Docker Compose，可选本地模型或远程模型，基础权限、审计、模板库和评测样本 |
-| `Community Mode` | 多人共用实例 | 多用户、角色权限、审批流、审计查询、模板共享、资源配额和可选 FederationLink |
-| `Enterprise Mode` | 企业和强治理组织 | Keycloak、Temporal、PostgreSQL、LiteLLM Proxy、OpenTelemetry、Grafana/Loki/Tempo/Langfuse、环境隔离、备份恢复和完整 ApprovalGate |
+| `Tiny Mode` | 低配设备、教学和轻量试用 | 文件存储或 SQLite，mock model 或人工执行，最小 UI 或 CLI |
+| `Demo Mode` | 5 到 10 分钟首次体验 | mock 工具、可选用户自带模型 key、报告卡导出 |
+| `Local Mode` | 个人长期使用 | 本地数据库、可选 Docker Compose、本地或远程模型、基础审计 |
+| `Community Mode` | 多人共用实例 | 多用户、角色权限、审批流、模板共享、资源配额、可选 `FederationLink` |
+| `Enterprise Mode` | 企业和强治理组织 | Keycloak、Temporal、PostgreSQL、LiteLLM Proxy、OpenTelemetry、完整审批和备份恢复 |
 
-自适应运行通过 `ResourceProfile`、`AdaptiveRuntimePolicy`、`Adaptive Model Router` 和 `Adaptive Task Scheduler` 选择本地模型、远程模型、mock 模型或人工接管。资源降级不能绕过审批、安全、审计、预算和数据分级。
+自适应运行可以在本地模型、远程模型、mock 模型和人工接管之间降级，但不能绕过审批、安全、审计、预算或数据分级。
 
-## 个人与社区优先
+## Governance and Safety Boundaries
 
-FreedomRealm 优先服务个人、自由职业者、开源维护者、小团队、社区组织和多人协作体。商业公司可以参与和使用，但项目方向不能被商业公司重定向。
+- 控制面不直接承载 agent 推理图执行逻辑。
+- Agent Runtime 不直接写入 HR 主数据真相。
+- 生产模型调用必须经过 LiteLLM Proxy 或受控 `ModelRoute`。
+- 生产 `ModelRoute` 必须绑定 `ModelCapabilityProfile`、评测结果、数据分级范围、风险等级范围和回退策略。
+- 所有高风险动作必须存在 `ApprovalGate`。
+- 敏感数据不得以原文作为训练、评测或模型能力改进资源保留。
+- 跨实例协作必须使用 `ProjectInstance`、`FederationLink`、`CapabilityOffer`、`CapabilityRequest`、`SharedTemplate` 和 `SharedEvalSummary` 语言。
+- 跨实例通信必须保持 `FederationMessage` envelope、`FederationManifest`、`FederationReceipt` 和协议版本兼容。
+- 真实 connector、live model、生产数据、secret、外部 issue / PR 创建和 Commons 发布都不是默认授权能力。
 
-每类贡献都应可署名、可追踪、可复用，包括 code、docs、templates、eval samples、tool contracts、failure reports、translations、design discussions、review notes 和 real-world usage reports。
+## Documentation
 
-## 跨实例协作
-
-多个 `ProjectInstance` 可以通过 `FederationLink` 显式协作。协作语言包括 `FederationPeer`、`CapabilityOffer`、`CapabilityRequest`、`SharedTemplate` 和 `SharedEvalSummary`。
-
-跨实例规则：
-
-- 默认不互信。
-- 默认不共享私有数据。
-- 默认不允许远程实例直接调用本地高风险工具。
-- 跨实例协作必须显式授权。
-- 跨实例通信必须记录审计。
-- 授权必须可撤销。
-- 敏感数据不得进入跨实例消息。
-- 高风险动作必须回到本实例 `ApprovalGate`。
-
-## 传播与模板生态
-
-FreedomRealm 的传播重点是让用户快速理解、试用、分享和贡献。可复用资产包括：
-
-- `Workflow Template`
-- `Skill Recipe`
-- `ToolContract`
-- `Eval sample`
-- `Failure case`
-- `Review note`
-
-首批模板方向包括 GitHub issue 分流、会议纪要整理、文档摘要、简历筛选、入职流程、政策问答、任务拆解、资料收集、日报周报、开源项目维护、社区贡献者 onboarding、小团队任务分派和客户反馈整理。
-
-## 开源与反商业捕获
-
-FreedomRealm 的反商业捕获策略是组合式的，而不是承诺许可证可以绝对阻止剽窃：
-
-- 许可证候选包括 `AGPL-3.0`、`Apache-2.0`、`MIT`、`MPL-2.0` 和非标准 source-available 方案。
-- 推荐初稿是优先评估 `AGPL-3.0 + 商标规则 + 开放协议 + 社区治理 + Commons 资产治理`。
-- 代码可以开源，项目名称、Logo、官方兼容认证和官方发行版标识可以由商标和治理规则保护。
-- 核心契约不得绑定单一云平台、单一模型供应商、单一中心服务器或单一商业 API。
-- 许可证、商标策略和官方兼容认证需要人工确认；相关说明不是法律意见。
-
-## 文档入口
-
-- [AGENTS.md](AGENTS.md)：Agent 协作规则、知识索引和约束入口。
+- [AGENTS.md](AGENTS.md)：agent 工作规则、知识索引和强制约束入口。
 - [ARCHITECTURE.md](ARCHITECTURE.md)：总体架构摘要与关键边界。
-- [docs/zh-CN/README.md](docs/zh-CN/README.md)：中文解释文档库总索引。
-- [docs/zh-CN/project-operating-entry.md](docs/zh-CN/project-operating-entry.md)：每次打开仓库后的任务清单、分派、防冲突和停止条件入口。
-- [docs/zh-CN/open-source-strategy.md](docs/zh-CN/open-source-strategy.md)：开源战略与反商业捕获。
-- [docs/zh-CN/adoption-and-growth.md](docs/zh-CN/adoption-and-growth.md)：传播、Demo、报告卡和模板增长机制。
-- [docs/zh-CN/governance-ai-brain.md](docs/zh-CN/governance-ai-brain.md)：治理型 AI 中枢、智能分派和模型能力治理。
-- [docs/zh-CN/member-rights-and-contribution.md](docs/zh-CN/member-rights-and-contribution.md)：成员拒绝权、贡献机制和 AI 分派边界。
-- [docs/zh-CN/capability-development-and-mvp.md](docs/zh-CN/capability-development-and-mvp.md)：能力发展愿景、文档教学优先和 MVP 生存优先级。
-- [docs/zh-CN/data-lifecycle-and-training-resources.md](docs/zh-CN/data-lifecycle-and-training-resources.md)：数据生命周期、脱敏训练资源和撤回删除规则。
-- [docs/zh-CN/community-network.md](docs/zh-CN/community-network.md)：ProjectInstance 与跨实例协作。
-- [docs/zh-CN/federation-protocol.md](docs/zh-CN/federation-protocol.md)：跨实例通信协议和二次开发兼容性规则。
-- [docs/zh-CN/adaptive-runtime.md](docs/zh-CN/adaptive-runtime.md)：资源自适应运行体系。
-- [docs/zh-CN/developer-experience.md](docs/zh-CN/developer-experience.md)：跨平台开发体验与文件组织规划。
-- [docs/zh-CN/community-governance.md](docs/zh-CN/community-governance.md)：社区治理和企业参与边界。
+- [docs/zh-CN/README.md](docs/zh-CN/README.md)：中文文档库总索引。
+- [docs/zh-CN/project-operating-entry.md](docs/zh-CN/project-operating-entry.md)：当前任务、分派、防冲突和停止条件入口。
+- [docs/zh-CN/api-contracts.md](docs/zh-CN/api-contracts.md)：接口、事件、请求边界、响应边界和审计点。
+- [docs/zh-CN/security-and-governance.md](docs/zh-CN/security-and-governance.md)：身份、策略、预算、审计与合规边界。
+- [docs/zh-CN/open-source-strategy.md](docs/zh-CN/open-source-strategy.md)：开源策略、许可证候选、商标和反商业捕获。
+- [docs/zh-CN/roadmap.md](docs/zh-CN/roadmap.md)：阶段路线图。
 
-## 路线图摘要
+## Contributing
 
-- `Phase 0.5`：FreedomRealm repositioning and adaptive demo foundation。
-- `Phase 0.6`：Template and report-card growth loop。
-- `Phase 0.7`：Community contribution foundation。
-- `Phase 1`：FreedomRealm Core 基础能力，保留传统 HRMS 能力，并最小实现 `AgentActor`、`WorkItem`、`ApprovalGate`、`GovernanceBrain`、`ModelCapabilityProfile`、`AdaptiveRuntimePolicy`、`ExecutionReportCard` 和 `ProjectInstance`。
+FreedomRealm 欢迎 code、docs、templates、eval samples、failure reports、translations、design discussions、review notes 和 usage reports。
+
+Before opening a pull request:
+
+1. Read [CONTRIBUTING.md](CONTRIBUTING.md).
+2. Check [docs/zh-CN/execution-plans/README.md](docs/zh-CN/execution-plans/README.md) for active work.
+3. Keep the change scoped to a clear `WorkItem`, issue or execution plan.
+4. Run `pnpm check` and `git diff --check`.
+
+Do not include secret、生产数据、敏感原文、真实 connector 配置、未授权外部账号信息，或任何绕过 `ApprovalGate`、审计、预算、数据分级、`ModelRoute` 和 human review 的变更。
+
+## Roadmap
+
+Near-term engineering priorities:
+
+- Stabilize mock v1 control-plane contracts and keep `/metadata` aligned with route descriptors.
+- Keep Demo Mode, Web Workbench, templates, eval samples and report cards deterministic and reproducible.
+- Choose the final project license and clarify trademark / official compatibility rules through human owner and community governance.
+- Expand implementation only after the relevant docs, API contracts, audit points, evaluation rules and rollback paths are updated.
+
+See [docs/zh-CN/roadmap.md](docs/zh-CN/roadmap.md) and [docs/zh-CN/execution-plans/README.md](docs/zh-CN/execution-plans/README.md) for maintained planning context.
+
+## License
+
+FreedomRealm has not selected a final project license yet. [LICENSE-CANDIDATES.md](LICENSE-CANDIDATES.md) is decision material, not legal advice and not a license grant.

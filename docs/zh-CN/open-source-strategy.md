@@ -51,6 +51,19 @@ FreedomRealm 不追求成为另一个封闭商业 SaaS。它应减少个人和�
 
 该推荐仍需人工确认，不构成法律意见。
 
+## 当前开源入口资产
+
+当前仓库已经提供最小开源贡献底座，但尚未完成最终许可证决策：
+
+- [../../LICENSE-CANDIDATES.md](../../LICENSE-CANDIDATES.md)：许可证候选和人工确认路径，不是最终许可证授权。
+- [../../CONTRIBUTING.md](../../CONTRIBUTING.md)：贡献范围、验证命令、治理边界和高风险变更要求。
+- [../../CODE_OF_CONDUCT.md](../../CODE_OF_CONDUCT.md)：行为准则和社区冲突处理底线。
+- [../../SECURITY.md](../../SECURITY.md)：安全披露和敏感信息处理路径。
+- [../../.github/PULL_REQUEST_TEMPLATE.md](../../.github/PULL_REQUEST_TEMPLATE.md)：PR 治理检查清单。
+- [../../.github/ISSUE_TEMPLATE/](../../.github/ISSUE_TEMPLATE/)：bug、feature、template 和 failure case 入口。
+
+这些资产由 `pnpm validate:open-source` 校验，并由 `pnpm check` 自动执行。它们的目标是让外部贡献可以开始，同时继续阻止 secret、生产数据、敏感原文、真实 connector 配置和高风险自治绕过进入仓库。
+
 ## 商标与官方身份
 
 - 代码可以开源。

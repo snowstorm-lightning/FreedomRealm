@@ -32,6 +32,12 @@ jobs:
       - name: Prepare pnpm
         run: corepack prepare pnpm@10.0.0 --activate
 
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: apps/control-plane/go.mod
+          check-latest: true
+
       - name: Install
         run: pnpm install --frozen-lockfile=false
 

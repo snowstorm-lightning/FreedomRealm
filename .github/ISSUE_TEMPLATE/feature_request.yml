@@ -1,0 +1,36 @@
+name: Feature request
+description: Propose a scoped change or candidate WorkItem.
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Feature requests are review material, not automatic assignments. Do not include secrets, production data, or sensitive raw user data.
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: What user or contributor outcome should this support?
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Proposed scope
+      description: Include non-goals and what should stay out of scope.
+    validations:
+      required: true
+  - type: textarea
+    id: governance
+    attributes:
+      label: Governance boundaries
+      description: Note any ApprovalGate, audit, budget, data classification, ModelRoute, Federation, or adaptive runtime impact.
+    validations:
+      required: true
+  - type: textarea
+    id: validation
+    attributes:
+      label: Suggested validation
+      placeholder: pnpm check

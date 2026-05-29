@@ -4,7 +4,7 @@
 
 ## Active
 
-- [active/phase-1-go-control-plane-skeleton.md](active/phase-1-go-control-plane-skeleton.md)
+当前没有 active execution plan。新增复杂任务前应先在 `active/` 创建计划。
 
 ## Completed
 
@@ -12,7 +12,12 @@
 - [completed/phase-0-doc-foundation.md](completed/phase-0-doc-foundation.md)
 - [completed/phase-0-5-freedomrealm-repositioning.md](completed/phase-0-5-freedomrealm-repositioning.md)
 - [completed/phase-0-6-web-workbench-mvp.md](completed/phase-0-6-web-workbench-mvp.md)
+- [completed/phase-0-7-open-source-contribution-foundation.md](completed/phase-0-7-open-source-contribution-foundation.md)
 - [completed/phase-1-environment-isolation-guard.md](completed/phase-1-environment-isolation-guard.md)
+- [completed/phase-1-go-control-plane-skeleton.md](completed/phase-1-go-control-plane-skeleton.md)
+- [completed/phase-1-mock-v1-workitem-contract-endpoints.md](completed/phase-1-mock-v1-workitem-contract-endpoints.md)
+- [completed/phase-1-control-plane-contract-primitives.md](completed/phase-1-control-plane-contract-primitives.md)
+- [completed/phase-1-mock-approvalgate-contract-endpoints.md](completed/phase-1-mock-approvalgate-contract-endpoints.md)
 
 ## 使用规则
 

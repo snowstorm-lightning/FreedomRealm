@@ -1,0 +1,38 @@
+name: Failure case
+description: Contribute a redacted failure case for templates, policy, or report cards.
+title: "[Failure case]: "
+labels:
+  - failure-case
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Failure cases must be redacted and reproducible. Do not include secrets, production data, sensitive raw user data, private logs, or real connector config.
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: What task, template, endpoint, or workflow failed?
+    validations:
+      required: true
+  - type: textarea
+    id: failure
+    attributes:
+      label: Failure
+      description: What went wrong, and where should it have been blocked?
+    validations:
+      required: true
+  - type: textarea
+    id: redaction
+    attributes:
+      label: Redaction notes
+      description: Explain how private or sensitive data was removed.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproducible mock input refs
+      description: Use references, fixtures, or synthetic examples.
+    validations:
+      required: true

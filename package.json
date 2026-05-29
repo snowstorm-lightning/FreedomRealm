@@ -13,6 +13,7 @@
   ],
   "scripts": {
     "check": "node scripts/check.mjs",
+    "check:go": "node scripts/check-go.mjs",
     "demo": "node scripts/run-demo-mode.mjs",
     "doctor": "node scripts/doctor.mjs",
     "knowledge:demo": "node scripts/run-knowledge-demo.mjs",
@@ -22,6 +23,7 @@
     "web:demo": "node apps/web/bin/build-demo.mjs",
     "validate:env": "node packages/policy/bin/validate-environment.mjs",
     "validate:env:all": "node scripts/validate-env-all.mjs",
+    "validate:open-source": "node scripts/validate-open-source-assets.mjs",
     "validate:operating-entry": "node scripts/validate-operating-entry.mjs",
     "validate:templates": "node scripts/validate-templates.mjs",
     "validate:workspace": "node scripts/validate-workspace.mjs"

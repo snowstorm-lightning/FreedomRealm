@@ -292,6 +292,18 @@
 - SLA 修改
 - 从智能体转人工或从人工转智能体
 
+首期 Go 控制面 mock 边界：
+
+- `POST /api/v1/work-items` 只创建 deterministic mock `WorkItem` 响应，不写数据库、不创建 issue / PR、不触发 Temporal workflow。
+- `GET /api/v1/work-items/{workItemId}` 返回由路径 ID 派生的 deterministic mock fixture；该 fixture 不是事实源。
+- `POST /api/v1/work-items/{workItemId}/transition` 首期只接受 `start`、`block` 和 `complete`，并要求 `meta.workItemId` 如存在必须与路径一致。
+- 写请求必须包含 `meta.requestId`、`meta.idempotencyKey`、`meta.env`、`meta.actorType`、`meta.actorId` 和 `meta.projectInstanceId`；高风险请求必须包含 `meta.reason`。
+- mock `workItemId` 由 `projectInstanceId`、`idempotencyKey` 和 `title` 派生，避免同一幂等键因 `requestId` 变化而产生不同 ID；这仍不是持久化幂等存储。
+- `riskLevel` 首期受控为 `low`、`medium`、`high`、`critical`；`dataClassification` 首期受控为 `public`、`internal`、`restricted`、`sensitive`，缺省为 `internal`。
+- 成功响应必须包含 `{ data, meta, audit }`，其中 `meta.mockOnly` 和 `data.mockOnly` 都为 `true`。
+- `high`、`critical`、`restricted` 或 `sensitive` 请求命中 deterministic fake policy 时返回 `approval_required`，并只给出 `approval.requested` 预览；明确策略禁止时返回 `policy_violation`；不会创建真实 `ApprovalGate`。
+- 当前事件目录只登记 `task.created` 和 `task.assigned` 等任务事件；状态迁移 mock 响应只保留审计引用，不新增未登记事件名。
+
 ### Project Instance API
 
 用途：维护 `ProjectInstance`、`InstanceMember`、运行档位和实例级治理边界。
@@ -719,6 +731,15 @@
 - 审批请求创建后，原始输入引用不可变。
 - `edit_and_approve` 必须保存人类修改后的 payload 引用。
 - 超时不能默认批准，必须按策略升级、取消或转人工队列。
+
+首期 Go 控制面 mock 边界：
+
+- `POST /api/v1/approvals` 只创建 deterministic mock approval 响应，不写数据库、不发通知、不触发 Temporal workflow。
+- `GET /api/v1/approvals/{approvalId}` 返回由路径 ID 派生的 deterministic mock fixture；该 fixture 不是事实源。
+- `POST /api/v1/approvals/{approvalId}/decide` 只返回 mock 决策结果，不执行回滚、不修改 WorkItem、不发布真实审计事件。
+- 创建请求必须包含 `meta.workItemId`、`data.requestedAction`、`data.requestPayloadRef`、`data.policyEvaluationId` 和 `data.rollbackRef`。
+- `edit_and_approve` 必须包含 `data.editedPayloadRef`。
+- mock 响应只返回 `approval.requested` 和 `approval.decided` 事件预览，不代表事件已经入队或被消费者处理。
 
 ### Knowledge API
 

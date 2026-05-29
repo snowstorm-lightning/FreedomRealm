@@ -3,6 +3,7 @@ coverage/
 dist/
 target/
 .pnpm-store/
+.cache/
 .env
 .env.*
 !.env.example

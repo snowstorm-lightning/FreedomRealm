@@ -51,6 +51,7 @@ pnpm validate:operating-entry
 pnpm validate:templates
 pnpm web:demo
 pnpm validate:workspace
+pnpm check:go
 pnpm validate:env:all
 pnpm validate:env -- config/environments/dev.sample.json
 ```
@@ -165,6 +166,7 @@ Python 侧：
 ├─ package.json
 ├─ pnpm-workspace.yaml
 ├─ apps/
+│  ├─ control-plane/
 │  └─ web/
 ├─ config/
 │  ├─ project-operating-entry.json
@@ -186,6 +188,7 @@ Python 侧：
    ├─ run-self-review.mjs
    ├─ run-tests.mjs
    ├─ validate-env-all.mjs
+   ├─ validate-open-source-assets.mjs
    └─ validate-workspace.mjs
 ```
 
@@ -193,6 +196,7 @@ Python 侧：
 
 - 根目录只保留入口文档、workspace 配置和当前阶段正式资产。
 - `docs/zh-CN/` 承担 system of record，符合 AGENTS 工作规则。
+- `apps/control-plane/` 存放 Go 控制面 skeleton，包含 health / metadata、mock v1 `WorkItem` contract endpoints、共享 `internal/contracts/v1` 请求原语、README、测试和 deterministic fake policy kernel，不启用生产 API、真实 connector、secret、生产数据或持久化写入。
 - `config/environments/` 独立存放环境样例，便于策略校验。
 - `config/project-operating-entry.json` 是项目运行入口的机器事实源，供校验脚本和 Web Workbench 读取。
 - `config/connectors/` 存放 OpenClaw、Hermes Agent 等外部 agent runtime 的 mock connector profile；真实 connector 配置不得保存 secret 明文。
@@ -203,11 +207,12 @@ Python 侧：
 - `packages/knowledge/` 存放本地 deterministic 知识导航、来源定位、AnswerCard 和 DocChallengeDraft 生成逻辑，供 CLI 和 Web 共享。
 - `packages/policy/` 存放可机械检查的治理规则。
 - `scripts/` 存放跨平台本地守卫，避免把复杂逻辑写进 shell-specific package scripts。
+- 根目录开源入口文件包括 `LICENSE-CANDIDATES.md`、`CONTRIBUTING.md`、`CODE_OF_CONDUCT.md` 和 `SECURITY.md`；`pnpm validate:open-source` 校验这些文件和 GitHub issue / PR 模板的最小安全边界。
 - `scripts/run-self-review.mjs` 用于运行项目自我审查模板，只生成报告卡，不修改仓库文件。
 - `scripts/render-delivery-report-html.mjs` 用于从有效 JSON report cards 生成整体 HTML 交付报告，不替代 Markdown 文档。
 - `.github/workflows/` 存放最小 CI，使 Windows/Linux 差异尽早暴露。
 
-当前不建议移动文件。项目仍处于文档基线、最小策略守卫和轻量 Demo Workbench 阶段；新增目录都必须有可运行入口、README 或测试。
+当前不建议移动文件。项目仍处于文档基线、最小策略守卫、轻量 Demo Workbench 和 Go 控制面 skeleton 阶段；新增目录都必须有可运行入口、README 或测试。
 
 外部 agent 接入、自我审查和 HTML 总报告当前不需要新增 workspace package：
 
@@ -219,7 +224,7 @@ Python 侧：
 
 ## 未来目标结构
 
-进入服务实现阶段后，建议按以下结构扩展：
+进入下一轮服务实现阶段后，建议按以下结构扩展：
 
 ```text
 .

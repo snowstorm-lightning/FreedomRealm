@@ -2,15 +2,15 @@
 
 ## 状态
 
-Active
+Completed
 
-等待 human owner 关闭 Go module import path、HTTP 框架、Rust kernel 集成方式、首期 endpoint 范围和本地存储策略后，才能进入实现。
+2026-05-26，human owner 明确要求继续工程主线，并接受保守默认决策：Go module path 使用仓库内 `freedomrealm/apps/control-plane`，HTTP 层优先使用标准库，Rust kernel 首期只接窄接口 deterministic fake，首期 endpoint 只暴露 health / metadata，本地存储暂不持久化。
 
 ## 背景和问题陈述
 
 ADR-0010 已接受长期生产 Core Control Plane 默认采用 Go，Rust 用于 Policy / Contract / Protocol Kernel。当前仓库已经有 TypeScript Demo / Web / contracts / policy 基础，以及不接入生产路径的 Rust policy kernel skeleton，但还没有 Go 控制面 skeleton 的受控执行计划。
 
-本计划用于定义 Go 控制面最小初始化边界，避免直接创建空目录或过早承诺生产 API。它是后续实现前的执行计划，不是本轮自动实现授权。
+本计划用于定义 Go 控制面最小初始化边界，避免直接创建空目录或过早承诺生产 API。实施时只落地最小 skeleton，不启用生产 API、真实 connector、secret、模型调用或持久化写入。
 
 ## 目标
 
@@ -21,15 +21,14 @@ ADR-0010 已接受长期生产 Core Control Plane 默认采用 Go，Rust 用于 
 
 ## 非目标
 
-- 不在本计划创建 `apps/control-plane` 或 Go module。
 - 不实现 HR 主数据 API、登录、多租户、数据库迁移或生产服务。
 - 不调用真实模型、真实外部 connector、secret、生产数据或云服务。
 - 不让 Go 控制面复制 Rust Policy / Contract / Protocol Kernel 的高治理规则。
 - 不让控制面承载 agent 推理图执行逻辑。
 
-## 建议最小目录
+## 实际最小目录
 
-实际创建前需要 human owner 确认 Go module path 和 HTTP 框架。默认建议先采用标准库优先的模块化单体：
+实际采用标准库优先的模块化单体：
 
 ```text
 apps/control-plane/
@@ -54,7 +53,7 @@ apps/control-plane/
 首批测试：
 
 ```text
-internal/http/health_test.go
+internal/http/server_test.go
 internal/platform/response_test.go
 internal/platform/meta_test.go
 internal/modules/work/handler_test.go
@@ -76,8 +75,7 @@ internal/policy/kernel_test.go
 本计划落地为代码后，至少运行：
 
 ```text
-go test ./...
-go vet ./...
+pnpm check:go
 pnpm validate:workspace
 pnpm check
 ```
@@ -96,11 +94,32 @@ pnpm check
 
 ## Human Owner 决策点
 
-- Go module import path。
-- HTTP 框架：标准库优先、chi、Echo 或其他。
-- Rust kernel 集成方式：CLI、FFI、sidecar、WASM 或 generated bindings。
-- 首期是否只暴露 health / metadata，还是加入 mock v1 contract endpoints。
-- 本地存储：文件、SQLite，或暂不持久化。
+- Go module import path：`freedomrealm/apps/control-plane`。
+- HTTP 框架：标准库优先。
+- Rust kernel 集成方式：首期只用窄接口 deterministic fake，真实 CLI / FFI / sidecar / WASM / generated bindings 另开计划。
+- 首期 endpoint 范围：只暴露 `/healthz` 和 `/metadata`。
+- 本地存储：暂不持久化。
+
+## 实际交付物
+
+- `apps/control-plane` Go module。
+- 标准库 HTTP server 和 `/healthz`、`/metadata`。
+- request audit ref header、response envelope、service metadata 和 deterministic policy kernel fake。
+- `instances`、`work`、`approvals`、`reports`、`federation` 模块 handler 占位，默认返回 disabled problem response。
+- `scripts/check-go.mjs`，并纳入 `pnpm check`。
+- CI 增加 Go toolchain setup。
+
+## 偏差
+
+- 原计划在进入实现前不创建 `apps/control-plane`；本轮 human owner 明确要求继续工程主线后，按计划中的保守默认完成最小实现。
+- 首期没有加入 mock v1 contract endpoints，避免过早承诺 API shape。
+- 未引入 `go.work`，也未把 Go 服务加入 pnpm workspace，避免误判为 Node workspace。
+
+## 剩余风险和后续事项
+
+- mock v1 WorkItem contract endpoints 已由 [phase-1-mock-v1-workitem-contract-endpoints.md](phase-1-mock-v1-workitem-contract-endpoints.md) 完成；后续新增其它 mock 或生产接口仍必须先定义请求边界、响应边界、事件语义和审计点。
+- 真实 Rust kernel 集成方式仍需单独计划；当前 fake 不得被解释为生产治理内核。
+- 数据库、Temporal、LiteLLM、Keycloak、真实 connector 和生产模型调用仍在本计划范围外。
 
 ## 验收标准
 

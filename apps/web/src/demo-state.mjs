@@ -231,11 +231,11 @@ const learningTasks = [
     label: "理解治理 / Governance",
     title: "知道哪些事不能自动做 / Know what cannot be automated",
     summary:
-      "把 owner 决策、P2 live connector、self-review backlog 和 Go 控制面决策点分开看。 / Separate owner decisions, P2 live connectors, self-review backlog, and Go control-plane decisions.",
+      "把 owner 决策、P2 live connector、self-review backlog 和 Go 控制面后续计划分开看。 / Separate owner decisions, P2 live connectors, self-review backlog, and follow-up Go control-plane plans.",
     steps: [
       "Owner Decision Queue 是候选决策，不是自动分派。",
       "live connector、secret、生产数据和高风险动作仍停在 ApprovalGate。",
-      "Go 控制面 skeleton 需要 human owner 先确认技术边界。"
+      "Go 控制面 skeleton、mock v1 WorkItem 与 ApprovalGate endpoints 已落地；真实 Rust kernel 集成和持久化仍需新计划。"
     ],
     primaryHref: "./workbench.html#decisions",
     primaryAction: "查看决策队列 / View decisions"

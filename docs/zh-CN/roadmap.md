@@ -100,6 +100,13 @@
 - 模板贡献流程。
 - 失败样本贡献流程。
 
+当前落地状态：
+
+- 已新增 `LICENSE-CANDIDATES.md`，记录候选许可证和 human owner / 社区治理确认路径，但未替维护者选择最终 `LICENSE`。
+- 已新增 `CONTRIBUTING.md`、`CODE_OF_CONDUCT.md` 和 `SECURITY.md`。
+- 已新增 GitHub issue / PR 模板，覆盖 bug、feature、template contribution、failure case 和治理检查清单。
+- 已新增 `pnpm validate:open-source` 并纳入 `pnpm check`，防止关键开源入口和安全边界漂移。
+
 最小交付：
 
 - LICENSE 或 LICENSE-CANDIDATES 决策材料，标注需要人工确认。

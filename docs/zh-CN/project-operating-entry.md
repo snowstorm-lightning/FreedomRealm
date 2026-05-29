@@ -57,13 +57,41 @@ P0 是当前打开仓库后默认优先级。除非用户明确改变方向，ag
 
 以下条目是候选决策，不是自动分派。拒绝、延后、缩小范围或转交都不能成为负面贡献信号。
 
-Go Core Control Plane skeleton 在进入实现前仍需要 human owner 确认：
+Go Core Control Plane skeleton 的首期 human owner 决策已在 2026-05-26 关闭：
 
-- Go module import path。
-- HTTP 框架：标准库优先、chi、Echo 或其他。
-- Rust policy / contract / protocol kernel 集成方式：CLI、FFI、sidecar、WASM 或 generated bindings。
-- 首期 endpoint 范围：只暴露 health / metadata，还是加入 mock v1 contract endpoints。
-- 本地存储：文件、SQLite，或暂不持久化。
+- Go module import path：`freedomrealm/apps/control-plane`。
+- HTTP 框架：标准库优先。
+- Rust policy / contract / protocol kernel 集成方式：首期只用窄接口 deterministic fake；真实 CLI、FFI、sidecar、WASM 或 generated bindings 另开计划。
+- 首期 endpoint 范围：只暴露 health / metadata。
+- 本地存储：暂不持久化。
+
+Mock v1 WorkItem contract endpoints 已在 2026-05-26 归档：
+
+- 暴露 `POST /api/v1/work-items`、`GET /api/v1/work-items/{workItemId}` 和 `POST /api/v1/work-items/{workItemId}/transition`。
+- 端点只返回 deterministic mock 响应，不写数据库、不创建真实 `ApprovalGate`、不触发 Temporal workflow、不调用模型或真实 connector。
+- 高风险或敏感数据请求返回 `approval_required`，保留 `approval.requested` 预览和审计引用。
+- 状态迁移不新增未登记事件名，只保留同步响应和审计引用。
+
+Open source contribution foundation 已在 2026-05-26 归档：
+
+- 根目录新增 `LICENSE-CANDIDATES.md`、`CONTRIBUTING.md`、`CODE_OF_CONDUCT.md` 和 `SECURITY.md`。
+- `.github/ISSUE_TEMPLATE/` 和 `.github/PULL_REQUEST_TEMPLATE.md` 提供 bug、feature、template contribution、failure case 和 PR 治理检查入口。
+- `pnpm validate:open-source` 已纳入 `pnpm check`，用于校验开源入口文件和模板中的 secret、生产数据、敏感原文、真实 connector 和治理影响提示。
+- 最终 LICENSE、商标策略和官方兼容认证仍需 human owner / 社区治理人工确认。
+
+Control plane contract primitives 已在 2026-05-26 归档：
+
+- `apps/control-plane/internal/contracts/v1` 提供共享 `RequestMeta`、`ActorRef`、`RiskLevel`、`DataClassification` 和枚举校验。
+- WorkItem mock ID 改为由 `projectInstanceId`、`idempotencyKey` 和 `title` 派生，避免同一幂等键因 `requestId` 变化而漂移。
+- deterministic policy fake 区分 `allowed`、`approval_required` 和 `policy_violation`。
+- HTTP route descriptor 同时驱动 mux 注册和 `/metadata`，降低 endpoint 清单重复维护。
+
+Mock ApprovalGate contract endpoints 已在 2026-05-26 归档：
+
+- 暴露 `POST /api/v1/approvals`、`GET /api/v1/approvals/{approvalId}` 和 `POST /api/v1/approvals/{approvalId}/decide`。
+- 端点只返回 deterministic mock 响应，不写数据库、不发通知、不创建真实审批队列、不触发 Temporal workflow。
+- 只使用 `approval.requested` 和 `approval.decided` 事件预览，不发布真实异步事件。
+- `edit_and_approve` 必须提供 `editedPayloadRef`，保留人类修改后 payload 引用的契约边界。
 
 真实 connector / live model 增强仍停留在 P2，不自动推进。进入设计或实现前至少需要确认：
 
@@ -71,10 +99,15 @@ Go Core Control Plane skeleton 在进入实现前仍需要 human owner 确认：
 - `ExternalAgentRunRequest` 是否需要显式增加 redaction / sanitization 字段，用于 restricted / sensitive 出站数据。
 - 是否允许任何真实外部连接器、secret、账号、消息记录、MCP 配置、skills、memory 或生产数据进入本轮 readSet / writeSet；默认答案仍是否。
 
-Active execution plans 状态清理已在 2026-05-19 完成：
+Active execution plans 状态清理已在 2026-05-26 更新：
 
 - `phase-0-doc-foundation.md`、`phase-0-5-freedomrealm-repositioning.md` 和 `phase-1-environment-isolation-guard.md` 已归档到 `docs/zh-CN/execution-plans/completed/`。
-- `phase-1-go-control-plane-skeleton.md` 继续保留为 active，等待 human owner 关闭 Go module import path、HTTP 框架、Rust kernel 集成方式、首期 endpoint 范围和本地存储策略。
+- `phase-1-go-control-plane-skeleton.md` 已归档到 `docs/zh-CN/execution-plans/completed/`。
+- `phase-1-mock-v1-workitem-contract-endpoints.md` 已归档到 `docs/zh-CN/execution-plans/completed/`。
+- `phase-0-7-open-source-contribution-foundation.md` 已归档到 `docs/zh-CN/execution-plans/completed/`。
+- `phase-1-control-plane-contract-primitives.md` 已归档到 `docs/zh-CN/execution-plans/completed/`。
+- `phase-1-mock-approvalgate-contract-endpoints.md` 已归档到 `docs/zh-CN/execution-plans/completed/`。
+- 当前没有 active execution plan；真实 Rust kernel 集成、数据库、Temporal、LiteLLM、Keycloak 和真实 connector 仍需单独计划与审批。
 
 ## 分派规则
 
